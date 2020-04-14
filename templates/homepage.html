@@ -1,0 +1,76 @@
+<html>
+  <head>
+    {% include "header_meta.html" %}
+    <title>BlogCentral | Publish Blogs from Google Docs</title>
+  </head>
+  <body>
+    {% include "header.html" %}
+    <div id="main_content" class="outer">
+        <h2>Usage</h2>
+
+        <h3>Installation</h3>
+        <p>
+        BlogCentral is available on the G Suite Marketplace. Select Install to begin using it in Google Docs.
+        </p>
+
+        <h3>Starting the add-on</h3>
+        <p>
+        Open a new doc and Click on Add-Ons >> BlogCentral >> Start.
+        </p>
+
+        <h2>Contributing</h2>
+        <h3>Setup</h2>
+        <p>
+        <pre class="highlight">
+            <code>
+            $ cd gdocs
+            $ npm install
+            </code>
+        </pre>
+        </p>
+
+        <h3>Build</h2>
+        <p>
+        <pre class="highlight">
+            <code>
+            $ cd gdocs
+            $ npm run build
+            </code>
+        </pre>
+        </p>
+
+        <h3>Pushing Changes</h2>
+        <p>
+        <table>
+          <thead>
+            <tr>
+              <th>Command</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code class="language-plaintext highlighter-rouge">npm run push:server</code></td>
+              <td>All GAS Server Scripts</td>
+            </tr>
+            <tr>
+              <td><code class="language-plaintext highlighter-rouge">npm run push:client</code></td>
+              <td>just <code class="language-plaintext highlighter-rouge">main.html</code></td>
+            </tr>
+          </tbody>
+        </table>
+        </p>
+
+
+        <h2>Google Apps Script Resources</h2>
+        <ul>
+          <li>https://developers.google.com/apps-script/guides/clasp</li>
+          <li>https://github.com/google/clasp/blob/master/docs/typescript.md</li>
+          <li>https://developers.google.com/apps-script/guides/support/best-practices</li>
+          <li>https://gsuite-developers.googleblog.com/2015/12/advanced-development-process-with-apps.html</li>
+          <li>http://googleappsscript.blogspot.com/2010/06/optimizing-spreadsheet-operations.html</li>
+        </ul>
+    </div>
+    {% include "footer.html" %}
+  </body>
+</html>
