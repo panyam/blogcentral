@@ -1,134 +1,73 @@
 <!-- Use this CSS stylesheet to ensure that add-ons styling
      matches the default Google Docs styles -->
-<link href="https://ssl.gstatic.com/docs/script/css/add-ons.css"
-     rel="stylesheet">
+<html>
+    <head>
+        <link href="https://ssl.gstatic.com/docs/script/css/add-ons.css" rel="stylesheet">
+        <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
+        <link href="/static/css/style.css" rel="stylesheet">
+    </head>
+    <body>
+        <!-- The sidebar will have a input box and the search button -->
+        <div class="sidebar">
+            <center>
+                <button class="blue" id="add_site_button">Add</button>
+            </center>
+            <div id = "site_list">
+            </div>
+        </div>
 
-<!-- The sidebar will have a input box and the search button -->
-<div class="sidebar">
-<!--
-    <h2>Task Options</h2>
-    <table>
-    <tr>
-        <td>
-            <label for="task_start_date_col">Task Start Date Column: </label>
-        </td>
-        <td>
-            <input type="text" id="task_start_date_col" placeholder="Task Start Date Column..." value = "E" />
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <label for="task_end_date_col">Task End Date Column: </label>
-        </td>
-        <td>
-            <input type="text" id="task_end_date_col" placeholder="Task Start End Column..."  value = "F" />
-        </td>
-    </tr>
-    </table>
-    -->
-    
-    <h2>Calendar Options</h2>
-    <table>
-<!--    <tr>
-        <td>
-            <label for="calendar_start_date_cell">Calendar Start Date Cell: </label>
-        </td>
-        <td>
-            <input type="TEXT" id="calendar_start_date_cell" placeholder="Calendar Start Date Cell..." value = "A2" />
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <label for="calendar_end_date_cell">Calendar End Date Cell: </label>
-        </td>
-        <td>
-            <input type="TEXT" id="calendar_end_date_cell" placeholder="Calendar End Date Cell..." value = "B2" />
-        </td>
-    </tr>-->
-    <tr>
-        <td>
-            <label for="border_color">Border Color: </label>
-        </td>
-        <td>
-            <input type="color" id="border_color" value = "black" />
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <label for="weekday_color">Weekday Color: </label>
-        </td>
-        <td>
-            <input type="color" id="weekday_color" value = "black" />
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <label for="weekend_color">Weekend Color: </label>
-        </td>
-        <td>
-            <input type="color" id="weekend_color" value = "black" />
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <label for="highlight_color">Highlight Color: </label>
-        </td>
-        <td>
-            <input type="color" id="highlight_color" value = "black" />
-        </td>
-    </tr>
-    </table>
-    <br/>
-    <button class="blue" id="save_properties">Apply</button>
-</div>
+        <div id="new_site_dialog" title="Add new Site">
+          <form>
+            <fieldset class = "dialog_fields">
+              <label for="site_type">Site Type</label>
+              <select id = "site_type" class = "ui-widget-content ui-corner-all">
+                <option>WordPress Blog</option>
+              </select>
 
-<!-- Load the jQuery library from the Google CDN -->
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js">
-</script>
+              <label for="site_host">Site Host</label>
+              <input type="url" name="site_host" id="site_host" value="https://leetcoach.com/" class="text ui-widget-content ui-corner-all">
 
-<script>
+              <label for="site_username">Username</label>
+              <input type="url" name="site_username" id="site_username" value="panyam" class="text ui-widget-content ui-corner-all">
 
-   function loadProperties(callback) {
-     google.script.run
-     .withSuccessHandler(function(properties) {
-       console.log("Properties: ", properties);
-       $("#border_color").val(properties.borderBGColor);
-       $("#weekend_color").val(properties.weekendBGColor);
-       $("#weekday_color").val(properties.weekdayBGColor);
-       $("#highlight_color").val(properties.highlightBGColor);
-       $("#task_start_date_col").val(properties.taskStartDateCol);
-       $("#task_end_date_col").val(properties.taskEndDateCol);
-       callback(properties);
-     })
-     .loadTrackerProperties()
-   }
-   
-   
-   function saveProperties(callback) {
-       var newProperties = {
-       "borderBGColor": $("#border_color").val(),
-       "weekendBGColor": $("#weekend_color").val(),
-       "weekdayBGColor": $("#weekday_color").val(),
-       "highlightBGColor": $("#highlight_color").val(),
-       "taskStartDateCol": $("#task_start_date_col").val(),
-       "taskEndDateCol": $("#task_end_date_col").val()
-     };
-     
-     google.script.run
-     .withSuccessHandler(callback)
-     .saveActiveTrackerProperties(newProperties);
-   }
+              <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+            </fieldset>
+          </form>
+        </div>
 
-    // Attach click handlers after the Sidebar has loaded in Google Docs
-    $(function() {
-       loadProperties(function(properties) {
-           console.log("Loaded Properties: ", properties);
-           $('#save_properties').click(function() {
-               saveProperties(function(result) {
-                   console.log("Applied Tracker to Sheet: ", result);
-                   google.script.host.close();
-               });
-           });
-       });
-    });
-</script>
+
+        <!-- Load the jQuery library from the Google CDN -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
+                integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
+                crossorigin="anonymous"></script>
+        <script src="/static/models.js"></script>
+        <script src="/static/views.js"></script>
+
+        <script>
+            var localStorageExists = typeof(Storage) !== "undefined";
+            function setupUi(callback) {
+                if (!localStorageExists) {
+                    $("#site_list").html("You do not have local storage enabled.");
+                } else {
+                }
+                callback();
+            }
+
+            function addNewSite() {
+                alert("ok");
+            }
+
+            // Attach click handlers after the Sidebar has loaded in Google Docs
+            $(function() {
+                var newSiteDialog = new AddSiteDialog("new_site_dialog");
+                setupUi(function() {
+                    $( "#add_site_button" ).button().on( "click", function() {
+                        newSiteDialog.open();
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

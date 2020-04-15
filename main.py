@@ -25,6 +25,10 @@ def tos():
 def privacypolicy():
     return render_template("privacy.html", **common_properties())
 
+@app.route('/client/')
+def client():
+    return render_template("client.html", **common_properties())
+
 @app.route('/')
 def homepage():
     return render_template("homepage.html", **common_properties())

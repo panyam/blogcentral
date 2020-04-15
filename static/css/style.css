@@ -3,13 +3,19 @@
     border: solid 0px red;
 }
 
+label, input { display:block; }
+input.text { margin-bottom:12px; width:95%; padding: .4em; }
+fieldset { padding:0; border:0; margin-top:25px; }
+.ui-dialog .ui-state-error { padding: .3em; }
+
 header {
     border: solid 0px blue;
     margin-left: 250px;
     margin-right: 250px;
 }
 
-#main_content {
+#sidebar {
+    border: solid 1px red;
     background: "#ff00ff";
     margin-left: 250px;
     margin-right: 250px;
