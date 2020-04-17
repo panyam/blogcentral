@@ -4,32 +4,37 @@ set -e
 
 dist_dir="dist"
 mkdir -p ${dist_dir}/server
-mkdir -p ${dist_dir}/client
+mkdir -p ${dist_dir}/client/static/js
+mkdir -p ${dist_dir}/client/static/css
 
 server () {
-    cp project/appsscript.json ${dist_dir}
-    cp project/server/*.js ${dist_dir}/server
+    cp src/appsscript.json ${dist_dir}
+    cp src/server/*.js ${dist_dir}/server
 }
 
 client () {
+    echo "Building Client Html..."
     cp project/client/*.html ${dist_dir}/client
+    js
 }
 
 js () {
-    echo "JS Done"
+    echo "Building JS Bundle..."
+    input_files="project/client/static/js/*.js"
+    output_min_file="${dist_dir}/client/bundle.min.js.html"
+    output_file="${dist_dir}/client/bundle.js.html"
+
+    echo "<script>" > ${output_file}
+    browserify --debug ${input_files} --standalone GSJS >> ${output_file}
+    echo "</script>" >> ${output_file}
+
+    echo "<script>" > ${output_min_file}
+    browserify -t 'uglifyify' ${input_files} --standalone GSJS | uglifyjs >> ${output_min_file}
+    echo "</script>" >> ${output_min_file}
 }
 
 css () {
     echo "CSS Done"
-}
-
-js2 () {
-    # wrap bundled js in script tags and rename as html
-    input_file="project/client/sidebar.js"
-    output_file="${dist_dir}/client/bundle.min.js.html"
-    echo "<script>" > ${output_file}
-    browserify -t 'uglifyify' ${input_file} | uglifyjs >> ${output_file}
-    echo "</script>" >> ${output_file}
 }
 
 css2 () {

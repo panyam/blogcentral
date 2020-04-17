@@ -28,9 +28,31 @@ class AddSiteDialog extends Dialog {
         super(elemid);
     }
 
+    get template() {
+        return `
+          <form>
+            <fieldset class = "dialog_fields">
+              <label for="site_type">Site Type</label>
+              <select id = "site_type" class = "ui-widget-content ui-corner-all">
+                <option>WordPress Blog</option>
+              </select>
+
+              <label for="site_host">Site Host</label>
+              <input type="url" name="site_host" id="site_host" value="https://leetcoach.com/" class="text ui-widget-content ui-corner-all">
+
+              <label for="site_username">Username</label>
+              <input type="url" name="site_username" id="site_username" value="panyam" class="text ui-widget-content ui-corner-all">
+
+              <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+            </fieldset>
+          </form>
+        `
+    }
+
     construct() {
         var self = this;
         this.element = $("#" + this.elemid);
+        this.element.html(this.template);
         this.siteType = this.element.find("select");
         this.siteHost = this.element.find("#site_host");
         this.siteUsername = this.element.find("#site_username");

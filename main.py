@@ -27,7 +27,7 @@ def privacypolicy():
 
 @app.route('/client/')
 def client():
-    return render_template("client.html", **common_properties())
+    return render_template("client/client.html", **common_properties())
 
 @app.route('/')
 def homepage():
