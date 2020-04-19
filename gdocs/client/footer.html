@@ -1,26 +1,2 @@
 <script>
-    var localStorageExists = typeof(Storage) !== "undefined";
-    function setupUi(callback) {
-        if (!localStorageExists) {
-            $("#site_list").html("You do not have local storage enabled.");
-        } else {
-        }
-        callback();
-    }
--
-    function addNewSite() {
-        alert("ok");
-    }
--
-    // Attach click handlers after the Sidebar has loaded in Google Docs
-    $(function() {
-        /*
-        var newSiteDialog = new AddSiteDialog("new_site_dialog");
-        setupUi(function() {
-            $( "#add_site_button" ).button().on( "click", function() {
-                newSiteDialog.open();
-            });
-        });
-        */
-    });
 </script>

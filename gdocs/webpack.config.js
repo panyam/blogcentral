@@ -1,10 +1,12 @@
 const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
+const CopyPlugin = require('copy-webpack-plugin');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 const HTMLWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin');
 const uglifyJsPlugin = require('uglifyjs-webpack-plugin');
-// const CleanWebpackPlugin = require("clean-webpack-plugin");
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+
 
 // Read Samples first
 function readdir(path) {
@@ -25,18 +27,36 @@ module.exports = (env, options) => {
     console.log("Options: ", options);
     var plugins = [
         // new uglifyJsPlugin(),
-        // new CleanWebpackPlugin('dist'),
+        new CleanWebpackPlugin(),
+        new CopyPlugin([
+            {
+                from: path.resolve(__dirname, 'appsscript.json'),
+                to: 'appsscript.json'
+            },
+            {
+                from: path.resolve(__dirname, 'server/'),
+                to: 'server/'
+            },
+            {
+                from: path.resolve(__dirname, 'client/header.html'),
+                to: 'client/header.html'
+            },
+            {
+                from: path.resolve(__dirname, 'client/body.html'),
+                to: 'client/body.html'
+            }
+        ]),
         new HTMLWebpackPlugin({
             title: "Blog Central",
             myPageHeader: "Blog Central",
             template: path.resolve(__dirname, 'client/index.gdocs.ejs'),
-            filename: "index.html"
+            filename: "client/main.html"
         }),
         new HTMLWebpackPlugin({
             title: "Blog Central",
             myPageHeader: "Blog Central",
             template: path.resolve(__dirname, 'client/index.flask.ejs'),
-            filename: "client.html"
+            filename: path.resolve(__dirname, "../templates/client.html")
         }),
         new webpack.ProvidePlugin({
             $: "jquery",
@@ -56,14 +76,17 @@ module.exports = (env, options) => {
         libraryTarget: 'umd',
         libraryExport: 'default',
         path: path.resolve(__dirname, 'dist'),
-        filename: 'index.js'
+        publicPath: "/static",
+        filename: 'client/index.js'
     };
     if (options.debug) {
         output.filename = "[name].js";
     }
 
     var webpack_configs = {
-        entry: './client/index.ts',
+        entry: {
+            client: './client/index.ts'
+        },
         output: output,
         module: {
             rules: [
