@@ -62,11 +62,11 @@ export class SiteList {
         this.site_map = {};
         var us = this;
         if (site_keys != null) {
-            site_keys = JSON.parse(site_keys);
-            site_keys?.forEach(function(siteid : string, index : Int) {
+            var site_keys_list : string[] = JSON.parse(site_keys);
+            site_keys_list ?.forEach(function(siteid : string, index : Int) {
                 var key = "site_details_" + siteid;
                 var details = window.localStorage.getItem(key);
-                var site = new Site(siteid, details)
+                var site = new Site(siteid, SiteType.WORDPRESS, details)
                 us.addSite(site);
             });
         }

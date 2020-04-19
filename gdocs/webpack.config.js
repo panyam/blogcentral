@@ -148,7 +148,10 @@ module.exports = (env, options) => {
                 }
             ]
         },
-        plugins: plugins
+        plugins: plugins,
+        resolve: {
+            extensions: ['.js', '.jsx', '.ts', '.tsx']
+        }
     };
     if (options.debug || options.dev) {
         webpack_configs.devtool = 'inline-source-map';
