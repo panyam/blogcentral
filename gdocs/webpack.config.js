@@ -27,14 +27,12 @@ module.exports = (env, options) => {
         // new uglifyJsPlugin(),
         // new CleanWebpackPlugin('dist'),
         new HTMLWebpackPlugin({
-            inject: "head",
             title: "Blog Central",
             myPageHeader: "Blog Central",
             template: path.resolve(__dirname, 'client/index.gdocs.ejs'),
             filename: "index.html"
         }),
         new HTMLWebpackPlugin({
-            inject: "head",
             title: "Blog Central",
             myPageHeader: "Blog Central",
             template: path.resolve(__dirname, 'client/index.flask.ejs'),

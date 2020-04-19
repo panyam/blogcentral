@@ -61,8 +61,10 @@
   "scripts": {
     "clean": "rm -rf dist/*",
     "build:server": "./build.sh server",
-    "build:client": "webpack",
-    "build": "npm run build:server && npm run build:client",
+    "build": "webpack",
+    "builddev": "webpack --mode=development",
+    "buildall": "npm run build:server && npm run builddev",
+    "buildallprod": "npm run build:server && npm run build",
     "pull": "cd dist ; clasp pull",
     "pushOnly": "cd dist ; clasp push",
     "push:client": "npm run build:client && npm run pushOnly",
