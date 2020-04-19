@@ -54,11 +54,11 @@ module.exports = (env, options) => {
     }
 
     var output = {
-        library: 'Sistine',
+        library: 'BCJS',
         libraryTarget: 'umd',
         libraryExport: 'default',
         path: path.resolve(__dirname, 'dist'),
-        filename: '/index.js'
+        filename: 'index.js'
     };
     if (options.debug) {
         output.filename = "[name].js";
@@ -71,14 +71,14 @@ module.exports = (env, options) => {
             rules: [
                 // The rule for rendering html from an ejs template.
                 {
-                  test: /\/src\/demos\/.*index.ejs$/,
+                  test: /\/client\/index.*.ejs$/,
                   use: [{
                     loader: 'extract-loader'
                   },
                   {
                     loader: 'html-loader',
                     options: {
-                      interpolate: 'require'
+                      // interpolate: 'require'
                     }
                   },
                   {
@@ -113,7 +113,7 @@ module.exports = (env, options) => {
                       init: function (engine, info) {
                         engine.registerPartial(
                           'body',
-                          fs.readFileSync('./src/body.hbs').toString()
+                          fs.readFileSync('./client/body.hbs').toString()
                         )
                       },
                       locals: {
@@ -167,3 +167,4 @@ module.exports = (env, options) => {
     }
     return webpack_configs;
 };
+

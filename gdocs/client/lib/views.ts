@@ -1,10 +1,21 @@
 
-class Dialog {
-    constructor(elemid) {
+// import { SiteType } from "./models";
+
+export class Dialog {
+    elemid : string
+    onConfirm : any
+    onCancel : any
+    element : any
+    dialog : any
+
+    constructor(elemid : string) {
         this.elemid = elemid;
         this.onConfirm = null;
         this.onCancel = null;
         this.construct();
+    }
+
+    construct() {
     }
 
     confirmClicked() {
@@ -23,12 +34,20 @@ class Dialog {
     }
 }
 
-class AddSiteDialog extends Dialog {
-    constructor(elemid) {
+export class AddSiteDialog extends Dialog {
+    element : any
+    siteTypeElem : JQuery<HTMLElement>
+    siteHostElem : JQuery<HTMLElement>
+    usernameElem : JQuery<HTMLElement>
+    allFields : JQuery<any>
+    dialog : any
+    form : any
+
+    constructor(elemid : string) {
         super(elemid);
     }
 
-    get template() {
+    get template() : string {
         return `
           <form>
             <fieldset class = "dialog_fields">
@@ -53,13 +72,13 @@ class AddSiteDialog extends Dialog {
         var self = this;
         this.element = $("#" + this.elemid);
         this.element.html(this.template);
-        this.siteType = this.element.find("select");
-        this.siteHost = this.element.find("#site_host");
-        this.siteUsername = this.element.find("#site_username");
+        this.siteTypeElem = this.element.find("select");
+        this.siteHostElem  = this.element.find("#site_host");
+        this.usernameElem  = this.element.find("#site_username");
         this.allFields = $( [] )
-                            .add( this.siteType )
-                            .add( this.siteHost )
-                            .add( this.siteUsername );
+                         .add( this.siteTypeElem )
+                         .add( this.siteHostElem )
+                         .add( this.usernameElem );
         this.dialog = this.element.dialog({
             autoOpen: false,
             modal: true,
@@ -75,16 +94,17 @@ class AddSiteDialog extends Dialog {
             }
         });
 
-        this.form = this.dialog.find( "form" ).on( "submit", function( event ) {
+        this.form = this.dialog.find( "form" ).on( "submit", function( event : any) {
             event.preventDefault();
-            addUser();
+            this.addUser();
         });
         return this;
     }
 }
 
-class SiteListView {
-    constructor(divid) {
+export class SiteListView {
+    divid : string
+    constructor(divid : string) {
         this.divid = divid;
     }
 }
