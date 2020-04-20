@@ -1,7 +1,7 @@
 // import `.scss` files
 // var $ = import("jquery"); import("jquery-ui");
 
-import './scss/styles.scss';
+import './styles/global';
 
 import { BCJS } from './lib/index';
 
@@ -10,6 +10,5 @@ import { BCJS } from './lib/index';
 export default BCJS;
 
 $(function() {
-    alert("Here");
     const app = new BCJS.App.App();
 });

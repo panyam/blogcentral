@@ -4,6 +4,7 @@ const webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 const HTMLWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const uglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
@@ -26,6 +27,7 @@ function readdir(path) {
 
 module.exports = (env, options) => {
     console.log("Options: ", options);
+    var isDevelopment = options.mode == "development"
     var plugins = [
         // new uglifyJsPlugin(),
         // new BundleAnalyzerPlugin(),
@@ -46,6 +48,10 @@ module.exports = (env, options) => {
                 from: path.resolve(__dirname, 'client/body.html'), to: 'client/body.html'
             }
         ]),
+        new MiniCssExtractPlugin({
+            filename: isDevelopment ? '[name].css' : '[name].[hash].css',
+            chunkFilename: isDevelopment ? '[id].css' : '[id].[hash].css'
+        }),
         new HTMLWebpackPlugin({
             title: "Blog Central",
             myPageHeader: "Blog Central",
@@ -58,6 +64,15 @@ module.exports = (env, options) => {
             template: path.resolve(__dirname, 'client/index.flask.html'),
             filename: "client/index.flask.html"
         }),
+        /*
+        new HTMLWebpackIncludeAssetsPlugin({
+            files: [ "client/index.flask.html", "client/index.gdocs.html" ],
+            assets: [
+                "./client/css/styles.css"
+            ],
+            append: true
+        }),
+        */
         // new webpack.ProvidePlugin({ $: "jquery", jQuery: "jquery" }),
         new webpack.HotModuleReplacementPlugin()
     ];
@@ -151,6 +166,7 @@ module.exports = (env, options) => {
                     exclude: /node_modules/,
                     use: ['ts-loader']
                 },
+                /*
                 {
                     test: /\.scss$/,
                     use: [
@@ -158,6 +174,39 @@ module.exports = (env, options) => {
                         'css-loader', 
                         'postcss-loader', 
                         'sass-loader'
+                    ]
+                },*/
+                {
+                    test: /\.module\.s(a|c)ss$/,
+                    loader: [
+                      isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader,
+                      {
+                        loader: 'css-loader',
+                        options: {
+                          modules: true,
+                          sourceMap: isDevelopment
+                        }
+                      },
+                      {
+                        loader: 'sass-loader',
+                        options: {
+                          sourceMap: isDevelopment
+                        }
+                      }
+                    ]
+                },
+                {
+                    test: /\.s(a|c)ss$/,
+                    exclude: /\.module.(s(a|c)ss)$/,
+                    loader: [
+                      isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader,
+                      'css-loader',
+                      {
+                        loader: 'sass-loader',
+                        options: {
+                          sourceMap: isDevelopment
+                        }
+                      }
                     ]
                 },
                 /*
@@ -184,7 +233,7 @@ module.exports = (env, options) => {
         },
         plugins: plugins,
         resolve: {
-            extensions: ['.js', '.jsx', '.ts', '.tsx']
+            extensions: ['.js', '.jsx', '.ts', '.tsx', '.scss']
         }
     };
     if (options.debug || options.dev) {
