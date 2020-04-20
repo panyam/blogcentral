@@ -1,4 +1,6 @@
 // import `.scss` files
+// var $ = import("jquery"); import("jquery-ui");
+
 import './scss/styles.scss';
 
 import { BCJS } from './lib/index';

@@ -6,6 +6,7 @@ const HTMLWebpackPlugin = require('html-webpack-plugin');
 const HTMLWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin');
 const uglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 
 // Read Samples first
@@ -27,6 +28,7 @@ module.exports = (env, options) => {
     console.log("Options: ", options);
     var plugins = [
         // new uglifyJsPlugin(),
+        new BundleAnalyzerPlugin(),
         new CleanWebpackPlugin(),
         new CopyPlugin([
             {
@@ -38,6 +40,10 @@ module.exports = (env, options) => {
                 to: 'server/'
             },
             {
+                from: path.resolve(__dirname, 'client/index.gdocs.html'),
+                to: 'client/index.gdocs.html'
+            },
+            {
                 from: path.resolve(__dirname, 'client/header.html'),
                 to: 'client/header.html'
             },
@@ -46,12 +52,14 @@ module.exports = (env, options) => {
                 to: 'client/body.html'
             }
         ]),
+            /*
         new HTMLWebpackPlugin({
             title: "Blog Central",
             myPageHeader: "Blog Central",
             template: path.resolve(__dirname, 'client/index.gdocs.ejs'),
             filename: "client/index.gdocs.html"
         }),
+            */
         new HTMLWebpackPlugin({
             title: "Blog Central",
             myPageHeader: "Blog Central",
@@ -67,8 +75,6 @@ module.exports = (env, options) => {
     if (options.mode == "production") {
         plugins.splice(0, 0, new uglifyJsPlugin());
     } else if (options.debug) {
-        const CleanWebpackPlugin = require("clean-webpack-plugin");
-        plugins.splice(0, 0, new CleanWebpackPlugin('dist'));
     }
 
     var output = {
@@ -79,13 +85,15 @@ module.exports = (env, options) => {
         publicPath: "/static",
         filename: 'client/index.js'
     };
-    if (options.debug) {
-        output.filename = "[name].js";
-    }
 
     var webpack_configs = {
         entry: {
             client: './client/index.ts'
+        },
+        optimization: {
+            splitChunks: {
+                chunks: 'all'
+            },
         },
         output: output,
         module: {
