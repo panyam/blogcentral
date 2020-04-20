@@ -56,9 +56,7 @@
   "dependencies": {
     "@types/jquery": "^3.3.29",
     "@types/node": "^13.11.1",
-    "handlebars": "^4.1.2",
-    "jquery": "^3.5.0",
-    "webpack-jquery-ui": "^2.0.1"
+    "handlebars": "^4.1.2"
   },
   "scripts": {
     "pull": "cd dist ; clasp pull",

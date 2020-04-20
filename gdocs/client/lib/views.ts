@@ -1,4 +1,7 @@
 
+// import "jquery-ui/ui/widgets/dialog";
+// import "webpack-jquery-ui/css";
+
 // import { SiteType } from "./models";
 
 export class Dialog {

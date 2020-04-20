@@ -28,7 +28,7 @@ module.exports = (env, options) => {
     console.log("Options: ", options);
     var plugins = [
         // new uglifyJsPlugin(),
-        new BundleAnalyzerPlugin(),
+        // new BundleAnalyzerPlugin(),
         new CleanWebpackPlugin(),
         new CopyPlugin([
             {
@@ -40,36 +40,25 @@ module.exports = (env, options) => {
                 to: 'server/'
             },
             {
-                from: path.resolve(__dirname, 'client/index.gdocs.html'),
-                to: 'client/index.gdocs.html'
+                from: path.resolve(__dirname, 'client/ext.html'), to: 'client/ext.html'
             },
             {
-                from: path.resolve(__dirname, 'client/header.html'),
-                to: 'client/header.html'
-            },
-            {
-                from: path.resolve(__dirname, 'client/body.html'),
-                to: 'client/body.html'
+                from: path.resolve(__dirname, 'client/body.html'), to: 'client/body.html'
             }
         ]),
-            /*
         new HTMLWebpackPlugin({
             title: "Blog Central",
             myPageHeader: "Blog Central",
             template: path.resolve(__dirname, 'client/index.gdocs.ejs'),
             filename: "client/index.gdocs.html"
         }),
-            */
         new HTMLWebpackPlugin({
             title: "Blog Central",
             myPageHeader: "Blog Central",
-            template: path.resolve(__dirname, 'client/index.flask.ejs'),
+            template: path.resolve(__dirname, 'client/index.flask.html'),
             filename: "client/index.flask.html"
         }),
-        new webpack.ProvidePlugin({
-            $: "jquery",
-            jQuery: "jquery"
-        }),
+        // new webpack.ProvidePlugin({ $: "jquery", jQuery: "jquery" }),
         new webpack.HotModuleReplacementPlugin()
     ];
     if (options.mode == "production") {
@@ -170,6 +159,22 @@ module.exports = (env, options) => {
                         'postcss-loader', 
                         'sass-loader'
                     ]
+                },
+                /*
+                {
+                    test: /\.css$/,
+                    loaders: ["style-loader","css-loader"]
+                },
+                */
+                {
+                    test: /\.(jpe?g|png|gif)$/i,
+                    loader:"file-loader",
+                    options:{
+                        name:'[name].[ext]',
+                        publicPath: "/static/assets/images/",
+                        outputPath: "assets/images/"
+                        //the images will be emited to dist/assets/images/ folder
+                    }
                 },
                 {
                     test: /\.(png|svg|jpg|gif)$/,
