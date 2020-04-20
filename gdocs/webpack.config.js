@@ -50,13 +50,13 @@ module.exports = (env, options) => {
             title: "Blog Central",
             myPageHeader: "Blog Central",
             template: path.resolve(__dirname, 'client/index.gdocs.ejs'),
-            filename: "client/main.html"
+            filename: "client/index.gdocs.html"
         }),
         new HTMLWebpackPlugin({
             title: "Blog Central",
             myPageHeader: "Blog Central",
             template: path.resolve(__dirname, 'client/index.flask.ejs'),
-            filename: path.resolve(__dirname, "../templates/client.html")
+            filename: "client/index.flask.html"
         }),
         new webpack.ProvidePlugin({
             $: "jquery",
@@ -73,7 +73,7 @@ module.exports = (env, options) => {
 
     var output = {
         library: 'BCJS',
-        libraryTarget: 'umd',
+        libraryTarget: 'this',
         libraryExport: 'default',
         path: path.resolve(__dirname, 'dist'),
         publicPath: "/static",

@@ -56,21 +56,17 @@
     "file-loader": "^6.0.0",
     "handlebars": "^4.1.2",
     "html-loader": "^1.1.0",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
+    "jquery-ui-bundle": "^1.12.1-migrate",
     "render-template-loader": "^1.2.1"
   },
   "scripts": {
+    "pull": "cd dist ; clasp pull",
     "clean": "rm -rf dist/*",
-    "build:server": "./build.sh server",
     "build": "webpack",
     "builddev": "webpack --mode=development",
-    "buildall": "npm run build:server && npm run builddev",
-    "buildallprod": "npm run build:server && npm run build",
-    "pull": "cd dist ; clasp pull",
     "pushOnly": "cd dist ; clasp push",
-    "push:client": "npm run build:client && npm run pushOnly",
-    "push:server": "npm run build:server && npm run pushOnly",
-    "prepush": "npm run clean && npm run build",
-    "push": "npm run pushOnly"
+    "push": "npm run build && npm run pushOnly",
+    "pushdev": "npm run builddev && npm run pushOnly"
   }
 }
