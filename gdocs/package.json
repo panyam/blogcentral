@@ -30,6 +30,7 @@
     "eslint-config-prettier": "^6.10.1",
     "eslint-plugin-prettier": "^3.1.0",
     "extract-loader": "^5.0.1",
+    "gas-webpack-plugin": "^1.0.2",
     "highlight.js": "9.16.2",
     "html-loader": "^1.1.0",
     "html-webpack-include-assets-plugin": "^2.0.0",
@@ -62,9 +63,10 @@
   "scripts": {
     "pull": "cd dist ; clasp pull",
     "clean": "rm -rf dist/*",
-    "build": "webpack",
-    "builddev": "webpack --mode=development",
-    "pushOnly": "cd dist ; clasp push",
+    "wrap": "cd dist ; echo '<script>\n' > client/index.js.html ; cat client/index.js >> client/index.js.html ; echo '\n</script>' >> client/index.js.html",
+    "build": "webpack && npm run wrap",
+    "builddev": "webpack --mode=development && npm run wrap",
+    "pushOnly": "cd dist ; rm client/index.js client/index.flask.html ; clasp push",
     "push": "npm run build && npm run pushOnly",
     "pushdev": "npm run builddev && npm run pushOnly"
   }

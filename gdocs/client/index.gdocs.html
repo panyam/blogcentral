@@ -1,15 +1,10 @@
 <html>
     <head>
-    <?!= include('client/ext.html'); ?>
     <link href="https://ssl.gstatic.com/docs/script/css/add-ons.css" rel="stylesheet">
+    <?!=HtmlService.createHtmlOutputFromFile('client/ext.html').getContent()?>
     </head>
     <body>
-    <?!= include('client/body.html'); ?>
-    <script>
-        <?!= include('client/vendors~client.index.js'); ?>
-    </script>
-    <script>
-        <?!= include('client/index.js'); ?>
-    </script>
+        <?!=HtmlService.createHtmlOutputFromFile('client/body.html').getContent()?>
+        <?!=HtmlService.createHtmlOutputFromFile('client/index.js.html').getContent()?>
     </body>
 </html>

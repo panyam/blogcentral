@@ -15,8 +15,9 @@ function onOpen() {
 }
 
 function startBlogCentral() {
-  var html = HtmlService.createTemplateFromFile("client/main")
+  var html = HtmlService.createTemplateFromFile("client/index.gdocs.html")
     .evaluate()
+    .setSandboxMode(HtmlService.SandboxMode.IFRAME)
     .setTitle("Blog Central"); // The title shows in the sidebar
   DocumentApp.getUi().showSidebar(html); // userInterface, title)showSidebar(html);
 }

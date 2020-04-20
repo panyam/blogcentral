@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
+const GasPlugin = require("gas-webpack-plugin");
 const CopyPlugin = require('copy-webpack-plugin');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 const HTMLWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin');
@@ -29,6 +30,7 @@ module.exports = (env, options) => {
     console.log("Options: ", options);
     var isDevelopment = options.mode == "development"
     var plugins = [
+        new GasPlugin(),
         // new uglifyJsPlugin(),
         // new BundleAnalyzerPlugin(),
         new CleanWebpackPlugin(),
@@ -42,6 +44,9 @@ module.exports = (env, options) => {
                 to: 'server/'
             },
             {
+                from: path.resolve(__dirname, 'client/index.gdocs.html'), to: 'client/index.gdocs.html'
+            },
+            {
                 from: path.resolve(__dirname, 'client/ext.html'), to: 'client/ext.html'
             },
             {
@@ -52,12 +57,14 @@ module.exports = (env, options) => {
             filename: isDevelopment ? '[name].css' : '[name].[hash].css',
             chunkFilename: isDevelopment ? '[id].css' : '[id].[hash].css'
         }),
+        /*
         new HTMLWebpackPlugin({
             title: "Blog Central",
             myPageHeader: "Blog Central",
             template: path.resolve(__dirname, 'client/index.gdocs.ejs'),
             filename: "client/index.gdocs.html"
         }),
+        */
         new HTMLWebpackPlugin({
             title: "Blog Central",
             myPageHeader: "Blog Central",
@@ -71,10 +78,10 @@ module.exports = (env, options) => {
                 "./client/css/styles.css"
             ],
             append: true
-        }),
+        })
         */
         // new webpack.ProvidePlugin({ $: "jquery", jQuery: "jquery" }),
-        new webpack.HotModuleReplacementPlugin()
+        // new webpack.HotModuleReplacementPlugin()
     ];
     if (options.mode == "production") {
         plugins.splice(0, 0, new uglifyJsPlugin());
