@@ -1,5 +1,6 @@
 
-import { Int, Nullable, Timestamp, Undefined } from "./types"
+import { Store } from "./stores"
+import { Int, Nullable, Undefined } from "./types"
 
 export type SiteCallback = () => Undefined<boolean>;
 
@@ -42,18 +43,39 @@ export class Article {
 
 export class SiteList {
     sites : Site[] = []
+    store : Store
 
-    constructor() {
-        this.loadAll();
+    constructor(store : Store) {
+        this.store = store;
     }
 
     /**
      * Save all the sites
      */
-    saveAll() {
+    saveAll(callback : any) {
+        var payload = this.sites.map(function(v, i) {
+            return {
+                "site_type": v.site_type, 
+                "site_host": v.site_host, 
+                "username": v.username,
+                "site_config": v.site_config
+            };
+        });
+        this.store.set("sites", payload, callback);
     }
 
-    loadAll() {
+    loadAll(callback : any) {
+        var self = this;
+        this.store.get("sites", function(payload : any) {
+            payload = payload || [];
+            self.sites = payload.map(function(v : any, _index : Int) {
+                return new Site(v["site_type"],
+                                v["site_host"],
+                                v["username"],
+                                v["site_config"]);
+            }); 
+            callback();
+        });
     }
 
     /** 
@@ -87,7 +109,6 @@ export class SiteList {
             index = this.sites.length;
             this.sites.push(site);
         }
-        this.save();
         return index;
     }
 
@@ -97,33 +118,5 @@ export class SiteList {
     removeAt(index : Int) : Site {
         return this.sites.splice(index, 1)[0];
     }
-
-    loadSites(callback : SiteCallback) {
-        /*
-        var site_keys = window.localStorage.getItem("site_keys");
-        this.site_keys = [];
-        this.site_map = {};
-        var us = this;
-        if (site_keys != null) {
-            var site_keys_list : string[] = JSON.parse(site_keys);
-            site_keys_list ?.forEach(function(siteid : string, index : Int) {
-                var key = "site_details_" + siteid;
-                var details = window.localStorage.getItem(key);
-                // var site = new Site(SiteType.WORDPRESS, details)
-                // us.addSite(site);
-            });
-        }
-       */
-    }
 }
 
-export class LocalSiteService {
-    getSites(callback : SiteCallback) {
-    }
-
-    addSite(site : Site, callback : SiteCallback) {
-    }
-
-    removeSite(site : Site, callback : SiteCallback) {
-    }
-};

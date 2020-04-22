@@ -1,4 +1,7 @@
 <html>
-    <head> {% include "client/ext.html" %} </head>
+    <head> 
+        <script> CLIENT_ENV = "flask" </script>
+        {% include "client/ext.html" %} 
+    </head>
     <body> {% include "client/body.html" %} </body>
 </html>

@@ -1,6 +1,6 @@
 
 declare var Handlebars : any;
-import { Int, Nullable } from "./types";
+import { Nullable } from "./types";
 import { SiteType, Site, SiteList } from "./models";
 
 export class Dialog {
