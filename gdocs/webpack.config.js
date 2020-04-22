@@ -137,6 +137,7 @@ module.exports = (env, options) => {
                     }
                   }]
                 },
+                // { test: /\.handlebars$/, loader: "handlebars-loader" },
                 // The rule for rendering page-hbs.html from a handlebars template.
                 {
                   test: /\.hbs$/,

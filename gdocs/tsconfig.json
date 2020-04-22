@@ -12,7 +12,7 @@
     "allowJs": false,
     "strictNullChecks": true,
     "typeRoots": [ "node_modules/types" ],
-    "types": [ "jquery" ],
+    "types": [ "jquery", "node" ],
     "lib":[ "es2015", "dom" ],
     "plugins": [
       { "name": "typescript-tslint-plugin" }

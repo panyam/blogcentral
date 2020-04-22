@@ -1,8 +1,7 @@
 
-// import "jquery-ui/ui/widgets/dialog";
-// import "webpack-jquery-ui/css";
-
-// import { SiteType } from "./models";
+declare var Handlebars : any;
+import { Int, Nullable } from "./types";
+import { SiteType, Site, SiteList } from "./models";
 
 export class Dialog {
     elemid : string
@@ -21,9 +20,9 @@ export class Dialog {
     construct() {
     }
 
-    confirmClicked() {
+    confirmClicked(data : Nullable<any> = null) {
         if (this.onConfirm != null) {
-            this.onConfirm();
+            this.onConfirm(data);
         }
         this.close();
     }
@@ -48,6 +47,13 @@ export class AddSiteDialog extends Dialog {
 
     constructor(elemid : string) {
         super(elemid);
+    }
+
+    get site() : Site {
+        // var siteType : string = this.siteTypeElem.val() as string;
+        var username : string = this.usernameElem.val() as string;
+        var siteHost : string = this.siteHostElem.val() as string;
+        return new Site(SiteType.WORDPRESS, siteHost, username);
     }
 
     get template() : string {
@@ -87,7 +93,9 @@ export class AddSiteDialog extends Dialog {
             position: { "my": "center top", "at": "center top", "of": window },
             modal: true,
             buttons: {
-                "Add Site": function() { self.confirmClicked(); },
+                "Add Site": function() {
+                    self.confirmClicked(self.site);
+                },
                 Cancel: function() {
                     self.close();
                 }
@@ -109,8 +117,63 @@ export class AddSiteDialog extends Dialog {
 }
 
 export class SiteListView {
-    divid : string
-    constructor(divid : string) {
-        this.divid = divid;
+    elemid : string
+    element : any
+    siteList : SiteList
+
+    constructor(elemid : string, siteList : SiteList) {
+        this.elemid = elemid;
+        this.siteList = siteList;
+        this.element = $("#" + this.elemid);
+        this.refresh();
+    }
+
+    get template() : string {
+        return `
+            {{# each siteList.sites }}
+            <table class = "site_table"
+                   id = "site_table_{{@index}}" >
+                <tr>
+                    <td class = "site_param_name"> Site Host: </td>
+                    <td> {{this.site_host}} </td>
+                </tr>
+                <tr>
+                    <td class = "site_param_name"> Username: </td>
+                    <td> {{this.username}} </td>
+                </tr>
+                <tr>
+                    <td colspan = 2>
+                        <center>
+                            <button class = "site_connect_button"
+                                    id = "connect_site_{{@index}}">Connect</button>
+                            <button class = "site_delete_button"
+                                    id = "delete_site_{{@index}}">Delete</button>
+                        </center>
+                    </td>
+                </tr>
+            </table>
+            <hr/>
+            {{/each}}
+        `
+    }
+
+    refresh() {
+        var self = this;
+        var siteListTemplate = Handlebars.compile(this.template);
+        var html = siteListTemplate({
+            "siteList" : this.siteList
+        });
+        this.element.html(html);
+        var connect_buttons = this.element.find(".site_connect_button");
+        var delete_buttons = this.element.find(".site_delete_button");
+        connect_buttons.on( "click", function( event : any) {
+            console.log("connect button clicked: ", event);
+        });
+        delete_buttons.on( "click", function( event : any) {
+            var index = parseInt(event.currentTarget.id.substring("delete_site_".length));
+            console.log("Removing Site at: ", index);
+            self.siteList.removeAt(index);
+            self.refresh();
+        });
     }
 }

@@ -9,22 +9,24 @@ export enum SiteType {
     MEDIUM
 };
 
-export class WordpressSiteConfig {
-    site_host : string
-    constructor(site_host : string) {
-        this.site_host = site_host;
-    }
-}
-
 export class Site {
-    id : string
     site_type : SiteType
+    site_host : string
+    username : string
     site_config : any
 
-    constructor(siteid : string, site_type : SiteType, site_config : any) {
-        this.id = siteid;
+    constructor(site_type : SiteType,
+                site_host : string,
+                username : string,
+                site_config : Nullable<any> = null) {
         this.site_type = site_type;
-        this.site_config = site_config;
+        this.site_host = site_host;
+        this.username = username;
+        this.site_config = site_config || {};
+    }
+
+    get id() : string {
+        return this.site_host + ":" + this.username
     }
 }
 
@@ -39,24 +41,65 @@ export class Article {
 }
 
 export class SiteList {
-    site_keys : string[] = []
-    site_map : { [key : string] : Site } = { }
+    sites : Site[] = []
 
-    constructor() { }
+    constructor() {
+        this.loadAll();
+    }
 
-    getSite(index : Int) : Site {
-        return this.site_map[this.site_keys[index]];
+    /**
+     * Save all the sites
+     */
+    saveAll() {
+    }
+
+    loadAll() {
+    }
+
+    /** 
+     * Return the site at the given index.
+     */
+    siteAt(index : Int) : Site {
+        return this.sites[index];
+    }
+
+    /**
+     * Find the index of the site given its ID.
+     * Returns the index or -1 if not found.
+     */
+    findSite(id : string) : Int {
+        for (var i = this.sites.length - 1;i >= 0;i--) {
+            if (this.sites[i].id == id) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     /**
      * Add a new site.
      */
-    addSite(site :Site) {
-        this.site_keys.push(site.id);
-        this.site_map[site.id] = site;
+    addSite(site : Site) : Int {
+        var index = this.findSite(site.id);
+        if (index >= 0) {
+            this.sites[index] = site;
+        } else {
+            index = this.sites.length;
+            this.sites.push(site);
+        }
+        this.save();
+        return index;
+    }
+
+    /**
+     * Removes the site at a given index and returns it.
+     */
+    removeAt(index : Int) : Site {
+        return this.sites.splice(index, 1)[0];
     }
 
     loadSites(callback : SiteCallback) {
+        /*
         var site_keys = window.localStorage.getItem("site_keys");
         this.site_keys = [];
         this.site_map = {};
@@ -66,17 +109,11 @@ export class SiteList {
             site_keys_list ?.forEach(function(siteid : string, index : Int) {
                 var key = "site_details_" + siteid;
                 var details = window.localStorage.getItem(key);
-                var site = new Site(siteid, SiteType.WORDPRESS, details)
-                us.addSite(site);
+                // var site = new Site(SiteType.WORDPRESS, details)
+                // us.addSite(site);
             });
         }
-    }
-
-    /**
-     * Save the site given by the specific ID.
-     */
-    saveSite(siteid : string, callback : SiteCallback) {
-        var site = this.site_map[siteid];
+       */
     }
 }
 
