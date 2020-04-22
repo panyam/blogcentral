@@ -54,17 +54,14 @@ export class AddSiteDialog extends Dialog {
         return `
           <form>
             <fieldset class = "dialog_fields">
-              <br/>
               <label for="site_type">Site Type</label>
-              <select id = "site_type" class = "ui-widget-content ui-corner-all">
+              <select id = "site_type">
                 <option>WordPress Blog</option>
               </select>
 
-              <br/>
               <label for="site_host">Site Host</label>
               <input type="url" name="site_host" id="site_host" value="https://leetcoach.com/" class="text ui-widget-content ui-corner-all">
 
-              <br/>
               <label for="site_username">Username</label>
               <input type="url" name="site_username" id="site_username" value="panyam" class="text ui-widget-content ui-corner-all">
 
@@ -87,6 +84,7 @@ export class AddSiteDialog extends Dialog {
                          .add( this.usernameElem );
         this.dialog = this.element.dialog({
             autoOpen: false,
+            position: { "my": "center top", "at": "center top", "of": window },
             modal: true,
             buttons: {
                 "Add Site": function() { self.confirmClicked(); },
@@ -104,6 +102,8 @@ export class AddSiteDialog extends Dialog {
             event.preventDefault();
             this.addUser();
         });
+
+        this.dialog.find("#site_type").selectmenu();
         return this;
     }
 }
