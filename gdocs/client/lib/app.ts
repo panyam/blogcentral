@@ -19,7 +19,9 @@ export class App {
         this.newSiteDialog = new AddSiteDialog("new_site_dialog");
         this.newSiteDialog.onConfirm = function(site : Site) {
             self.siteList.addSite(site);
-            self.siteListView.refresh();
+            self.siteList.saveAll(function() {
+                self.siteListView.refresh();
+            });
         };
 
         this.addSiteButton = $( "#add_site_button" )

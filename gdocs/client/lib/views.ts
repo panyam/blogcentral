@@ -173,7 +173,9 @@ export class SiteListView {
             var index = parseInt(event.currentTarget.id.substring("delete_site_".length));
             console.log("Removing Site at: ", index);
             self.siteList.removeAt(index);
-            self.refresh();
+            self.siteList.saveAll(function() {
+                self.refresh();
+            });
         });
     }
 }
