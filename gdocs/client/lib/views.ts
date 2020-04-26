@@ -130,6 +130,7 @@ export class SiteLoginDialog extends Dialog {
     element : any
     usernameElem : JQuery<HTMLElement>
     passwordElem : JQuery<HTMLElement>
+    errorMessageElem : JQuery<HTMLElement>
     allFields : JQuery<any>
     dialog : any
     form : any
@@ -160,18 +161,27 @@ export class SiteLoginDialog extends Dialog {
         }
     }
 
+    get errorMessage() : string {
+        return this.errorMessageElem.html();
+    }
+
+    set errorMessage(html : string) {
+        this.errorMessageElem.html(html);
+    }
+
     get template() : string {
         return `
           <form>
             <fieldset class = "dialog_fields">
               <label for="site_username">Username</label>
-              <input type="text" name="site_username" id="site_username" value="panyam" class="text ui-widget-content ui-corner-all">
+              <input type="text" name="site_username" id="site_username" value="username" class="text ui-widget-content ui-corner-all">
 
               <label for="site_password">Password</label>
-              <input type="password" name="site_password" id="site_password" value="panyam" class="text ui-widget-content ui-corner-all">
+              <input type="password" name="site_password" id="site_password" class="text ui-widget-content ui-corner-all">
 
 
               <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+              <span id = "error_message_span"></span>
             </fieldset>
           </form>
         `
@@ -181,7 +191,10 @@ export class SiteLoginDialog extends Dialog {
         var self = this;
         return {
             "Login": function() {
-                self.close(self.credentials, resolve, reject);
+                self.errorMessageElem.html("");
+                if (resolve != null) {
+                    resolve(self.credentials);
+                }
             },
             Cancel: function() {
                 self.close(null, resolve, reject);
@@ -195,6 +208,7 @@ export class SiteLoginDialog extends Dialog {
         this.element.html(this.template);
         this.usernameElem  = this.element.find("#site_username");
         this.passwordElem  = this.element.find("#site_password");
+        this.errorMessageElem = this.element.find("#error_message_span");
         this.allFields = $( [] )
                          .add( this.usernameElem )
                          .add( this.passwordElem );
