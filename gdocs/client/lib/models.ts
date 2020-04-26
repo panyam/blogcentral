@@ -14,16 +14,16 @@ export class Site {
     site_type : SiteType
     site_host : string
     username : string
-    site_config : any
+    config : any
 
     constructor(site_type : SiteType,
                 site_host : string,
                 username : string,
-                site_config : Nullable<any> = null) {
+                config : Nullable<any> = null) {
         this.site_type = site_type;
         this.site_host = site_host;
         this.username = username;
-        this.site_config = site_config || {};
+        this.config = config || {};
     }
 
     get id() : string {
@@ -31,7 +31,7 @@ export class Site {
     }
 }
 
-export class Article {
+export class Post {
     id : string
     config : any
     constructor(id : string, config : any) {
@@ -109,7 +109,7 @@ export class SiteService {
         return new Site(value["site_type"],
                         value["site_host"],
                         value["username"],
-                        value["site_config"]);
+                        value["config"] || {});
     }
 
     async saveSite(site : Site) {
@@ -118,7 +118,7 @@ export class SiteService {
             "site_type": site.site_type, 
             "site_host": site.site_host, 
             "username": site.username,
-            "site_config": site.site_config
+            "config": site.config || {}
         };
         return this.store.set("site:" + site.id, payload);
     }

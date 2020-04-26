@@ -3,16 +3,16 @@
 // import "webpack-jquery-ui/css";
 import { Store } from "./stores";
 import { AddSiteDialog, SiteListView, SiteLoginDialog } from "./views";
-import { Site, SiteService } from "./models";
-import { SiteConnector } from "./auth";
+import { Post, Site, SiteService } from "./models";
+import { SiteGateway } from "./auth";
 declare var CLIENT_ENV : string;
 
 export class App {
     addSiteDialog : AddSiteDialog
-    siteLoginDialog : SiteLoginDialog
     siteListView : SiteListView
+    siteLoginDialog : SiteLoginDialog
     siteService : SiteService
-    siteConnector : SiteConnector
+    siteGateway : SiteGateway
     store : Store
     addSiteButton : any
 
@@ -22,15 +22,15 @@ export class App {
         this.siteService = new SiteService(store);
 
         this.addSiteDialog = new AddSiteDialog("add_site_dialog");
-        this.addSiteDialog.onConfirm = function(site : Site) {
-            self.siteService.addSite(site).then(() => {
-                self.siteListView.refresh();
-            });
-        };
 
         this.addSiteButton = $( "#add_site_button" )
         this.addSiteButton.button().on( "click", function() {
-            self.addSiteDialog.open();
+            self.addSiteDialog.open()
+                .then(site => {
+                    self.siteService.addSite(site as Site).then(() => {
+                        self.siteListView.refresh();
+                    });
+                });
         });
 
         this.siteLoginDialog = new SiteLoginDialog("site_login_dialog");
@@ -40,13 +40,11 @@ export class App {
             self.siteListView.refresh();
         });
         this.siteListView.onConnectSite = function(site : Site) {
-            console.log("Connecting to Site at: ", site);
-            self.siteLoginDialog.site = site;
-            self.siteLoginDialog.open();
+            self.siteGateway.getPosts(site)
+            .then((posts : Post[]) => {
+                console.log("Connected to Site: ", site);
+            });
         };
-        this.siteLoginDialog.onConfirm = function(credentials : any) {
-            var site = self.siteLoginDialog.site;
-            console.log("Login Confirmed: ", site, credentials, CLIENT_ENV);
-        };
+        this.siteGateway = new SiteGateway(this.siteService, this.siteLoginDialog);
     }
 };

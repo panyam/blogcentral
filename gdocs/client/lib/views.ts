@@ -5,33 +5,40 @@ import { SiteType, Site, SiteService } from "./models";
 
 export class Dialog {
     elemid : string
-    onConfirm : any
-    onCancel : any
     element : any
     dialog : any
+    promise : Promise<any>
 
     constructor(elemid : string) {
         this.elemid = elemid;
-        this.onConfirm = null;
-        this.onCancel = null;
         this.setupViews();
     }
 
     setupViews() {
     }
 
-    confirmClicked(data : Nullable<any> = null) {
-        if (this.onConfirm != null) {
-            this.onConfirm(data);
+    async open() {
+        var self = this;
+        return new Promise((resolve, reject) => {
+            this.dialog
+                .dialog( "option", "buttons", self.buttons(resolve, reject))
+                .dialog( "open" );
+        });
+    }
+
+    buttons(resolve : any, reject : any) {
+        var self = this;
+        return {
+            Cancel: function() {
+                self.close(null, resolve, reject);
+            }
+        };
+    }
+
+    close(data : Nullable<any> = null, resolve : any = null, reject : any = null) {
+        if (resolve != null) {
+            resolve(data);
         }
-        this.close();
-    }
-
-    open() {
-        this.dialog.dialog( "open" );
-    }
-
-    close() {
         this.dialog.dialog( "close" );
     }
 }
@@ -77,6 +84,18 @@ export class AddSiteDialog extends Dialog {
         `
     }
 
+    buttons(resolve : any, reject : any) {
+        var self = this;
+        return {
+            "Add Site": function() {
+                self.close(self.site, resolve, reject);
+            },
+            Cancel: function() {
+                self.close(null, resolve, reject);
+            }
+        };
+    }
+
     setupViews() {
         var self = this;
         this.element = $("#" + this.elemid);
@@ -92,14 +111,6 @@ export class AddSiteDialog extends Dialog {
             autoOpen: false,
             position: { "my": "center top", "at": "center top", "of": window },
             modal: true,
-            buttons: {
-                "Add Site": function() {
-                    self.confirmClicked(self.site);
-                },
-                Cancel: function() {
-                    self.close();
-                }
-            },
             close: function() {
                 self.form[0].reset();
                 self.allFields.removeClass( "ui-state-error" );
@@ -108,7 +119,6 @@ export class AddSiteDialog extends Dialog {
 
         this.form = this.dialog.find( "form" ).on( "submit", function( event : any) {
             event.preventDefault();
-            this.addUser();
         });
 
         this.dialog.find("#site_type").selectmenu();
@@ -137,7 +147,6 @@ export class SiteLoginDialog extends Dialog {
         this._site = s;
         if (s != null) {
             this.usernameElem.val(s.username);
-            this.passwordElem.val("");
         }
     }
 
@@ -168,6 +177,18 @@ export class SiteLoginDialog extends Dialog {
         `
     }
 
+    buttons(resolve : any, reject : any) {
+        var self = this;
+        return {
+            "Login": function() {
+                self.close(self.credentials, resolve, reject);
+            },
+            Cancel: function() {
+                self.close(null, resolve, reject);
+            }
+        };
+    }
+
     setupViews() {
         var self = this;
         this.element = $("#" + this.elemid);
@@ -181,14 +202,6 @@ export class SiteLoginDialog extends Dialog {
             autoOpen: false,
             position: { "my": "center top", "at": "center top", "of": window },
             modal: true,
-            buttons: {
-                "Login": function() {
-                    self.confirmClicked(self.credentials);
-                },
-                Cancel: function() {
-                    self.close();
-                }
-            },
             close: function() {
                 self.form[0].reset();
                 self.allFields.removeClass( "ui-state-error" );
@@ -197,7 +210,6 @@ export class SiteLoginDialog extends Dialog {
 
         this.form = this.dialog.find( "form" ).on( "submit", function( event : any) {
             event.preventDefault();
-            this.addUser();
         });
 
         return this;
