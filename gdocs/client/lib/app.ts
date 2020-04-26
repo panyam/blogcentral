@@ -5,20 +5,22 @@ import { Store } from "./stores";
 import { AddSiteDialog, SiteListView, SiteLoginDialog } from "./views";
 import { Post, Site, SiteService } from "./models";
 import { SiteGateway } from "./auth";
-declare var CLIENT_ENV : string;
+import { HttpClient } from "./net";
 
 export class App {
     addSiteDialog : AddSiteDialog
     siteListView : SiteListView
     siteLoginDialog : SiteLoginDialog
     siteService : SiteService
+    httpClient : HttpClient
     siteGateway : SiteGateway
     store : Store
     addSiteButton : any
 
-    constructor(store : Store) {
+    constructor(store : Store, httpClient : HttpClient) {
         var self = this;
         this.store = store;
+        this.httpClient = httpClient;
         this.siteService = new SiteService(store);
 
         this.addSiteDialog = new AddSiteDialog("add_site_dialog");
@@ -45,6 +47,6 @@ export class App {
                 console.log("Connected to Site: ", site);
             });
         };
-        this.siteGateway = new SiteGateway(this.siteService, this.siteLoginDialog);
+        this.siteGateway = new SiteGateway(this.siteService, this.siteLoginDialog, this.httpClient);
     }
 };

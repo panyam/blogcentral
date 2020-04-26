@@ -9,7 +9,9 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const uglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-
+const WebpackShellPlugin = require('webpack-shell-plugin');
+const CreateFilePlugin = require('webpack-create-file-plugin');
+const GAppsJSWrapperPlugin = require("./myplugins");
 
 // Read Samples first
 function readdir(path) {
@@ -71,6 +73,8 @@ module.exports = (env, options) => {
             template: path.resolve(__dirname, 'client/index.flask.html'),
             filename: "client/index.flask.html"
         }),
+        new GAppsJSWrapperPlugin({ source: "client/index.gdocs.js" }),
+        new GAppsJSWrapperPlugin({ source: "client/index.flask~gdocs.js" }),
         /*
         new HTMLWebpackIncludeAssetsPlugin({
             files: [ "client/index.flask.html", "client/index.gdocs.html" ],
@@ -94,12 +98,13 @@ module.exports = (env, options) => {
         libraryExport: 'default',
         path: path.resolve(__dirname, 'dist'),
         publicPath: "/static",
-        filename: 'client/index.js'
+        filename: 'client/index.[name].js'
     };
 
     var webpack_configs = {
         entry: {
-            client: './client/index.ts'
+            gdocs: "./client/index.gdocs.ts",
+            flask: "./client/index.flask.ts"
         },
         optimization: {
             splitChunks: {

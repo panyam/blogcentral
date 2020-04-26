@@ -2,16 +2,17 @@
 import { Int, Nullable, Undefined } from "./types"
 import { Site, SiteService } from "./models";
 import { SiteLoginDialog } from "./views";
-declare var CLIENT_ENV : string;
+import { Request, Response, HttpClient } from "./net";
 
 export class SiteGateway {
     siteService : SiteService
     siteLoginDialog : SiteLoginDialog
+    httpClient : HttpClient
 
-    constructor(siteService : SiteService, siteLoginDialog : SiteLoginDialog) {
-        var self = this;
+    constructor(siteService : SiteService, siteLoginDialog : SiteLoginDialog, httpClient : HttpClient) {
         this.siteService = siteService;
         this.siteLoginDialog = siteLoginDialog;
+        this.httpClient = httpClient
     }
 
     async ensureLoggedIn(site : Site) {
@@ -25,10 +26,13 @@ export class SiteGateway {
         }
 
         // validate token
-        if (await this.validateToken(site)) {
-            await this.siteService.saveSite(site);
-            return site;
+        var validated = await this.validateToken(site);
+        if (!validated) {
+            return null;
         }
+
+        await this.siteService.saveSite(site);
+        return site;
     }
 
     async loginToWordpress(site : Site) {
@@ -42,29 +46,20 @@ export class SiteGateway {
             };
             var apiHost = site.site_host + '/wp-json';
             var url = apiHost + '/jwt-auth/v1/token';
-            if (CLIENT_ENV == "gdocs") {
-                var options = {
-                  'method': 'post',
-                  "contentType" : "application/json",
-                  'payload': JSON.stringify(payload),
-                  'muteHttpExceptions': false
-                }
-                return null;
-            } else {
-                try {
-                    var response = await $.ajax({
-                        "method": "POST",
-                        "url": url,
-                        "data": payload
-                    });
-                    this.siteLoginDialog.close();
-                    return response.token;
-                } catch (e) {
-                    console.log("Received Exception: ", e);
-                    var errorMessage = e.responseJSON.message;
-                    self.siteLoginDialog.errorMessage = errorMessage;
-                    credentials = await this.siteLoginDialog.open();
-                }
+            var request = new Request(url, {
+                "method": "post",
+                "contentType" : "application/json",
+                "body": payload
+            });
+            try {
+                var response = await this.httpClient.send(request);
+                this.siteLoginDialog.close();
+                return response.bodyAsJson.token;
+            } catch (e) {
+                console.log("Received Exception: ", e);
+                var errorMessage = e.responseJSON.message;
+                self.siteLoginDialog.errorMessage = errorMessage;
+                credentials = await this.siteLoginDialog.open();
             }
         }
         return null;
@@ -78,28 +73,19 @@ export class SiteGateway {
         var headers = {
             "Authorization" : "Bearer " + site.config.token
         };
-        if (CLIENT_ENV == "gdocs") {
-            var options = {
-              'method': 'post',
-              "contentType" : "application/json",
-              "headers": headers,
-              'muteHttpExceptions': false
-            };
+        var request = new Request(url, {
+            "method": "post",
+            "contentType" : "application/json",
+            "headers": headers
+        });
+        try {
+            var response = await this.httpClient.send(request);
+            site.config.tokenValidatedAt = Date.now();
+            return true;
+        } catch (e) {
+            site.config.tokenValidatedAt = 0;
+            console.log("Validation Exception: ", e);
             return false;
-        } else {
-            try {
-                var response = await $.ajax({
-                    "method": "POST",
-                    "url": url,
-                    "headers": headers
-                });
-                site.config.tokenValidatedAt = Date.now();
-                return true;
-            } catch (e) {
-                site.config.tokenValidatedAt = 0;
-                console.log("Validation Exception: ", e);
-                return false;
-            }
         }
     }
 

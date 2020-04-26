@@ -53,7 +53,9 @@
     "webpack": "^4.42.1",
     "webpack-bundle-analyzer": "^3.7.0",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.1.14"
+    "webpack-create-file-plugin": "^1.0.0",
+    "webpack-dev-server": "^3.1.14",
+    "webpack-shell-plugin": "^0.5.0"
   },
   "dependencies": {
     "@types/handlebars": "^4.1.0",
@@ -63,10 +65,9 @@
   "scripts": {
     "pull": "cd dist ; clasp pull",
     "clean": "rm -rf dist/*",
-    "wrap": "cd dist ; echo '<script>\n' > client/index.js.html ; cat client/index.js >> client/index.js.html ; echo '\n</script>' >> client/index.js.html",
-    "build": "webpack && npm run wrap",
-    "devbuild": "webpack --mode=development && npm run wrap",
-    "pushOnly": "cd dist ; rm client/index.js client/index.flask.html ; clasp push",
+    "build": "webpack",
+    "devbuild": "webpack --mode=development",
+    "pushOnly": "cd dist ; rm client/index.*.js client/index.flask.html ; clasp push",
     "push": "npm run build && npm run pushOnly",
     "devpush": "npm run devbuild && npm run pushOnly"
   }
