@@ -14,9 +14,9 @@ declare var CLIENT_ENV : string;
 $(function() {
     var store = null;
     if (CLIENT_ENV == "gdocs") {
-        store = new BCJS.Stores.PropertiesStore();
+        store = new BCJS.Stores.PropertiesStore("BC");
     } else {
-        store = new BCJS.Stores.LocalStore();
+        store = new BCJS.Stores.LocalStore("BC");
     }
     const app = new BCJS.App.App(store);
 });

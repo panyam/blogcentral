@@ -41,41 +41,12 @@ export class Article {
     }
 }
 
-export class SiteList {
+export class SiteService {
     sites : Site[] = []
     store : Store
 
     constructor(store : Store) {
         this.store = store;
-    }
-
-    /**
-     * Save all the sites
-     */
-    saveAll(callback : any) {
-        var payload = this.sites.map(function(v, i) {
-            return {
-                "site_type": v.site_type, 
-                "site_host": v.site_host, 
-                "username": v.username,
-                "site_config": v.site_config
-            };
-        });
-        this.store.set("sites", payload, callback);
-    }
-
-    loadAll(callback : any) {
-        var self = this;
-        this.store.get("sites", function(payload : any) {
-            payload = payload || [];
-            self.sites = payload.map(function(v : any, _index : Int) {
-                return new Site(v["site_type"],
-                                v["site_host"],
-                                v["username"],
-                                v["site_config"]);
-            }); 
-            callback();
-        });
     }
 
     /** 
@@ -89,7 +60,7 @@ export class SiteList {
      * Find the index of the site given its ID.
      * Returns the index or -1 if not found.
      */
-    findSite(id : string) : Int {
+    indexOf(id : string) : Int {
         for (var i = this.sites.length - 1;i >= 0;i--) {
             if (this.sites[i].id == id) {
                 return i;
@@ -98,25 +69,67 @@ export class SiteList {
         return -1;
     }
 
+    async loadAll() {
+        var self = this;
+        var siteids = await this.loadSiteIds()
+        var sitePromises = siteids.map(async function(id : string, _index : Int) { return self.loadSite(id); });
+        this.sites = await Promise.all(sitePromises);
+        return true;
+    }
+
     /**
      * Add a new site.
      */
-    addSite(site : Site) : Int {
-        var index = this.findSite(site.id);
+    async addSite(site : Site) {
+        var self = this;
+        var index = this.indexOf(site.id);
         if (index >= 0) {
             this.sites[index] = site;
         } else {
             index = this.sites.length;
             this.sites.push(site);
         }
+        await this.saveSiteIds();
+        await self.saveSite(site);
         return index;
     }
 
     /**
      * Removes the site at a given index and returns it.
      */
-    removeAt(index : Int) : Site {
-        return this.sites.splice(index, 1)[0];
+    async removeAt(index : Int) {
+        var site : Site = this.sites.splice(index, 1)[0];
+        await this.saveSiteIds();
+        await this.store.remove("site:" + site.id);
+        return site;
+    }
+
+    async loadSite(id : string) : Promise<Site> {
+        var value : any = await this.store.get("site:" + id);
+        return new Site(value["site_type"],
+                        value["site_host"],
+                        value["username"],
+                        value["site_config"]);
+    }
+
+    async saveSite(site : Site) {
+        // now save the site itself
+        var payload = {
+            "site_type": site.site_type, 
+            "site_host": site.site_host, 
+            "username": site.username,
+            "site_config": site.site_config
+        };
+        return this.store.set("site:" + site.id, payload);
+    }
+
+    async saveSiteIds() {
+        var siteids = this.sites.map(function(v, _i) { return v.id; });
+        return this.store.set("siteids", siteids);
+    }
+
+    async loadSiteIds() {
+        return this.store.get("siteids");
     }
 }
 

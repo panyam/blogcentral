@@ -2,44 +2,66 @@
 import { Nullable } from "./types"
 
 export class Store {
-    get(_key : string, _callback : any) { } 
-    set(_key : string, _value : Nullable<any>, _callback : any) { }
+    keyprefix : string
+    constructor(keyprefix : string) {
+        this.keyprefix = keyprefix
+    }
+
+    normalizedKey(key : string) : string {
+        return this.keyprefix + ":" + key;
+    }
+
+    async get(_key : string) { return null as any; } 
+    async set(_key : string, _value : Nullable<any>) { return null as any; }
+    async remove(_key : string) { return null as any; }
 };
 
 export class LocalStore extends Store {
-    get(key : string, callback : any) {
+    async get(key : string) {
+             key = this.normalizedKey(key);
         var value = window.localStorage.getItem(key);
         if (value != null) 
             value = JSON.parse(value);
-        callback(value);
+        return value;
     }
 
-    set(key : string, value : Nullable<any>, callback : any) {
+    async set(key : string, value : Nullable<any>) {
+        key = this.normalizedKey(key);
         window.localStorage.setItem(key, JSON.stringify(value));
-        callback();
+        return null as any;
+    }
+
+    async remove(key : string) {
+        key = this.normalizedKey(key);
+        window.localStorage.removeItem(key);
+        return null as any;
     }
 };
 
 declare var google : any;
 export class PropertiesStore extends Store {
-    constructor() {
-        super();
+    async get(key : string) {
+        key = this.normalizedKey(key);
+        return new Promise((resolve, reject) => {
+            google.script.run
+                  .withFailureHandler(reject)
+                  .withSuccessHandler(function(value : any) {
+                        if (value != null)
+                            value = JSON.parse(value);
+                        resolve(value);
+                  })
+                  .getUserProperty(key);
+        });
     }
 
-    get(key : string, callback : any) {
-        google.script.run
-              .withSuccessHandler(function(value : any) {
-                    if (value != null)
-                        value = JSON.parse(value);
-                    callback(value);
-              })
-              .getUserProperty(key);
-    }
-
-    set(key : string, value : Nullable<any>, callback : any) {
-        google.script.run
-              .withSuccessHandler(callback)
-              .setUserProperty(key, JSON.stringify(value));
+    async set(key : string, value : Nullable<any>) {
+        key = this.normalizedKey(key);
+        return new Promise((resolve, reject) => {
+            google.script.run
+                  .withSuccessHandler(resolve)
+                  .withFailureHandler(reject)
+                  .setUserProperty(key, JSON.stringify(value));
+        });
     }
 };
 
