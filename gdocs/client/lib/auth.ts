@@ -45,17 +45,15 @@ export class SiteGateway {
               'payload': JSON.stringify(payload),
               'muteHttpExceptions': false
             }
+            return null;
         } else {
-            $.ajax({
+            var response = await $.ajax({
                 "method": "POST",
                 "url": url,
                 "data": payload
-            }).done(function(response) {
-                console.log("Received Payload: ",response);
             });
+            return response.token;
         }
-
-        return null;
     }
 
     async getPosts(site : Site) {
