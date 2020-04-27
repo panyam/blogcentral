@@ -24,16 +24,15 @@ export class Request {
 
 export class Response {
     status : Int
-    body : any
-    headers : any
+    statusText : string
+    headers : any = {}
+    data : any = null
+    error : any = null
 
-    constructor(status : Int = 200, body : any = null) {
+    constructor(status : Int = 200, statusText : string = "", data : any = null) {
         this.status = status;
-        this.body = body;
-    }
-
-    get bodyAsJson() : any {
-        return JSON.parse(this.body);
+        this.statusText = statusText;
+        this.data = data;
     }
 }
 

@@ -1,10 +1,11 @@
 
 // import "webpack-jquery-ui/button";
 // import "webpack-jquery-ui/css";
+import { Int, Nullable } from "./types";
 import { Store } from "./stores";
 import { AddSiteDialog, SiteListView, SiteLoginDialog } from "./views";
 import { Post, Site, SiteService } from "./models";
-import { SiteGateway } from "./auth";
+import { SiteGateway } from "./gateway";
 import { HttpClient } from "./net";
 
 export class App {
@@ -41,10 +42,12 @@ export class App {
         this.siteService.loadAll().then(() => {
             self.siteListView.refresh();
         });
-        this.siteListView.onConnectSite = function(site : Site) {
+        this.siteListView.onConnectSite = function(site : Site, index : Int) {
+            self.siteListView.setConnecting(index, true);
             self.siteGateway.getPosts(site)
             .then((posts : Post[]) => {
                 console.log("Connected to Site: ", site);
+                self.siteListView.setConnecting(index, false);
             });
         };
         this.siteGateway = new SiteGateway(this.siteService, this.siteLoginDialog, this.httpClient);

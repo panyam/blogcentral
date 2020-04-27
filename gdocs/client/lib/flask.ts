@@ -35,8 +35,18 @@ export class JQHttpClient extends HttpClient {
         if (request.body != null) {
             options.data = request.body;
         }
-        var response = await $.ajax(options);
-        return this.toResponse(response);
+        return new Promise((resolve : any, reject : any) => {
+            $.ajax(options).done((data, textStatus, jqXHR) => {
+                var response = new Response(jqXHR.status, jqXHR.statusText, data);
+                response.headers = jqXHR.getAllResponseHeaders();
+                resolve(response);
+            }).fail((jqXHR, textStatus, errorThrown) => {
+                var response = new Response(jqXHR.status, jqXHR.statusText);
+                response.headers = jqXHR.getAllResponseHeaders();
+                response.error = errorThrown;
+                reject(response);
+            });
+        });
     }
 
     toResponse(response : any) : Response {

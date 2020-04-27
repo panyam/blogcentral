@@ -54,7 +54,7 @@ export class SiteGateway {
             try {
                 var response = await this.httpClient.send(request);
                 this.siteLoginDialog.close();
-                return response.bodyAsJson.token;
+                return response.data;
             } catch (e) {
                 console.log("Received Exception: ", e);
                 var errorMessage = e.responseJSON.message;
@@ -91,6 +91,18 @@ export class SiteGateway {
 
     async getPosts(site : Site) {
         var result = await this.ensureLoggedIn(site);
-        return []
+        var apiHost = site.site_host + '/wp-json';
+        var url = apiHost + '/wp/v2/posts/';
+        var headers = {
+            "Authorization" : "Bearer " + site.config.token
+        };
+        var request = new Request(url, { "headers": headers });
+        try {
+            var response = await this.httpClient.send(request);
+            return response.data;
+        } catch (e) {
+            console.log("Get Posts Exception: ", e);
+            throw e;
+        }
     }
 };

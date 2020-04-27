@@ -70,6 +70,7 @@ module.exports = (env, options) => {
         new HTMLWebpackPlugin({
             title: "Blog Central",
             myPageHeader: "Blog Central",
+            chunks: ['flask'],
             template: path.resolve(__dirname, 'client/index.flask.html'),
             filename: "client/index.flask.html"
         }),
@@ -88,7 +89,7 @@ module.exports = (env, options) => {
         // new webpack.HotModuleReplacementPlugin()
     ];
     if (options.mode == "production") {
-        plugins.splice(0, 0, new uglifyJsPlugin());
+        // plugins.splice(0, 0, new uglifyJsPlugin());
     } else if (options.debug) {
     }
 
@@ -251,18 +252,7 @@ module.exports = (env, options) => {
     };
     if (options.debug || options.dev) {
         webpack_configs.devtool = 'inline-source-map';
-        webpack_configs.resolve = { extensions: ['.js', '.jsx', '.ts', '.tsx'] };
-        webpack_configs.devServer = {
-            hot: true,
-            before: function(app, server) {
-                app.get(/\/dir\/.*/, function(req, res) {
-                    var path = "./" + req.path.substr(5);
-                    console.log("Listing dir: ", path);
-                    var listing = readdir(path);
-                    res.json({ entries: listing });
-                });
-            }
-        }
+        webpack_configs.resolve = { extensions: ['.js', '.jsx', '.ts', '.tsx', '.scss'] };
     }
     return webpack_configs;
 };

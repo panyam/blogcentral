@@ -1,6 +1,6 @@
 
 declare var Handlebars : any;
-import { Nullable } from "./types";
+import { Int, Nullable } from "./types";
 import { SiteType, Site, SiteService } from "./models";
 
 export class Dialog {
@@ -266,12 +266,30 @@ export class SiteListView {
                             <button class = "site_delete_button"
                                     id = "delete_site_{{@index}}">Delete</button>
                         </center>
+                        <center>
+                            <div class = "progressbar"
+                                 id="progressbar_{{@index}}"></div>
+                        </center>
                     </td>
                 </tr>
             </table>
             <hr/>
             {{/each}}
         `
+    }
+
+    setConnecting(index : Int, connecting : boolean) {
+        var progressbar = this.element.find("#progressbar_" + index);
+        var connect_button = this.element.find("#connect_site_" + index);
+        var delete_button = this.element.find("#delete_site_" + index);
+        connect_button.prop('disabled', connecting);
+        delete_button.prop('disabled', connecting);
+        if (connecting) {
+            progressbar.progressbar( "option", "value", false );
+            progressbar.show();
+        } else {
+            progressbar.hide();
+        }
     }
 
     refresh() {
@@ -283,11 +301,14 @@ export class SiteListView {
         this.element.html(html);
         var connect_buttons = this.element.find(".site_connect_button");
         var delete_buttons = this.element.find(".site_delete_button");
+        var progressbars = this.element.find(".progressbar");
+        progressbars.progressbar({ value: false });
+        progressbars.hide();
         connect_buttons.on( "click", function( event : any) {
             var index = parseInt(event.currentTarget.id.substring("connect_site_".length));
             var site = self.siteService.siteAt(index);
             if (self.onConnectSite != null) {
-                self.onConnectSite(site);
+                self.onConnectSite(site, index);
             }
         });
         delete_buttons.on( "click", function( event : any) {
