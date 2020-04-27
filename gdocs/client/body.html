@@ -1,10 +1,20 @@
 <!-- The sidebar will have a input box and the search button -->
-<div id ="sidebar" style="border: solid 1px red">
-    <center> <button class="blue" id="add_site_button">Add</button> </center>
+<div id ="sites_panel_div">
+    <center> <button class="blue" id="add_button">Add</button> </center>
     <div id = "site_list_div"> </div>
+    <div id="add_site_dialog" title="Add Site"> </div>
 </div>
 
-<div id="add_site_dialog" title="Add Site"> </div>
+<div id ="posts_panel_div">
+    <div id = "post_list_div"> </div>
+    <button class="blue" id="close_button" style="float: right">Close</button>
+    <div id = "posts_panel_button_panel">
+        <center>
+            <button class="blue" id="add_button">Add</button> 
+            <button class="blue" id="refresh_button">Refresh</button>
+        </center>
+    </div>
+</div>
 
 <div id="site_login_dialog" title="Login to Site"> </div>
 

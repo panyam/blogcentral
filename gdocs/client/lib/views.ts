@@ -1,16 +1,17 @@
 
 declare var Handlebars : any;
+import { ensureElement } from "./utils";
 import { Int, Nullable } from "./types";
-import { SiteType, Site, SiteService } from "./models";
+import { SiteType, Site, Post } from "./models";
+import { ServiceCatalog } from "./catalog";
 
 export class Dialog {
-    elemid : string
-    element : any
+    rootElement : any
     dialog : any
     promise : Promise<any>
 
-    constructor(elemid : string) {
-        this.elemid = elemid;
+    constructor(elem_or_id : any) {
+        this.rootElement = ensureElement(elem_or_id);
         this.setupViews();
     }
 
@@ -44,17 +45,13 @@ export class Dialog {
 }
 
 export class AddSiteDialog extends Dialog {
-    element : any
+    rootElement : any
     siteTypeElem : JQuery<HTMLElement>
     siteHostElem : JQuery<HTMLElement>
     usernameElem : JQuery<HTMLElement>
     allFields : JQuery<any>
     dialog : any
     form : any
-
-    constructor(elemid : string) {
-        super(elemid);
-    }
 
     get site() : Site {
         // var siteType : string = this.siteTypeElem.val() as string;
@@ -98,16 +95,15 @@ export class AddSiteDialog extends Dialog {
 
     setupViews() {
         var self = this;
-        this.element = $("#" + this.elemid);
-        this.element.html(this.template);
-        this.siteTypeElem = this.element.find("select");
-        this.siteHostElem  = this.element.find("#site_host");
-        this.usernameElem  = this.element.find("#site_username");
+        this.rootElement.html(this.template);
+        this.siteTypeElem = this.rootElement.find("select");
+        this.siteHostElem  = this.rootElement.find("#site_host");
+        this.usernameElem  = this.rootElement.find("#site_username");
         this.allFields = $( [] )
                          .add( this.siteTypeElem )
                          .add( this.siteHostElem )
                          .add( this.usernameElem );
-        this.dialog = this.element.dialog({
+        this.dialog = this.rootElement.dialog({
             autoOpen: false,
             position: { "my": "center top", "at": "center top", "of": window },
             modal: true,
@@ -127,7 +123,7 @@ export class AddSiteDialog extends Dialog {
 }
 
 export class SiteLoginDialog extends Dialog {
-    element : any
+    rootElement : any
     usernameElem : JQuery<HTMLElement>
     passwordElem : JQuery<HTMLElement>
     errorMessageElem : JQuery<HTMLElement>
@@ -135,10 +131,6 @@ export class SiteLoginDialog extends Dialog {
     dialog : any
     form : any
     _site : Nullable<Site> = null;
-
-    constructor(elemid : string) {
-        super(elemid);
-    }
 
     get site() : Nullable<Site> {
         return this._site;
@@ -204,15 +196,14 @@ export class SiteLoginDialog extends Dialog {
 
     setupViews() {
         var self = this;
-        this.element = $("#" + this.elemid);
-        this.element.html(this.template);
-        this.usernameElem  = this.element.find("#site_username");
-        this.passwordElem  = this.element.find("#site_password");
-        this.errorMessageElem = this.element.find("#error_message_span");
+        this.rootElement.html(this.template);
+        this.usernameElem  = this.rootElement.find("#site_username");
+        this.passwordElem  = this.rootElement.find("#site_password");
+        this.errorMessageElem = this.rootElement.find("#error_message_span");
         this.allFields = $( [] )
                          .add( this.usernameElem )
                          .add( this.passwordElem );
-        this.dialog = this.element.dialog({
+        this.dialog = this.rootElement.dialog({
             autoOpen: false,
             position: { "my": "center top", "at": "center top", "of": window },
             modal: true,
@@ -230,17 +221,56 @@ export class SiteLoginDialog extends Dialog {
     }
 }
 
+export class SitesPanel {
+    rootElement : any
+    addSiteDialog : AddSiteDialog
+    addButton : any
+    siteListView : SiteListView
+    services : ServiceCatalog
+
+    constructor(elem_or_id : string, services : ServiceCatalog) {
+        this.rootElement = ensureElement(elem_or_id);
+        this.services = services
+        this.setupViews();
+    }
+
+    setupViews() {
+        var self = this;
+        var addSiteDialogElem : any = ensureElement("add_site_dialog", this.rootElement);
+        if (addSiteDialogElem.length == 0) {
+            addSiteDialogElem = $("<div id='add_site_dialog'></div>");
+            this.rootElement.append(addSiteDialogElem);
+        }
+
+        this.addSiteDialog = new AddSiteDialog(addSiteDialogElem);
+
+        var siteListDiv = this.rootElement.find("#site_list_div");
+        this.siteListView = new SiteListView(siteListDiv, this.services);
+
+        this.addButton = this.rootElement.find("#add_button");
+        this.addButton.button().on("click", function() {
+            self.addSiteDialog.open()
+                .then((site : Site) => {
+                    self.services.siteService.addSite(site as Site).then(() => {
+                        self.siteListView.refresh();
+                    });
+                });
+        });
+
+        this.services.siteService.loadAll().then(() => {
+            self.siteListView.refresh();
+        });
+    }
+};
 
 export class SiteListView {
-    elemid : string
-    element : any
-    siteService : SiteService
+    rootElement : any
+    services : ServiceCatalog
     onConnectSite : any
 
-    constructor(elemid : string, siteService : SiteService) {
-        this.elemid = elemid;
-        this.siteService = siteService;
-        this.element = $("#" + this.elemid);
+    constructor(elem_or_id : any, services : ServiceCatalog) {
+        this.rootElement = ensureElement(elem_or_id);
+        this.services = services;
         this.onConnectSite = null;
         this.refresh();
     }
@@ -279,9 +309,9 @@ export class SiteListView {
     }
 
     setConnecting(index : Int, connecting : boolean) {
-        var progressbar = this.element.find("#progressbar_" + index);
-        var connect_button = this.element.find("#connect_site_" + index);
-        var delete_button = this.element.find("#delete_site_" + index);
+        var progressbar = this.rootElement.find("#progressbar_" + index);
+        var connect_button = this.rootElement.find("#connect_site_" + index);
+        var delete_button = this.rootElement.find("#delete_site_" + index);
         connect_button.prop('disabled', connecting);
         delete_button.prop('disabled', connecting);
         if (connecting) {
@@ -295,18 +325,19 @@ export class SiteListView {
     refresh() {
         var self = this;
         var siteServiceTemplate = Handlebars.compile(this.template);
+        var siteService = this.services.siteService;
         var html = siteServiceTemplate({
-            "siteService" : this.siteService
+            "siteService" : siteService
         });
-        this.element.html(html);
-        var connect_buttons = this.element.find(".site_connect_button");
-        var delete_buttons = this.element.find(".site_delete_button");
-        var progressbars = this.element.find(".progressbar");
+        this.rootElement.html(html);
+        var connect_buttons = this.rootElement.find(".site_connect_button");
+        var delete_buttons = this.rootElement.find(".site_delete_button");
+        var progressbars = this.rootElement.find(".progressbar");
         progressbars.progressbar({ value: false });
         progressbars.hide();
         connect_buttons.on( "click", function( event : any) {
             var index = parseInt(event.currentTarget.id.substring("connect_site_".length));
-            var site = self.siteService.siteAt(index);
+            var site = siteService.siteAt(index);
             if (self.onConnectSite != null) {
                 self.onConnectSite(site, index);
             }
@@ -314,7 +345,218 @@ export class SiteListView {
         delete_buttons.on( "click", function( event : any) {
             var index = parseInt(event.currentTarget.id.substring("delete_site_".length));
             console.log("Removing Site at: ", index);
-            self.siteService.removeAt(index).then(() => self.refresh());
+            siteService.removeAt(index).then(() => self.refresh());
         });
     }
 }
+
+
+export class AddPostDialog extends Dialog {
+    rootElement : any
+    allFields : JQuery<any>
+    dialog : any
+    form : any
+    titleElem : JQuery<HTMLElement>
+
+    get template() : string {
+        return `
+          <form>
+            <fieldset class = "dialog_fields">
+              <label for="post_title">Post Title</label>
+              <input type="url" name="post_title" id="post_title" value="New Post" class="text ui-widget-content ui-corner-all">
+
+              <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+            </fieldset>
+          </form>
+        `
+    }
+
+    get post() : Post {
+        var title = this.titleElem.val() as string;
+        return new Post(null, {
+            "title": title
+        });
+    }
+
+    buttons(resolve : any, reject : any) {
+        var self = this;
+        return {
+            "Create Post": function() {
+                self.close(self.post, resolve, reject);
+            },
+            Cancel: function() {
+                self.close(null, resolve, reject);
+            }
+        };
+    }
+
+    setupViews() {
+        var self = this;
+        this.rootElement.html(this.template);
+        this.titleElem = this.rootElement.find("#post_title");
+        this.allFields = $( [] )
+                         .add( this.titleElem );
+        this.dialog = this.rootElement.dialog({
+            autoOpen: false,
+            position: { "my": "center top", "at": "center top", "of": window },
+            modal: true,
+            close: function() {
+                self.form[0].reset();
+                self.allFields.removeClass( "ui-state-error" );
+            }
+        });
+
+        this.form = this.dialog.find( "form" ).on( "submit", function( event : any) {
+            event.preventDefault();
+        });
+        return this;
+    }
+}
+
+export class PostsPanel {
+    rootElement : any
+    addPostDialog : AddPostDialog
+    addButton : any
+    refreshButton : any
+    closeButton : any
+    postListView : PostListView
+    services : ServiceCatalog
+
+    constructor(elem_or_id : string, services : ServiceCatalog) {
+        this.rootElement = ensureElement(elem_or_id);
+        this.services = services
+        this.setupViews();
+    }
+
+    show() {
+        var parent = this.rootElement.parent();
+        var margins = parseInt(parent.css("margin-left")) + 
+                      parseInt(parent.css("margin-right"));
+        var width = parent.width() + margins;
+        this.rootElement.animate({
+            width: width + "px"
+        });
+    }
+
+    hide() {
+        this.rootElement.animate({
+            width: "0px"
+        });
+    }
+
+    setupViews() {
+        var self = this;
+        var postService = this.services.postService;
+        var addPostDialogElem : any = ensureElement("add_post_dialog", this.rootElement);
+        if (addPostDialogElem.length == 0) {
+            addPostDialogElem = $("<div id='add_post_dialog'></div>");
+            this.rootElement.append(addPostDialogElem);
+        }
+
+        this.addPostDialog = new AddPostDialog(addPostDialogElem);
+
+        var postListDiv = this.rootElement.find("#post_list_div");
+        this.postListView = new PostListView(postListDiv, this.services);
+
+        this.addButton = this.rootElement.find("#add_button");
+        this.addButton.button().on("click", function() {
+        });
+
+        this.refreshButton = this.rootElement.find("#refresh_button");
+        this.refreshButton.button().on("click", function() {
+        });
+
+        this.closeButton = this.rootElement.find("#close_button");
+        this.closeButton.button().on("click", function() {
+            self.hide();
+        });
+    }
+};
+
+export class PostListView {
+    rootElement : any
+    services : ServiceCatalog
+    onConnectSite : any
+
+    constructor(elem_or_id : any, services : ServiceCatalog) {
+        this.rootElement = ensureElement(elem_or_id);
+        this.services = services;
+        this.onConnectSite = null;
+        this.refresh();
+    }
+
+    get template() : string {
+        return `
+            {{# each siteService.sites }}
+            <table class = "site_table"
+                   id = "site_table_{{@index}}" >
+                <tr>
+                    <td class = "site_param_name"> Site Host: </td>
+                    <td> {{this.site_host}} </td>
+                </tr>
+                <tr>
+                    <td class = "site_param_name"> Username: </td>
+                    <td> {{this.username}} </td>
+                </tr>
+                <tr>
+                    <td colspan = 2>
+                        <center>
+                            <button class = "site_connect_button"
+                                    id = "connect_site_{{@index}}">Connect</button>
+                            <button class = "site_delete_button"
+                                    id = "delete_site_{{@index}}">Delete</button>
+                        </center>
+                        <center>
+                            <div class = "progressbar"
+                                 id="progressbar_{{@index}}"></div>
+                        </center>
+                    </td>
+                </tr>
+            </table>
+            <hr/>
+            {{/each}}
+        `
+    }
+
+    setConnecting(index : Int, connecting : boolean) {
+        var progressbar = this.rootElement.find("#progressbar_" + index);
+        var connect_button = this.rootElement.find("#connect_site_" + index);
+        var delete_button = this.rootElement.find("#delete_site_" + index);
+        connect_button.prop('disabled', connecting);
+        delete_button.prop('disabled', connecting);
+        if (connecting) {
+            progressbar.progressbar( "option", "value", false );
+            progressbar.show();
+        } else {
+            progressbar.hide();
+        }
+    }
+
+    refresh() {
+        var self = this;
+        var siteService = this.services.siteService;
+        var siteServiceTemplate = Handlebars.compile(this.template);
+        var html = siteServiceTemplate({
+            "siteService" : siteService
+        });
+        this.rootElement.html(html);
+        var connect_buttons = this.rootElement.find(".site_connect_button");
+        var delete_buttons = this.rootElement.find(".site_delete_button");
+        var progressbars = this.rootElement.find(".progressbar");
+        progressbars.progressbar({ value: false });
+        progressbars.hide();
+        connect_buttons.on( "click", function( event : any) {
+            var index = parseInt(event.currentTarget.id.substring("connect_site_".length));
+            var site = siteService.siteAt(index);
+            if (self.onConnectSite != null) {
+                self.onConnectSite(site, index);
+            }
+        });
+        delete_buttons.on( "click", function( event : any) {
+            var index = parseInt(event.currentTarget.id.substring("delete_site_".length));
+            console.log("Removing Site at: ", index);
+            siteService.removeAt(index).then(() => self.refresh());
+        });
+    }
+}
+

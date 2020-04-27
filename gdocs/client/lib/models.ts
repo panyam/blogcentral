@@ -31,16 +31,6 @@ export class Site {
     }
 }
 
-export class Post {
-    id : string
-    config : any
-    constructor(id : string, config : any) {
-        config = config || {};
-        this.id = id;
-        this.config = config;
-    }
-}
-
 export class SiteService {
     sites : Site[] = []
     store : Store
@@ -133,3 +123,85 @@ export class SiteService {
     }
 }
 
+
+export class Post {
+    id : Nullable<string>
+    config : any
+    constructor(id : Nullable<string> = null, config : any = null) {
+        config = config || {};
+        this.id = id;
+        this.config = config;
+    }
+}
+
+export class PostService {
+    posts : Post[] = []
+    store : Store
+
+    constructor(store : Store) {
+        this.store = store;
+    }
+
+    /** 
+     * Return the post at the given index.
+     */
+    postAt(index : Int) : Post {
+        return this.posts[index];
+    }
+
+    /**
+     * Find the index of the post given its ID.
+     * Returns the index or -1 if not found.
+     */
+    indexOf(id : string) : Int {
+        for (var i = this.posts.length - 1;i >= 0;i--) {
+            if (this.posts[i].id == id) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    async loadAll() {
+        var self = this;
+        var postids = await this.loadPostIds()
+        var postPromises = postids.map(async function(id : string, _index : Int) { return self.loadPost(id); });
+        this.posts = await Promise.all(postPromises);
+        return true;
+    }
+
+    /**
+     * Add a new post.
+     */
+    async addPost(post : Post) {
+        return 0;
+    }
+
+    /**
+     * Removes the post at a given index and returns it.
+     */
+    async removeAt(index : Int) {
+        var post : Post = this.posts.splice(index, 1)[0];
+        await this.savePostIds();
+        await this.store.remove("post:" + post.id);
+        return post;
+    }
+
+    async loadPost(id : string) : Promise<Post> {
+        var value : any = await this.store.get("post:" + id);
+        return new Post(null);
+    }
+
+    async savePost(post : Post) {
+        return 0;
+    }
+
+    async savePostIds() {
+        var postids = this.posts.map(function(v, _i) { return v.id; });
+        return this.store.set("postids", postids);
+    }
+
+    async loadPostIds() {
+        return this.store.get("postids");
+    }
+}

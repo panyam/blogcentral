@@ -1,4 +1,8 @@
 
+:root {
+    --toolbar-button-height: 30px;
+}
+
 // body { background-color: yellow; }
 
 label, input { 
@@ -24,3 +28,42 @@ fieldset {
 	background-position: top;
 }
 
+#sites_panel_div {
+    left: 0px;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    position: absolute;
+    overflow: scroll;
+    border: solid 1px red;
+}
+
+#posts_panel_div {
+    border: solid 1px blue;
+    overflow: scroll;
+    width: 0px;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    position: absolute;
+    background: yellow;
+}
+
+#post_list_div {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: var(--toolbar-button-height);
+}
+
+#posts_panel_button_panel {
+    // border: solid 1px blue;
+    overflow: scroll;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    height: var(--toolbar-button-height);
+    position: absolute;
+    background: green;
+}

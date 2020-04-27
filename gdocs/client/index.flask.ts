@@ -4,12 +4,14 @@
 import './styles/global';
 
 import { BCJS } from './lib/index';
+import { ServiceCatalog } from "./lib/catalog";
 import { LocalStore, JQHttpClient } from "./lib/flask";
 
 $(function() {
     var store = new LocalStore("BC");
     var httpClient = new JQHttpClient();
-    const app = new BCJS.App.App(store, httpClient);
+    var catalog = new ServiceCatalog(store, httpClient);
+    const app = new BCJS.App.App(catalog)
 });
 
 // export default UserList class

@@ -2,12 +2,14 @@
 import './styles/global';
 
 import { BCJS } from './lib/index';
+import { ServiceCatalog } from "./lib/catalog";
 import { PropertiesStore, GAppsHttpClient } from "./lib/gapps";
 
 $(function() {
     var store = new PropertiesStore("BC");
     var httpClient = new GAppsHttpClient();
-    const app = new BCJS.App.App(store, httpClient);
+    var catalog = new ServiceCatalog(store, httpClient);
+    const app = new BCJS.App.App(catalog);
 });
 
 // export default UserList class

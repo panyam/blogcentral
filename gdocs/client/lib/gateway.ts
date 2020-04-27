@@ -1,18 +1,17 @@
 
 import { Int, Nullable, Undefined } from "./types"
-import { Site, SiteService } from "./models";
+import { Site } from "./models";
 import { SiteLoginDialog } from "./views";
-import { Request, Response, HttpClient } from "./net";
+import { Request } from "./net";
+import { ServiceCatalog } from "./catalog";
 
 export class SiteGateway {
-    siteService : SiteService
+    services : ServiceCatalog
     siteLoginDialog : SiteLoginDialog
-    httpClient : HttpClient
 
-    constructor(siteService : SiteService, siteLoginDialog : SiteLoginDialog, httpClient : HttpClient) {
-        this.siteService = siteService;
+    constructor(services : ServiceCatalog, siteLoginDialog : SiteLoginDialog) {
+        this.services = services;
         this.siteLoginDialog = siteLoginDialog;
-        this.httpClient = httpClient
     }
 
     async ensureLoggedIn(site : Site) {
@@ -31,12 +30,13 @@ export class SiteGateway {
             return null;
         }
 
-        await this.siteService.saveSite(site);
+        await this.services.siteService.saveSite(site);
         return site;
     }
 
     async loginToWordpress(site : Site) {
         var self = this;
+        var httpClient = this.services.httpClient;
         this.siteLoginDialog.site = site;
         var credentials : any = await this.siteLoginDialog.open();
         while (credentials != null) {
@@ -52,7 +52,7 @@ export class SiteGateway {
                 "body": payload
             });
             try {
-                var response = await this.httpClient.send(request);
+                var response = await httpClient.send(request);
                 this.siteLoginDialog.close();
                 return response.data;
             } catch (e) {
@@ -79,7 +79,8 @@ export class SiteGateway {
             "headers": headers
         });
         try {
-            var response = await this.httpClient.send(request);
+            var httpClient = this.services.httpClient;
+            var response = await httpClient.send(request);
             site.config.tokenValidatedAt = Date.now();
             return true;
         } catch (e) {
@@ -90,6 +91,7 @@ export class SiteGateway {
     }
 
     async getPosts(site : Site) {
+        var httpClient = this.services.httpClient;
         var result = await this.ensureLoggedIn(site);
         var apiHost = site.site_host + '/wp-json';
         var url = apiHost + '/wp/v2/posts/';
@@ -98,7 +100,7 @@ export class SiteGateway {
         };
         var request = new Request(url, { "headers": headers });
         try {
-            var response = await this.httpClient.send(request);
+            var response = await httpClient.send(request);
             return response.data;
         } catch (e) {
             console.log("Get Posts Exception: ", e);
