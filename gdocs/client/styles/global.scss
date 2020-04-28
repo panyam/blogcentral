@@ -1,20 +1,20 @@
 
 :root {
     --toolbar-button-height: 30px;
+    --posts-panel-search-bar-height: 60px;
 }
 
 // body { background-color: yellow; }
 
-label, input { 
-    display:block; 
-}
-
+/*
+label, input { display:block; }
 label { 
     margin-top: 20px;
     margin-bottom: 5px;
 }
 
 input.text { margin-bottom:12px; width:95%; padding: .4em; }
+*/
 
 fieldset {
     padding:0; border:0; margin-top:0px;
@@ -35,35 +35,78 @@ fieldset {
     right: 0px;
     position: absolute;
     overflow: scroll;
-    border: solid 1px red;
 }
 
 #posts_panel_div {
-    border: solid 1px blue;
     overflow: scroll;
     width: 0px;
     top: 0px;
     bottom: 0px;
     right: 0px;
     position: absolute;
-    background: yellow;
+    background: aliceblue;
 }
 
-#post_list_div {
+#posts_panel_div > #search_bar_div {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    height: var(--posts-panel-search-bar-height);
+}
+
+#posts_panel_div > #search_bar_div > #search_field {
     position: absolute;
     top: 0px;
     left: 0px;
-    right: 0px;
-    bottom: var(--toolbar-button-height);
+    right: 80px;
+    width: 100%;
+    bottom: 0px;
+    height: 30px;
 }
 
-#posts_panel_button_panel {
-    // border: solid 1px blue;
+#posts_panel_div > #search_bar_div > #search_button {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    float: right;
+    bottom: 0px;
+    height: 30px;
+}
+
+#posts_panel_div > #search_bar_div > #search_form_div {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 35px;
+    text-align: center;
+}
+
+#posts_panel_div #search_form_div fieldset > label  {
+    margin-left: 20px;
+    font-weight: bold;
+}
+
+#posts_panel_div #search_form_div fieldset > select {
+    width: 80px;
+}
+
+#posts_panel_div > #post_list_div {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    bottom: var(--toolbar-button-height);
+    top: var(--posts-panel-search-bar-height);
+    border-top: solid 2px;
+    border-bottom: solid 2px;
+    margin-bottom: 5px;
+}
+
+#posts_panel_div > #button_panel {
     overflow: scroll;
     bottom: 0px;
     left: 0px;
     right: 0px;
     height: var(--toolbar-button-height);
     position: absolute;
-    background: green;
 }

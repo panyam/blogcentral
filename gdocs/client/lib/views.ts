@@ -283,6 +283,11 @@ export class SiteListView {
                 <tr>
                     <td class = "site_param_name"> Site Host: </td>
                     <td> {{this.site_host}} </td>
+                    <td rowspan = 2>
+                        <button class="remove_site_button ui-button ui-widget ui-corner-all ui-button-icon-only" title="Remove Site" id = "remove_site_{{@index}}">
+                            <span class="ui-icon ui-icon-trash"></span> Remove Site
+                        </button>
+                    </td>
                 </tr>
                 <tr>
                     <td class = "site_param_name"> Username: </td>
@@ -291,10 +296,10 @@ export class SiteListView {
                 <tr>
                     <td colspan = 2>
                         <center>
-                            <button class = "site_connect_button"
-                                    id = "connect_site_{{@index}}">Connect</button>
-                            <button class = "site_delete_button"
-                                    id = "delete_site_{{@index}}">Delete</button>
+                            <button class = "select_post_button"
+                                    id = "select_post_{{@index}}">Posts</button>
+                            <button class = "publish_post_button"
+                                    id = "publish_post_{{@index}}">Publish</button>
                         </center>
                         <center>
                             <div class = "progressbar"
@@ -310,10 +315,10 @@ export class SiteListView {
 
     setConnecting(index : Int, connecting : boolean) {
         var progressbar = this.rootElement.find("#progressbar_" + index);
-        var connect_button = this.rootElement.find("#connect_site_" + index);
-        var delete_button = this.rootElement.find("#delete_site_" + index);
-        connect_button.prop('disabled', connecting);
-        delete_button.prop('disabled', connecting);
+        var publish_post_button = this.rootElement.find("#publish_post_" + index);
+        var remove_button = this.rootElement.find("#remove_site_" + index);
+        publish_post_button.prop('disabled', connecting);
+        remove_button.prop('disabled', connecting);
         if (connecting) {
             progressbar.progressbar( "option", "value", false );
             progressbar.show();
@@ -330,20 +335,30 @@ export class SiteListView {
             "siteService" : siteService
         });
         this.rootElement.html(html);
-        var connect_buttons = this.rootElement.find(".site_connect_button");
-        var delete_buttons = this.rootElement.find(".site_delete_button");
+
         var progressbars = this.rootElement.find(".progressbar");
         progressbars.progressbar({ value: false });
         progressbars.hide();
-        connect_buttons.on( "click", function( event : any) {
-            var index = parseInt(event.currentTarget.id.substring("connect_site_".length));
+
+        var select_post_buttons = this.rootElement.find(".select_post_button");
+        select_post_buttons.button().on( "click", function( event : any) {
+            var index = parseInt(event.currentTarget.id.substring("publish_post_".length));
             var site = siteService.siteAt(index);
             if (self.onConnectSite != null) {
                 self.onConnectSite(site, index);
             }
         });
-        delete_buttons.on( "click", function( event : any) {
-            var index = parseInt(event.currentTarget.id.substring("delete_site_".length));
+
+        var publish_post_buttons = this.rootElement.find(".publish_post_button");
+        publish_post_buttons.button().on( "click", function( event : any) {
+            var index = parseInt(event.currentTarget.id.substring("select_post_".length));
+            var site = siteService.siteAt(index);
+            console.log("Publish to site: ", index, site);
+        });
+
+        var remove_buttons = this.rootElement.find(".remove_site_button");
+        remove_buttons.button().on( "click", function( event : any) {
+            var index = parseInt(event.currentTarget.id.substring("remove_site_".length));
             console.log("Removing Site at: ", index);
             siteService.removeAt(index).then(() => self.refresh());
         });
@@ -417,7 +432,9 @@ export class PostsPanel {
     rootElement : any
     addPostDialog : AddPostDialog
     addButton : any
-    refreshButton : any
+    searchButton : any
+    prevButton : any
+    nextButton : any
     closeButton : any
     postListView : PostListView
     services : ServiceCatalog
@@ -434,7 +451,7 @@ export class PostsPanel {
                       parseInt(parent.css("margin-right"));
         var width = parent.width() + margins;
         this.rootElement.animate({
-            width: width + "px"
+            width: "100%" // width + "px"
         });
     }
 
@@ -458,12 +475,22 @@ export class PostsPanel {
         var postListDiv = this.rootElement.find("#post_list_div");
         this.postListView = new PostListView(postListDiv, this.services);
 
-        this.addButton = this.rootElement.find("#add_button");
-        this.addButton.button().on("click", function() {
+        this.searchButton = this.rootElement.find("#search_button");
+        this.searchButton.button().on("click", function() {
         });
 
-        this.refreshButton = this.rootElement.find("#refresh_button");
-        this.refreshButton.button().on("click", function() {
+        this.prevButton = this.rootElement.find("#prev_button");
+        this.prevButton.button().on("click", function() {
+        });
+        this.prevButton.hide();
+
+        this.nextButton = this.rootElement.find("#next_button");
+        this.nextButton.button().on("click", function() {
+        });
+        this.nextButton.hide();
+
+        this.addButton = this.rootElement.find("#add_button");
+        this.addButton.button().on("click", function() {
         });
 
         this.closeButton = this.rootElement.find("#close_button");
@@ -501,10 +528,10 @@ export class PostListView {
                 <tr>
                     <td colspan = 2>
                         <center>
-                            <button class = "site_connect_button"
-                                    id = "connect_site_{{@index}}">Connect</button>
-                            <button class = "site_delete_button"
-                                    id = "delete_site_{{@index}}">Delete</button>
+                            <button class = "publish_post_button"
+                                    id = "publish_post_{{@index}}">Connect</button>
+                            <button class = "remove_site_button"
+                                    id = "remove_site_{{@index}}">Remove</button>
                         </center>
                         <center>
                             <div class = "progressbar"
@@ -520,10 +547,10 @@ export class PostListView {
 
     setConnecting(index : Int, connecting : boolean) {
         var progressbar = this.rootElement.find("#progressbar_" + index);
-        var connect_button = this.rootElement.find("#connect_site_" + index);
-        var delete_button = this.rootElement.find("#delete_site_" + index);
-        connect_button.prop('disabled', connecting);
-        delete_button.prop('disabled', connecting);
+        var publish_post_button = this.rootElement.find("#publish_post_" + index);
+        var remove_button = this.rootElement.find("#remove_site_" + index);
+        publish_post_button.prop('disabled', connecting);
+        remove_button.prop('disabled', connecting);
         if (connecting) {
             progressbar.progressbar( "option", "value", false );
             progressbar.show();
@@ -540,20 +567,20 @@ export class PostListView {
             "siteService" : siteService
         });
         this.rootElement.html(html);
-        var connect_buttons = this.rootElement.find(".site_connect_button");
-        var delete_buttons = this.rootElement.find(".site_delete_button");
+        var publish_post_buttons = this.rootElement.find(".publish_post_button");
+        var remove_buttons = this.rootElement.find(".remove_site_button");
         var progressbars = this.rootElement.find(".progressbar");
         progressbars.progressbar({ value: false });
         progressbars.hide();
-        connect_buttons.on( "click", function( event : any) {
-            var index = parseInt(event.currentTarget.id.substring("connect_site_".length));
+        publish_post_buttons.on( "click", function( event : any) {
+            var index = parseInt(event.currentTarget.id.substring("publish_post_".length));
             var site = siteService.siteAt(index);
             if (self.onConnectSite != null) {
                 self.onConnectSite(site, index);
             }
         });
-        delete_buttons.on( "click", function( event : any) {
-            var index = parseInt(event.currentTarget.id.substring("delete_site_".length));
+        remove_buttons.on( "click", function( event : any) {
+            var index = parseInt(event.currentTarget.id.substring("remove_site_".length));
             console.log("Removing Site at: ", index);
             siteService.removeAt(index).then(() => self.refresh());
         });

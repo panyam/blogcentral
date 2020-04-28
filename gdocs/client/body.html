@@ -6,12 +6,46 @@
 </div>
 
 <div id ="posts_panel_div">
+    <div id = "search_bar_div">
+        <input name="search_field" id="search_field"
+               value=""
+               placeholder = "Enter search field here" >
+        <button id = "search_button">Search</button>
+        <div id = "search_form_div">
+            <form id = "search_form">
+                <fieldset class = "dialog_fields">
+                    <label for="searchin">Search In</label>
+                    <select name = "searchin" id = "searchin">
+                        <option value="title">Title</option>
+                        <option value="slug">Slug</option>
+                        <option value="tags">Tags</option>
+                        <option value="categories">Categories</option>
+                        <option value="author">Author</option>
+                    </select>
+                    <label for="orderby">Order By</label>
+                    <select name = "orderby" id = "orderby">
+                        <option value="date">Date</option>
+                        <option value="title">Title</option>
+                        <option value="modified">Modified</option>
+                        <option value="author">Author</option>
+                        <option value="slug">Slug</option>
+                    </select>
+                    <label for="order">Order</label>
+                    <select name = "order" id = "order">
+                        <option value="asc">Ascending</option>
+                        <option value="desc">Descending</option>
+                    </select>
+                </fieldset>
+            </form>
+        </div>
+    </div>
     <div id = "post_list_div"> </div>
-    <button class="blue" id="close_button" style="float: right">Close</button>
-    <div id = "posts_panel_button_panel">
+    <div id = "button_panel">
         <center>
-            <button class="blue" id="add_button">Add</button> 
-            <button class="blue" id="refresh_button">Refresh</button>
+            <button hidden id = "prev_button">Previous</button>
+            <button id="add_button">Add</button> 
+            <button id="close_button">Close</button>
+            <button hidden id = "next_button">Next</button>
         </center>
     </div>
 </div>
