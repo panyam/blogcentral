@@ -1,27 +1,37 @@
 
-import { Int, Nullable, Undefined } from "./types"
 import { Site } from "./models";
-import { SiteLoginDialog } from "./ui/SiteLoginDialog";
 import { Request } from "./net";
 import { ServiceCatalog } from "./catalog";
 
 export class SiteGateway {
     services : ServiceCatalog
-    siteLoginDialog : SiteLoginDialog
 
-    constructor(services : ServiceCatalog, siteLoginDialog : SiteLoginDialog) {
+    constructor(services : ServiceCatalog) {
         this.services = services;
-        this.siteLoginDialog = siteLoginDialog;
     }
 
     async ensureLoggedIn(site : Site) {
         var siteToken = site.config.token || null;
         if (siteToken == null) {
-            site.config.token = await this.loginToWordpress(site);
-            if (site.config.token == null) {
-                return null;
+            var loginProvider = this.services.siteLoginProvider;
+            var credentials : any = await loginProvider.startLogin(site);
+            while (credentials != null) {
+                try {
+                    site.config.token = await this.loginToWordpress(site, credentials);
+                    loginProvider.cancelLogin();
+                    if (site.config.token == null) {
+                        // cancelled
+                        return null;
+                    } else {
+                        site.config.tokenTimestamp = Date.now();
+                        return site;
+                    }
+                } catch (e) {
+                    console.log("Received Exception: ", e);
+                    loginProvider.loginFailed(e, e.responseJSON.message);
+                    credentials = await loginProvider.startLogin(site);
+                }
             }
-            site.config.tokenTimestamp = Date.now();
         }
 
         // validate token
@@ -34,35 +44,22 @@ export class SiteGateway {
         return site;
     }
 
-    async loginToWordpress(site : Site) {
+    async loginToWordpress(site : Site, credentials : any) {
         var self = this;
         var httpClient = this.services.httpClient;
-        this.siteLoginDialog.site = site;
-        var credentials : any = await this.siteLoginDialog.open();
-        while (credentials != null) {
-            var payload = {
-                username: site.username,
-                password: credentials.password
-            };
-            var apiHost = site.site_host + '/wp-json';
-            var url = apiHost + '/jwt-auth/v1/token';
-            var request = new Request(url, {
-                "method": "post",
-                "contentType" : "application/json",
-                "body": payload
-            });
-            try {
-                var response = await httpClient.send(request);
-                this.siteLoginDialog.close();
-                return response.data;
-            } catch (e) {
-                console.log("Received Exception: ", e);
-                var errorMessage = e.responseJSON.message;
-                self.siteLoginDialog.errorMessage = errorMessage;
-                credentials = await this.siteLoginDialog.open();
-            }
-        }
-        return null;
+        var payload = {
+            username: site.username,
+            password: credentials.password
+        };
+        var apiHost = site.site_host + '/wp-json';
+        var url = apiHost + '/jwt-auth/v1/token';
+        var request = new Request(url, {
+            "method": "post",
+            "contentType" : "application/json",
+            "body": payload
+        });
+        var response = await httpClient.send(request);
+        return response.data;
     }
 
     async validateToken(site : Site) {

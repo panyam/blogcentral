@@ -24,6 +24,7 @@ export class PostsPanel {
     services : ServiceCatalog
     resolveFunc : any
     rejectFunc : any
+    site : Nullable<Site> = null;
 
     constructor(elem_or_id : string, services : ServiceCatalog) {
         this.rootElement = ensureElement(elem_or_id);
@@ -31,7 +32,7 @@ export class PostsPanel {
         this.setupViews();
     }
 
-    async open() : Promise<Post[]> {
+    async open(site : Site) : Promise<Post[]> {
         var parent = this.rootElement.parent();
         /*
         var margins = parseInt(parent.css("margin-left")) + 
@@ -40,6 +41,7 @@ export class PostsPanel {
         var width = "100%"; // (parent.width() + margins) + "px";
         this.rootElement.animate({ width: width });
         var self = this;
+        self.site = site;
         return new Promise((resolve, reject) => {
             self.resolveFunc = resolve;
             self.rejectFunc = reject;
