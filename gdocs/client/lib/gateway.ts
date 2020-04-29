@@ -1,7 +1,7 @@
 
 import { Int, Nullable, Undefined } from "./types"
 import { Site } from "./models";
-import { SiteLoginDialog } from "./views";
+import { SiteLoginDialog } from "./ui/SiteLoginDialog";
 import { Request } from "./net";
 import { ServiceCatalog } from "./catalog";
 

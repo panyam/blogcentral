@@ -2,7 +2,10 @@
 // import "webpack-jquery-ui/button";
 // import "webpack-jquery-ui/css";
 import { Int, Nullable } from "./types";
-import { SitesPanel, SiteLoginDialog, PostsPanel, PostSelector } from "./views";
+import { SiteLoginDialog } from "./ui/SiteLoginDialog";
+import { SitesPanel } from "./ui/SitesPanel";
+import { PostSelector } from "./ui/SiteListView";
+import { PostsPanel } from "./ui/PostsPanel";
 import { Post, Site, } from "./models";
 import { SiteGateway } from "./gateway";
 import { ServiceCatalog } from "./catalog";
