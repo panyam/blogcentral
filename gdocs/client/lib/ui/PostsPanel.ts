@@ -108,10 +108,12 @@ export class PostsPanel {
         });
     }
 
-    searchPosts() {
+    async searchPosts() {
         var orderBy = this.orderByField.val();
         var orderField = this.orderField.val();
         var searchIn = this.searchInField.val();
         var query = this.searchField.val();
+        var posts = await this.services.siteGateway.getPosts(this.site!!);
+        console.log("Got Posts: ", posts);
     }
 };

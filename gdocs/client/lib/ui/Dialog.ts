@@ -1,9 +1,6 @@
 
-declare var Handlebars : any;
 import { ensureElement } from "../utils";
-import { Int, Nullable } from "../types";
-import { SiteType, Site, Post } from "../models";
-import { ServiceCatalog } from "../catalog";
+import { Nullable } from "../types";
 
 export class Dialog {
     rootElement : any

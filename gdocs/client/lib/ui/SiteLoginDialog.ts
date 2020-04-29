@@ -1,12 +1,12 @@
 
-declare var Handlebars : any;
 import { Dialog } from "./Dialog";
 import { ensureElement } from "../utils";
-import { Int, Nullable } from "../types";
-import { SiteType, Site, Post } from "../models";
+import { SiteLoginProvider } from "../auth";
+import { Nullable } from "../types";
+import { Site } from "../models";
 import { ServiceCatalog } from "../catalog";
 
-export class SiteLoginDialog extends Dialog {
+export class SiteLoginDialog extends Dialog implements SiteLoginProvider {
     rootElement : any
     usernameElem : JQuery<HTMLElement>
     passwordElem : JQuery<HTMLElement>
@@ -15,6 +15,12 @@ export class SiteLoginDialog extends Dialog {
     dialog : any
     form : any
     _site : Nullable<Site> = null;
+    services : ServiceCatalog
+
+    constructor(elem_or_id : any, services : ServiceCatalog) {
+        super(elem_or_id);
+        this.services = services;
+    }
 
     get site() : Nullable<Site> {
         return this._site;
@@ -68,8 +74,8 @@ export class SiteLoginDialog extends Dialog {
         return {
             "Login": function() {
                 self.errorMessageElem.html("");
-                if (this.resolveFunc != null) {
-                    this.resolveFunc(self.credentials);
+                if (self.resolveFunc != null) {
+                    self.resolveFunc(self.credentials);
                 }
             },
             Cancel: function() {
@@ -102,5 +108,43 @@ export class SiteLoginDialog extends Dialog {
         });
 
         return this;
+    }
+
+    /** LoginProvider interface */
+    async ensureLoggedIn(site : Site) {
+        var gateway = this.services.siteGateway;
+        var siteToken = site.config.token || null;
+        if (siteToken == null) {
+            while (true) {
+                this.site = site;
+                var credentials : any = await this.open();
+                if (credentials == null) return false;
+                try {
+                    site.config.token = await gateway.loginToWordpress(site, credentials);
+                    this.close();
+                    if (site.config.token == null) {
+                        // cancelled
+                        return false;
+                    } else {
+                        site.config.tokenTimestamp = Date.now();
+                        return true;
+                    }
+                } catch (e) {
+                    console.log("Received Exception: ", e);
+                    var resjson = e.responseJSON || {};
+                    var message = resjson.message || e.statusText;
+                    this.errorMessage = message;
+                }
+            }
+        }
+
+        // validate token
+        var validated = await gateway.validateToken(site);
+        if (!validated) {
+            return false;
+        }
+
+        await this.services.siteService.saveSite(site);
+        return true;
     }
 }

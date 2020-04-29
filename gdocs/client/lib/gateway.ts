@@ -10,40 +10,6 @@ export class SiteGateway {
         this.services = services;
     }
 
-    async ensureLoggedIn(site : Site) {
-        var siteToken = site.config.token || null;
-        if (siteToken == null) {
-            var loginProvider = this.services.siteLoginProvider;
-            var credentials : any = await loginProvider.startLogin(site);
-            while (credentials != null) {
-                try {
-                    site.config.token = await this.loginToWordpress(site, credentials);
-                    loginProvider.cancelLogin();
-                    if (site.config.token == null) {
-                        // cancelled
-                        return null;
-                    } else {
-                        site.config.tokenTimestamp = Date.now();
-                        return site;
-                    }
-                } catch (e) {
-                    console.log("Received Exception: ", e);
-                    loginProvider.loginFailed(e, e.responseJSON.message);
-                    credentials = await loginProvider.startLogin(site);
-                }
-            }
-        }
-
-        // validate token
-        var validated = await this.validateToken(site);
-        if (!validated) {
-            return null;
-        }
-
-        await this.services.siteService.saveSite(site);
-        return site;
-    }
-
     async loginToWordpress(site : Site, credentials : any) {
         var self = this;
         var httpClient = this.services.httpClient;
@@ -88,8 +54,11 @@ export class SiteGateway {
     }
 
     async getPosts(site : Site) {
+        var result = await this.services.siteLoginProvider.ensureLoggedIn(site);
+        if (!result) {
+            return [];
+        }
         var httpClient = this.services.httpClient;
-        var result = await this.ensureLoggedIn(site);
         var apiHost = site.site_host + '/wp-json';
         var url = apiHost + '/wp/v2/posts/';
         var headers = {
