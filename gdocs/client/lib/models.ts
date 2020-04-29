@@ -15,6 +15,7 @@ export class Site {
     site_host : string
     username : string
     config : any
+    selectedPosts : Post[] = [];
 
     constructor(site_type : SiteType,
                 site_host : string,
@@ -24,6 +25,17 @@ export class Site {
         this.site_host = site_host;
         this.username = username;
         this.config = config || {};
+    }
+
+    get payload() : any {
+        var selectedPosts = this.selectedPosts;
+        return {
+            "site_type": this.site_type, 
+            "site_host": this.site_host, 
+            "username": this.username,
+            "selectedPosts": selectedPosts.map(p => p.payload),
+            "config": this.config || {}
+        };
     }
 
     get id() : string {
@@ -104,13 +116,7 @@ export class SiteService {
 
     async saveSite(site : Site) {
         // now save the site itself
-        var payload = {
-            "site_type": site.site_type, 
-            "site_host": site.site_host, 
-            "username": site.username,
-            "config": site.config || {}
-        };
-        return this.store.set("site:" + site.id, payload);
+        return this.store.set("site:" + site.id, site.payload);
     }
 
     async saveSiteIds() {
@@ -131,6 +137,13 @@ export class Post {
         config = config || {};
         this.id = id;
         this.config = config;
+    }
+
+    get payload() : any {
+        return {
+            "id": this.id,
+            "config": this.config
+        };
     }
 }
 

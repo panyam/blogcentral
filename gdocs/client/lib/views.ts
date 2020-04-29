@@ -8,7 +8,8 @@ import { ServiceCatalog } from "./catalog";
 export class Dialog {
     rootElement : any
     dialog : any
-    promise : Promise<any>
+    resolveFunc : any
+    rejectFunc : any
 
     constructor(elem_or_id : any) {
         this.rootElement = ensureElement(elem_or_id);
@@ -21,24 +22,26 @@ export class Dialog {
     async open() {
         var self = this;
         return new Promise((resolve, reject) => {
+            self.resolveFunc = resolve;
+            self.rejectFunc = reject;
             this.dialog
-                .dialog( "option", "buttons", self.buttons(resolve, reject))
+                .dialog( "option", "buttons", self.buttons())
                 .dialog( "open" );
         });
     }
 
-    buttons(resolve : any, reject : any) {
+    buttons() {
         var self = this;
         return {
             Cancel: function() {
-                self.close(null, resolve, reject);
+                self.close(null);
             }
         };
     }
 
-    close(data : Nullable<any> = null, resolve : any = null, reject : any = null) {
-        if (resolve != null) {
-            resolve(data);
+    close(data : Nullable<any> = null) {
+        if (this.resolveFunc != null) {
+            this.resolveFunc(data);
         }
         this.dialog.dialog( "close" );
     }
@@ -81,14 +84,14 @@ export class AddSiteDialog extends Dialog {
         `
     }
 
-    buttons(resolve : any, reject : any) {
+    buttons() {
         var self = this;
         return {
             "Add Site": function() {
-                self.close(self.site, resolve, reject);
+                self.close(self.site);
             },
             Cancel: function() {
-                self.close(null, resolve, reject);
+                self.close(null);
             }
         };
     }
@@ -179,17 +182,17 @@ export class SiteLoginDialog extends Dialog {
         `
     }
 
-    buttons(resolve : any, reject : any) {
+    buttons() {
         var self = this;
         return {
             "Login": function() {
                 self.errorMessageElem.html("");
-                if (resolve != null) {
-                    resolve(self.credentials);
+                if (this.resolveFunc != null) {
+                    this.resolveFunc(self.credentials);
                 }
             },
             Cancel: function() {
-                self.close(null, resolve, reject);
+                self.close(null);
             }
         };
     }
@@ -263,15 +266,22 @@ export class SitesPanel {
     }
 };
 
+export interface PostSelector {
+    /**
+     * Lets one select one or more posts in a site.
+     */
+    selectPosts(site : Site, index : Int) : Promise<Post[]>;
+}
+
 export class SiteListView {
     rootElement : any
     services : ServiceCatalog
-    onConnectSite : any
+    postSelector : any
 
     constructor(elem_or_id : any, services : ServiceCatalog) {
         this.rootElement = ensureElement(elem_or_id);
         this.services = services;
-        this.onConnectSite = null;
+        this.postSelector = null;
         this.refresh();
     }
 
@@ -329,8 +339,8 @@ export class SiteListView {
 
     refresh() {
         var self = this;
-        var siteServiceTemplate = Handlebars.compile(this.template);
         var siteService = this.services.siteService;
+        var siteServiceTemplate = Handlebars.compile(this.template);
         var html = siteServiceTemplate({
             "siteService" : siteService
         });
@@ -341,27 +351,50 @@ export class SiteListView {
         progressbars.hide();
 
         var select_post_buttons = this.rootElement.find(".select_post_button");
-        select_post_buttons.button().on( "click", function( event : any) {
-            var index = parseInt(event.currentTarget.id.substring("publish_post_".length));
-            var site = siteService.siteAt(index);
-            if (self.onConnectSite != null) {
-                self.onConnectSite(site, index);
-            }
+        select_post_buttons.button().on( "click", (event : any) => {
+            self.onSelectPostClicked(event);
         });
 
         var publish_post_buttons = this.rootElement.find(".publish_post_button");
-        publish_post_buttons.button().on( "click", function( event : any) {
-            var index = parseInt(event.currentTarget.id.substring("select_post_".length));
-            var site = siteService.siteAt(index);
-            console.log("Publish to site: ", index, site);
+        publish_post_buttons.button().on( "click", (event : any) => {
+            self.onPublishPostClicked(event);
         });
 
         var remove_buttons = this.rootElement.find(".remove_site_button");
-        remove_buttons.button().on( "click", function( event : any) {
-            var index = parseInt(event.currentTarget.id.substring("remove_site_".length));
-            console.log("Removing Site at: ", index);
-            siteService.removeAt(index).then(() => self.refresh());
+        remove_buttons.button().on( "click", (event : any) => {
+            self.onRemoveSiteClicked(event);
         });
+    }
+
+    onSelectPostClicked(event : any) {
+        var self = this;
+        var siteService = this.services.siteService;
+        var index = parseInt(event.currentTarget.id.substring("select_post_".length));
+        var site = siteService.siteAt(index);
+        if (self.postSelector != null) {
+            self.postSelector.selectPosts(site, index)
+            .then((posts : Post[]) => {
+                site.selectedPosts = posts;
+                siteService.saveSite(site);
+                self.refresh();
+            });
+        }
+    }
+
+    onPublishPostClicked(event : any) {
+        var self = this;
+        var siteService = this.services.siteService;
+        var index = parseInt(event.currentTarget.id.substring("publish_post_".length));
+        var site = siteService.siteAt(index);
+        console.log("Publish to site: ", index, site);
+    }
+
+    onRemoveSiteClicked(event : any) {
+        var self = this;
+        var siteService = this.services.siteService;
+        var index = parseInt(event.currentTarget.id.substring("remove_site_".length));
+        console.log("Removing Site at: ", index);
+        siteService.removeAt(index).then(() => self.refresh());
     }
 }
 
@@ -393,14 +426,14 @@ export class AddPostDialog extends Dialog {
         });
     }
 
-    buttons(resolve : any, reject : any) {
+    buttons() {
         var self = this;
         return {
             "Create Post": function() {
-                self.close(self.post, resolve, reject);
+                self.close(self.post);
             },
             Cancel: function() {
-                self.close(null, resolve, reject);
+                self.close(null);
             }
         };
     }
@@ -432,12 +465,19 @@ export class PostsPanel {
     rootElement : any
     addPostDialog : AddPostDialog
     addButton : any
+    searchBarDiv : any
     searchButton : any
+    searchField : any
+    orderByField : any
+    orderField : any
+    searchInField : any
     prevButton : any
     nextButton : any
     closeButton : any
     postListView : PostListView
     services : ServiceCatalog
+    resolveFunc : any
+    rejectFunc : any
 
     constructor(elem_or_id : string, services : ServiceCatalog) {
         this.rootElement = ensureElement(elem_or_id);
@@ -445,17 +485,25 @@ export class PostsPanel {
         this.setupViews();
     }
 
-    show() {
+    async open() : Promise<Post[]> {
         var parent = this.rootElement.parent();
+        /*
         var margins = parseInt(parent.css("margin-left")) + 
                       parseInt(parent.css("margin-right"));
-        var width = parent.width() + margins;
-        this.rootElement.animate({
-            width: "100%" // width + "px"
+        */
+        var width = "100%"; // (parent.width() + margins) + "px";
+        this.rootElement.animate({ width: width });
+        var self = this;
+        return new Promise((resolve, reject) => {
+            self.resolveFunc = resolve;
+            self.rejectFunc = reject;
         });
     }
 
-    hide() {
+    close(data : any = []) {
+        if (this.resolveFunc != null) {
+            this.resolveFunc(data);
+        }
         this.rootElement.animate({
             width: "0px"
         });
@@ -464,6 +512,23 @@ export class PostsPanel {
     setupViews() {
         var self = this;
         var postService = this.services.postService;
+
+        this.searchBarDiv = ensureElement("search_bar_div", this.rootElement);
+        this.orderByField = ensureElement("search_bar_div", this.rootElement);
+        this.orderField = ensureElement("search_bar_div", this.rootElement);
+        this.searchInField = ensureElement("search_bar_div", this.rootElement);
+
+        this.searchButton = ensureElement("search_button", this.searchBarDiv);
+        this.searchButton.button().on("click", function() {
+            self.searchPosts();
+        });
+
+        this.searchField = ensureElement("search_field", this.searchBarDiv);
+        this.searchField.on("input", function() {
+            var v = ($(this).val() as any).trim();
+            self.searchButton.html(v.length == 0 ? "Refresh" : "Search");
+        });
+
         var addPostDialogElem : any = ensureElement("add_post_dialog", this.rootElement);
         if (addPostDialogElem.length == 0) {
             addPostDialogElem = $("<div id='add_post_dialog'></div>");
@@ -474,10 +539,6 @@ export class PostsPanel {
 
         var postListDiv = this.rootElement.find("#post_list_div");
         this.postListView = new PostListView(postListDiv, this.services);
-
-        this.searchButton = this.rootElement.find("#search_button");
-        this.searchButton.button().on("click", function() {
-        });
 
         this.prevButton = this.rootElement.find("#prev_button");
         this.prevButton.button().on("click", function() {
@@ -495,20 +556,25 @@ export class PostsPanel {
 
         this.closeButton = this.rootElement.find("#close_button");
         this.closeButton.button().on("click", function() {
-            self.hide();
+            self.close();
         });
+    }
+
+    searchPosts() {
+        var orderBy = this.orderByField.val();
+        var orderField = this.orderField.val();
+        var searchIn = this.searchInField.val();
+        var query = this.searchField.val();
     }
 };
 
 export class PostListView {
     rootElement : any
     services : ServiceCatalog
-    onConnectSite : any
 
     constructor(elem_or_id : any, services : ServiceCatalog) {
         this.rootElement = ensureElement(elem_or_id);
         this.services = services;
-        this.onConnectSite = null;
         this.refresh();
     }
 
@@ -575,9 +641,6 @@ export class PostListView {
         publish_post_buttons.on( "click", function( event : any) {
             var index = parseInt(event.currentTarget.id.substring("publish_post_".length));
             var site = siteService.siteAt(index);
-            if (self.onConnectSite != null) {
-                self.onConnectSite(site, index);
-            }
         });
         remove_buttons.on( "click", function( event : any) {
             var index = parseInt(event.currentTarget.id.substring("remove_site_".length));
