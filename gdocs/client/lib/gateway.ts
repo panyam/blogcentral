@@ -25,22 +25,39 @@ export class SiteGateway {
             "body": payload
         });
         var response = await httpClient.send(request);
-        return response.data;
+        return response.data.token;
     }
 
-    async validateToken(site : Site) {
-        var apiHost = site.site_host + '/wp-json';
-        var url = apiHost + '/jwt-auth/v1/token/validate';
+    siteEndPoint(site : Site, path : string) {
+        var apiHost = site.site_host;
+        if (!apiHost.endsWith("/")) {
+            apiHost += "/";
+        }
+        apiHost += 'wp-json';
+        var url = apiHost;
+        if (!path.startsWith("/")) {
+            url += "/";
+        }
+        url += path;
+        return url;
+    }
 
+    siteRequest(site : Site, path : string) : Request {
+        var url = this.siteEndPoint(site, path);
         // see if we have a valid token
         var headers = {
             "Authorization" : "Bearer " + site.config.token
         };
         var request = new Request(url, {
-            "method": "post",
             "contentType" : "application/json",
             "headers": headers
         });
+        return request;
+    }
+
+    async validateToken(site : Site) {
+        var request = this.siteRequest(site, '/jwt-auth/v1/token/validate');
+        request.options.method = "post";
         try {
             var httpClient = this.services.httpClient;
             var response = await httpClient.send(request);
@@ -59,12 +76,8 @@ export class SiteGateway {
             return [];
         }
         var httpClient = this.services.httpClient;
-        var apiHost = site.site_host + '/wp-json';
-        var url = apiHost + '/wp/v2/posts/';
-        var headers = {
-            "Authorization" : "Bearer " + site.config.token
-        };
-        var request = new Request(url, { "headers": headers });
+        var request = this.siteRequest(site, '/wp/v2/posts/');
+        request.options.method = "post";
         try {
             var response = await httpClient.send(request);
             return response.data;

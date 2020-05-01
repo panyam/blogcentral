@@ -3,18 +3,34 @@ import { Int, Nullable, Undefined } from "./types"
 declare var CLIENT_ENV : string;
 
 export class Request {
-    method : string
     url : string
-    headers : any;
     options : any;
-    body : any;
 
     constructor(url : string, options : any) {
         this.url = url;
         this.options = options || {};
-        this.method = options.method || "GET";
-        this.headers = options.headers || {};
-        this.body = options.body || null;
+        this.options.headers = this.options.headers || {};
+        this.options.body = this.options.body || null;
+    }
+
+    get method() : string {
+        return this.options.method || "GET";
+    }
+
+    set method(method : string) {
+        this.options.method = method;
+    }
+
+    get body() : any {
+        return this.options.body;
+    }
+
+    set body(body : any) {
+        this.options.body = body;
+    }
+
+    get headers() : any {
+        return this.options.headers;
     }
 
     get contentType() : string {

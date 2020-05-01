@@ -59,7 +59,9 @@ export class SiteLoginDialog extends Dialog implements SiteLoginProvider {
               <input type="text" name="site_username" id="site_username" value="username" class="text ui-widget-content ui-corner-all">
 
               <label for="site_password">Password</label>
-              <input type="password" name="site_password" id="site_password" class="text ui-widget-content ui-corner-all">
+              <input type="password" name="site_password" 
+                     id="site_password" 
+                     class="text ui-widget-content ui-corner-all">
 
 
               <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
@@ -127,7 +129,7 @@ export class SiteLoginDialog extends Dialog implements SiteLoginProvider {
                         return false;
                     } else {
                         site.config.tokenTimestamp = Date.now();
-                        return true;
+                        break ;
                     }
                 } catch (e) {
                     console.log("Received Exception: ", e);
@@ -137,6 +139,9 @@ export class SiteLoginDialog extends Dialog implements SiteLoginProvider {
                 }
             }
         }
+
+        // Save what we have so far
+        await this.services.siteService.saveSite(site);
 
         // validate token
         var validated = await gateway.validateToken(site);
