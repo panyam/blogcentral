@@ -26,7 +26,7 @@ export class SiteListView {
     get template() : string {
         return `
             {{# each siteService.sites }}
-            <table class = "site_table"
+            <table width="100%" class = "site_table"
                    id = "site_table_{{@index}}" >
                 <tr>
                     <td class = "td_param_name"> Site Host: </td>
@@ -41,6 +41,16 @@ export class SiteListView {
                     <td class = "td_param_name"> Username: </td>
                     <td> {{this.username}} </td>
                 </tr>
+                {{# if this.selectedPost }}
+                <tr>
+                    <td colspan = 3>
+                    <h3 style="margin-bottom: 0px">Post:</h3>
+                        <a target="_blank" href="{{ this.selectedPost.link }}">
+                            {{this.selectedPost.id}} : {{{ this.selectedPost.title.rendered }}} 
+                        </a>
+                    </td>
+                </tr>
+                {{/if}}
                 <tr>
                     <td colspan = 2>
                         <center>

@@ -2,6 +2,8 @@
 $default_bg: aliceblue;
 $posts_panel_header_height: 50px;
 $posts_panel_header_button_height: 30px;
+$posts_panel_footer_height: 50px;
+$posts_panel_footer_button_height: 30px;
 $posts_panel_search_bar_height: 120px;
 $posts_panel_search_field_height: 30px;
 $posts_panel_search_button_height: 30px;
@@ -61,13 +63,6 @@ fieldset {
     position: absolute;
     top: ($posts_panel_header_height - $posts_panel_header_button_height) / 2;
     right: 0px;
-    height: $posts_panel_header_button_height;
-}
-
-#posts_panel_div > #header_div #close_button {
-    position: absolute;
-    top: ($posts_panel_header_height - $posts_panel_header_button_height) / 2;
-    left: 0px;
     height: $posts_panel_header_button_height;
 }
 
@@ -139,10 +134,19 @@ fieldset {
     position: absolute;
     left: 0px;
     right: 0px;
-    bottom: 0px;
+    bottom: $posts_panel_footer_height;
     top: $posts_panel_header_height + $posts_panel_search_bar_height;
     border-top: solid 2px;
     overflow: scroll;
+}
+
+#posts_panel_div > #footer_div {
+    position: absolute;
+    text-align: center;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    height: $posts_panel_footer_height;
 }
 
 // #posts_panel_div > #post_list_div span.post_title { font-weight: bold; }

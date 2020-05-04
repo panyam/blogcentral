@@ -114,7 +114,9 @@ export class SiteGateway {
         var request = this.siteRequest(site, path + "?" + qp);
         try {
             var response = await httpClient.send(request);
-            return response.data;
+            return response.data.map((p : any) => { 
+                return new Post(p.id, p);
+            });
         } catch (e) {
             console.log("Get Posts Exception: ", e);
             throw e;

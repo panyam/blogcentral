@@ -22,12 +22,14 @@ export class PostsPanel implements PostListViewDelegate {
     searchInField : any
     prevButton : any
     nextButton : any
-    closeButton : any
+    confirmButton : any
+    cancelButton : any
     postListView : PostListView
     services : ServiceCatalog
     resolveFunc : any
     rejectFunc : any
     site : Site
+    selectedPost : Nullable<Post> = null
     activityIndicator : ActivityIndicator
     currentPage = 1;
     hasNextPage = false;
@@ -50,6 +52,7 @@ export class PostsPanel implements PostListViewDelegate {
         self.site = site;
         self.postListView.site = site;
         self.postListView.posts = [];
+        self.selectedPost = null;
         setVisible(this.prevButton, false);
         setVisible(this.nextButton, false);
         return new Promise((resolve, reject) => {
@@ -58,7 +61,7 @@ export class PostsPanel implements PostListViewDelegate {
         });
     }
 
-    close(data : any = []) {
+    close(data : any = null) {
         if (this.resolveFunc != null) {
             this.resolveFunc(data);
         }
@@ -117,9 +120,14 @@ export class PostsPanel implements PostListViewDelegate {
             self.onAddPost();
         });
 
-        this.closeButton = this.rootElement.find("#close_button");
-        this.closeButton.button().on("click", function() {
-            self.close();
+        this.confirmButton = this.rootElement.find("#confirm_button");
+        this.confirmButton.button().on("click", function() {
+            self.close(self.selectedPost);
+        });
+
+        this.cancelButton = this.rootElement.find("#cancel_button");
+        this.cancelButton.button().on("click", function() {
+            self.close(null);
         });
 
         this.activityIndicator = new ActivityIndicator(this.rootElement);
@@ -183,11 +191,8 @@ export class PostsPanel implements PostListViewDelegate {
     }
 
     postSelected(plv : PostListView, post : Post) : void {
-        this.site.selectedPost = {
-            "id": post.id,
-            "title": post.options.title
-        };
-        this.services.siteService.saveSite(this.site).then(() => { });
+        console.log("Here...: ", post);
+        this.selectedPost = post;
     }
 };
 

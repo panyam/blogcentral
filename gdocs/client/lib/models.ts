@@ -108,10 +108,12 @@ export class SiteService {
 
     async loadSite(id : string) : Promise<Site> {
         var value : any = await this.store.get("site:" + id);
-        return new Site(value["site_type"],
+        var out = new Site(value["site_type"],
                         value["site_host"],
                         value["username"],
                         value["config"] || {});
+        out.selectedPost = value.selectedPost || null;
+        return out;
     }
 
     async saveSite(site : Site) {

@@ -58,8 +58,15 @@ export class SitesPanel implements SiteListViewDelegate {
     async selectPost(site : Site, index : Int) {
         var siteService = this.services.siteService;
         var post = await this.postsPanel.open(site) as Nullable<Post>;
-        site.selectedPost = post;
-        await siteService.saveSite(site);
+        console.log("Post Selected from Panel: ", post);
+        if (post != null) {
+            site.selectedPost = {
+                "id": post.id,
+                "title": post.options.title,
+                "link": post.options.link
+            };
+            await siteService.saveSite(site);
+        }
         return post;
     }
 };

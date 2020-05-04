@@ -34,15 +34,15 @@ export class PostListView {
         <tr>
             <td>
                 <h3 class="post_title"> 
-                    <a target="_blank" href="{{ this.link }}">
-                        {{{ this.title.rendered }}} 
+                    <a target="_blank" href="{{ this.options.link }}">
+                        {{{ this.options.title.rendered }}} 
                     </a>
                 </h3>
                 <span class="post_created_at">
-                    Created: {{this.date}}
+                    Created: {{this.options.date}}
                 </span>
                 <span class="post_modified_at">
-                    Modified: {{this.modified}}
+                    Modified: {{this.options.modified}}
                 </span>
             </td>
             <td width="50px">
@@ -71,9 +71,7 @@ export class PostListView {
         this.rootElement.html(html);
         var select_post_buttons = this.rootElement.find(".select_post_button");
         select_post_buttons.on( "click", function( event : any) {
-            var index = parseInt(event.currentTarget.id.substring("select_post_".length));
-            var post = self._posts[index];
-            console.log("Selected Post: ", index, post);
+            self.onSelectPostClicked(event);
         });
 
         var remove_post_buttons = this.rootElement.find(".remove_post_button");
@@ -97,6 +95,7 @@ export class PostListView {
         var services = this.services;
         var index = parseInt(event.currentTarget.id.substring("remove_post_".length));
         var post = this._posts[index];
+        console.log("Post Selected: ", index, post);
         if (this.delegate != null) this.delegate.postSelected(this, post);
     }
 }
