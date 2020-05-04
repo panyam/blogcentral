@@ -8,7 +8,7 @@ import { Int, Nullable } from "../types";
 import { SiteType, Site, Post } from "../models";
 import { ServiceCatalog } from "../catalog";
 
-const PAGE_LENGTH = 20;
+const PAGE_LENGTH = 5;
 
 export class PostsPanel {
     rootElement : any

@@ -5,6 +5,8 @@ import { Nullable } from "../types";
 import { Site } from "../models";
 import { ServiceCatalog } from "../catalog";
 
+const TOKEN_VALIDATION_FREQUENCY = 60000;
+
 export class SiteLoginDialog extends Dialog implements SiteLoginProvider {
     rootElement : any
     usernameElem : JQuery<HTMLElement>
@@ -144,9 +146,12 @@ export class SiteLoginDialog extends Dialog implements SiteLoginProvider {
         await this.services.siteService.saveSite(site);
 
         // validate token
-        var validated = await gateway.validateToken(site);
-        if (!validated) {
-            return false;
+        var validatedDelta = Date.now() - (site.config.tokenValidatedAt || 0);
+        if (validatedDelta > TOKEN_VALIDATION_FREQUENCY) {
+            var validated = await gateway.validateToken(site);
+            if (!validated) {
+                return false;
+            }
         }
 
         await this.services.siteService.saveSite(site);

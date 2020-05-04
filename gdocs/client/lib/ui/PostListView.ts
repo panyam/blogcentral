@@ -43,10 +43,12 @@ export class PostListView {
             <td width="50px">
                 <button class = "select_post_button"
                         id = "select_post_{{@index}}">Select</button>
+                <!--
                 <br/>
                 <button class="remove_post_button ui-button ui-widget ui-corner-all ui-button-icon-only" title="Remove Post" id = "remove_post_{{@index}}">
                     <span class="ui-icon ui-icon-trash"></span> Remove
                 </button>
+                -->
             </td>
         </tr>
         </table>

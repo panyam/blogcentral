@@ -2,6 +2,7 @@
 :root {
     --toolbar-button-height: 30px;
     --posts-panel-search-bar-height: 90px;
+    --default-bg: aliceblue;
 }
 
 // body { background-color: yellow; }
@@ -28,6 +29,11 @@ fieldset {
 	background-position: top;
 }
 
+.td_param_name {
+    font-weight: bold;
+    width: 80px;
+}
+
 #sites_panel_div {
     left: 0px;
     top: 0px;
@@ -35,6 +41,7 @@ fieldset {
     right: 0px;
     position: absolute;
     overflow: scroll;
+    background: var(--default-bg);
 }
 
 #posts_panel_div {
@@ -44,7 +51,9 @@ fieldset {
     bottom: 0px;
     right: 0px;
     position: absolute;
-    background: aliceblue;
+    opacity: 1;
+    // background: aliceblue;
+    background: var(--default-bg);
 }
 
 #posts_panel_div > #search_bar_div {

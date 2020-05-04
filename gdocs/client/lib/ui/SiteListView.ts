@@ -30,7 +30,7 @@ export class SiteListView {
             <table class = "site_table"
                    id = "site_table_{{@index}}" >
                 <tr>
-                    <td class = "site_param_name"> Site Host: </td>
+                    <td class = "td_param_name"> Site Host: </td>
                     <td> {{this.site_host}} </td>
                     <td rowspan = 2>
                         <button class="remove_site_button ui-button ui-widget ui-corner-all ui-button-icon-only" title="Remove Site" id = "remove_site_{{@index}}">
@@ -39,7 +39,7 @@ export class SiteListView {
                     </td>
                 </tr>
                 <tr>
-                    <td class = "site_param_name"> Username: </td>
+                    <td class = "td_param_name"> Username: </td>
                     <td> {{this.username}} </td>
                 </tr>
                 <tr>
