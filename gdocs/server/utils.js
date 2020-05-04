@@ -46,3 +46,22 @@ function setUserProperty(key, value) {
     var properties = PropertiesService.getUserProperties();
     properties.setProperty(key, value);
 }
+
+function urlfetch(url, options) {
+    // TODO: Remove after dev
+    console.log("UrlFetch, URL: ", url);
+    console.log("UrlFetch, Options: ", options);
+    var response = UrlFetchApp.fetch(url, options);
+    var respText = response.getContentText()
+    console.log("UrlFetch, Response: ", respText);
+    // var data = response.getContent();
+    // var b2s = String.fromCharCode.apply(String, response.data);
+    // var parsed = JSON.parse(b2s);
+    var parsed = JSON.parse(respText);
+    var out = {
+        'status': response.getResponseCode(),
+        'data': parsed,
+        'headers': response.getAllHeaders()
+    };
+    return out;
+}

@@ -1,11 +1,14 @@
 
 declare var Handlebars : any;
 import { AddPostDialog } from "./AddPostDialog";
+import { ActivityIndicator } from "./ActivityIndicator";
 import { PostListView } from "./PostListView";
-import { ensureElement } from "../utils";
+import { setVisible, setEnabled, ensureElement } from "../utils";
 import { Int, Nullable } from "../types";
 import { SiteType, Site, Post } from "../models";
 import { ServiceCatalog } from "../catalog";
+
+const PAGE_LENGTH = 20;
 
 export class PostsPanel {
     rootElement : any
@@ -14,7 +17,7 @@ export class PostsPanel {
     searchBarDiv : any
     searchButton : any
     searchField : any
-    orderByField : any
+    orderbyField : any
     orderField : any
     searchInField : any
     prevButton : any
@@ -25,6 +28,9 @@ export class PostsPanel {
     resolveFunc : any
     rejectFunc : any
     site : Nullable<Site> = null;
+    activityIndicator : ActivityIndicator
+    currentPage = 1;
+    hasNextPage = false;
 
     constructor(elem_or_id : string, services : ServiceCatalog) {
         this.rootElement = ensureElement(elem_or_id);
@@ -62,13 +68,14 @@ export class PostsPanel {
         var postService = this.services.postService;
 
         this.searchBarDiv = ensureElement("search_bar_div", this.rootElement);
-        this.orderByField = ensureElement("search_bar_div", this.rootElement);
-        this.orderField = ensureElement("search_bar_div", this.rootElement);
-        this.searchInField = ensureElement("search_bar_div", this.rootElement);
+        this.orderbyField = ensureElement("orderby", this.rootElement);
+        this.orderField = ensureElement("order", this.rootElement);
+        this.searchInField = ensureElement("searchin", this.rootElement);
 
         this.searchButton = ensureElement("search_button", this.searchBarDiv);
         this.searchButton.button().on("click", function() {
-            self.searchPosts();
+            self.enableButtons(false);
+            self.searchPosts(self.currentPage);
         });
 
         this.searchField = ensureElement("search_field", this.searchBarDiv);
@@ -90,11 +97,15 @@ export class PostsPanel {
 
         this.prevButton = this.rootElement.find("#prev_button");
         this.prevButton.button().on("click", function() {
+            self.enableButtons(false);
+            self.searchPosts(self.currentPage - 1);
         });
         this.prevButton.hide();
 
         this.nextButton = this.rootElement.find("#next_button");
         this.nextButton.button().on("click", function() {
+            self.enableButtons(false);
+            self.searchPosts(self.currentPage + 1);
         });
         this.nextButton.hide();
 
@@ -106,14 +117,46 @@ export class PostsPanel {
         this.closeButton.button().on("click", function() {
             self.close();
         });
+
+        this.activityIndicator = new ActivityIndicator(this.rootElement);
     }
 
-    async searchPosts() {
-        var orderBy = this.orderByField.val();
-        var orderField = this.orderField.val();
+    async searchPosts(page : Int) {
+        var orderBy = this.orderbyField.val();
+        var order = this.orderField.val();
         var searchIn = this.searchInField.val();
         var query = this.searchField.val();
-        var posts = await this.services.siteGateway.getPosts(this.site!!);
-        console.log("Got Posts: ", posts);
+        
+        var site = this.site;
+        var services = this.services;
+        if (site != null &&
+            await services.siteLoginProvider.ensureLoggedIn(site)) {
+            this.activityIndicator.show();
+            var posts = await services.siteGateway.getPosts(site, {
+                "order": order,
+                "orderBy": orderBy,
+                "searchIn": searchIn,
+                "query": query,
+                "page": page,
+                "per_page": PAGE_LENGTH + 1
+            });
+            console.log("Fetched Posts: ", posts);
+            if (posts.length > 0) {
+                this.hasNextPage = posts.length > PAGE_LENGTH;
+                this.currentPage = page;
+                setVisible(this.prevButton, page > 1);
+                setVisible(this.nextButton, this.hasNextPage);
+                this.postListView.posts = posts;
+            }
+        }
+        this.activityIndicator.hide();
+        this.enableButtons();
+    }
+
+    enableButtons(enable : boolean = true) {
+        var opacity = enable ? 1 : 0.5;
+        setEnabled(this.searchButton, enable).css('opacity',opacity);
+        setEnabled(this.prevButton, enable).css('opacity',opacity);
+        setEnabled(this.nextButton, enable).css('opacity',opacity);
     }
 };

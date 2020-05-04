@@ -100,6 +100,11 @@ fieldset {
     border-top: solid 2px;
     border-bottom: solid 2px;
     margin-bottom: 5px;
+    overflow: scroll;
+}
+
+#posts_panel_div > #post_list_div span.post_title {
+    font-weight: bold;
 }
 
 #posts_panel_div > #button_panel {

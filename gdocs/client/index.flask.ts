@@ -13,7 +13,7 @@ $(function() {
     var httpClient = new JQHttpClient();
     var catalog = new ServiceCatalog(store, httpClient);
     catalog.siteGateway = new SiteGateway(catalog);
-    const app = new BCJS.App.App(catalog)
+    (window as any).bcApp = new BCJS.App.App(catalog)
 });
 
 // export default UserList class

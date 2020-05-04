@@ -1,6 +1,5 @@
 
 import { Dialog } from "./Dialog";
-import { ensureElement } from "../utils";
 import { SiteLoginProvider } from "../auth";
 import { Nullable } from "../types";
 import { Site } from "../models";
@@ -61,6 +60,7 @@ export class SiteLoginDialog extends Dialog implements SiteLoginProvider {
               <label for="site_password">Password</label>
               <input type="password" name="site_password" 
                      id="site_password" 
+                     value="qFsxYc0GzNVJxkwFm(9swPM1"
                      class="text ui-widget-content ui-corner-all">
 
 

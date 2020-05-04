@@ -28,6 +28,51 @@ export class SiteGateway {
         return response.data.token;
     }
 
+    async validateToken(site : Site) {
+        var request = this.siteRequest(site, '/jwt-auth/v1/token/validate');
+        request.options.method = "post";
+        try {
+            var httpClient = this.services.httpClient;
+            var response = await httpClient.send(request);
+            site.config.tokenValidatedAt = Date.now();
+            return true;
+        } catch (e) {
+            site.config.tokenValidatedAt = 0;
+            console.log("Validation Exception: ", e);
+            return false;
+        }
+    }
+
+    async getPosts(site : Site, options : any) {
+        var httpClient = this.services.httpClient;
+        var path = '/wp/v2/posts/';
+        var params = [];
+        if (options.query) {
+            params.push("search=" + options.query);
+        }
+        if (options.page) {
+            params.push("page=" + options.page);
+        }
+        if (options.per_page) {
+            params.push("per_page=" + options.per_page);
+        }
+        if (options.order) {
+            params.push("order=" + options.order);
+        }
+        if (options.orderby) {
+            params.push("orderby=" + options.orderby);
+        }
+        var qp = params.join("&");
+        var request = this.siteRequest(site, path + "?" + qp);
+        try {
+            var response = await httpClient.send(request);
+            return response.data;
+        } catch (e) {
+            console.log("Get Posts Exception: ", e);
+            throw e;
+        }
+    }
+
     siteEndPoint(site : Site, path : string) {
         var apiHost = site.site_host;
         if (!apiHost.endsWith("/")) {
@@ -53,37 +98,5 @@ export class SiteGateway {
             "headers": headers
         });
         return request;
-    }
-
-    async validateToken(site : Site) {
-        var request = this.siteRequest(site, '/jwt-auth/v1/token/validate');
-        request.options.method = "post";
-        try {
-            var httpClient = this.services.httpClient;
-            var response = await httpClient.send(request);
-            site.config.tokenValidatedAt = Date.now();
-            return true;
-        } catch (e) {
-            site.config.tokenValidatedAt = 0;
-            console.log("Validation Exception: ", e);
-            return false;
-        }
-    }
-
-    async getPosts(site : Site) {
-        var result = await this.services.siteLoginProvider.ensureLoggedIn(site);
-        if (!result) {
-            return [];
-        }
-        var httpClient = this.services.httpClient;
-        var request = this.siteRequest(site, '/wp/v2/posts/');
-        request.options.method = "post";
-        try {
-            var response = await httpClient.send(request);
-            return response.data;
-        } catch (e) {
-            console.log("Get Posts Exception: ", e);
-            throw e;
-        }
     }
 };

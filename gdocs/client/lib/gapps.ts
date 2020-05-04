@@ -4,6 +4,7 @@ import { Store } from "./stores"
 import { Request, Response, HttpClient } from "./net"
 
 declare var google : any;
+declare var UrlFetchApp : any;
 export class PropertiesStore extends Store {
     async get(key : string) {
         key = this.normalizedKey(key);
@@ -34,10 +35,12 @@ export class GAppsHttpClient extends HttpClient {
     async send(request : Request) : Promise<Response> {
         var options : any = {
             "method": request.method,
-            "url": request.url,
             "headers": request.headers,
             "muteHttpExceptions": false
         };
+        if (request.contentType) {
+            options.contentType = request.contentType;
+        }
         if (request.body != null) {
             if (request.contentType == "application/json") {
                 options.payload = JSON.stringify(request.body);
@@ -45,11 +48,21 @@ export class GAppsHttpClient extends HttpClient {
                 options.payload = request.body;
             }
         }
-        var response = await $.ajax(options);
-        return this.toResponse(response);
+        var self = this;
+        return new Promise((resolve, reject) => {
+            google.script.run
+                    .withSuccessHandler((response : any) => {
+                        resolve(self.toResponse(request, response));
+                    })
+                    .withFailureHandler(reject)
+                    .urlfetch(request.url, options);
+        });
     }
 
-    toResponse(response : any) : Response {
-        return new Response();
+    toResponse(_request : Request, response : any) : Response {
+        console.log("Response: ", response);
+        var out = new Response(response.status, "", response.data);
+        out.headers = response.headers;
+        return out;
     }
 }

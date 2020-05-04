@@ -8,6 +8,7 @@ import { ServiceCatalog } from "../catalog";
 export class PostListView {
     rootElement : any
     services : ServiceCatalog
+    _posts : Post[] = []
 
     constructor(elem_or_id : any, services : ServiceCatalog) {
         this.rootElement = ensureElement(elem_or_id);
@@ -15,74 +16,42 @@ export class PostListView {
         this.refresh();
     }
 
-    get template() : string {
-        return `
-            {{# each siteService.sites }}
-            <table class = "site_table"
-                   id = "site_table_{{@index}}" >
-                <tr>
-                    <td class = "site_param_name"> Site Host: </td>
-                    <td> {{this.site_host}} </td>
-                </tr>
-                <tr>
-                    <td class = "site_param_name"> Username: </td>
-                    <td> {{this.username}} </td>
-                </tr>
-                <tr>
-                    <td colspan = 2>
-                        <center>
-                            <button class = "publish_post_button"
-                                    id = "publish_post_{{@index}}">Connect</button>
-                            <button class = "remove_site_button"
-                                    id = "remove_site_{{@index}}">Remove</button>
-                        </center>
-                        <center>
-                            <div class = "progressbar"
-                                 id="progressbar_{{@index}}"></div>
-                        </center>
-                    </td>
-                </tr>
-            </table>
-            <hr/>
-            {{/each}}
-        `
+    set posts(posts : Post[]) {
+        this._posts = posts;
+        this.refresh();
     }
 
-    setConnecting(index : Int, connecting : boolean) {
-        var progressbar = this.rootElement.find("#progressbar_" + index);
-        var publish_post_button = this.rootElement.find("#publish_post_" + index);
-        var remove_button = this.rootElement.find("#remove_site_" + index);
-        publish_post_button.prop('disabled', connecting);
-        remove_button.prop('disabled', connecting);
-        if (connecting) {
-            progressbar.progressbar( "option", "value", false );
-            progressbar.show();
-        } else {
-            progressbar.hide();
-        }
+    get template() : string {
+        return `
+        {{# each posts }}
+        <table class = "post_table" width="100%" id = "post_table_{{@index}}" >
+        <tr>
+            <td>
+                <span class="post_title"> {{{ this.title.rendered }}} </span>
+            </td>
+            <td width="50px">
+                <button class = "select_post_button"
+                        id = "select_post_{{@index}}">Select</button>
+            </td>
+        </tr>
+        </table>
+        <hr/>
+        {{/each}}
+        `
     }
 
     refresh() {
         var self = this;
-        var siteService = this.services.siteService;
-        var siteServiceTemplate = Handlebars.compile(this.template);
-        var html = siteServiceTemplate({
-            "siteService" : siteService
+        var postsListTemplate = Handlebars.compile(this.template);
+        var html = postsListTemplate({
+            "posts" : this._posts
         });
         this.rootElement.html(html);
-        var publish_post_buttons = this.rootElement.find(".publish_post_button");
-        var remove_buttons = this.rootElement.find(".remove_site_button");
-        var progressbars = this.rootElement.find(".progressbar");
-        progressbars.progressbar({ value: false });
-        progressbars.hide();
-        publish_post_buttons.on( "click", function( event : any) {
-            var index = parseInt(event.currentTarget.id.substring("publish_post_".length));
-            var site = siteService.siteAt(index);
-        });
-        remove_buttons.on( "click", function( event : any) {
-            var index = parseInt(event.currentTarget.id.substring("remove_site_".length));
-            console.log("Removing Site at: ", index);
-            siteService.removeAt(index).then(() => self.refresh());
+        var select_post_buttons = this.rootElement.find(".select_post_button");
+        select_post_buttons.on( "click", function( event : any) {
+            var index = parseInt(event.currentTarget.id.substring("select_post_".length));
+            var post = self._posts[index];
+            console.log("Selected Post: ", index, post);
         });
     }
 }
