@@ -5,7 +5,7 @@ import { Nullable } from "../types";
 import { Site } from "../models";
 import { ServiceCatalog } from "../catalog";
 
-const TOKEN_VALIDATION_FREQUENCY = 60000;
+const TOKEN_VALIDATION_FREQUENCY = 600000;
 
 export class SiteLoginDialog extends Dialog implements SiteLoginProvider {
     rootElement : any

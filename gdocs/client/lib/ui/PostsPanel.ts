@@ -2,7 +2,7 @@
 declare var Handlebars : any;
 import { AddPostDialog } from "./AddPostDialog";
 import { ActivityIndicator } from "./ActivityIndicator";
-import { PostListView } from "./PostListView";
+import { PostListView, PostListViewDelegate } from "./PostListView";
 import { setVisible, setEnabled, ensureElement } from "../utils";
 import { Int, Nullable } from "../types";
 import { SiteType, Site, Post } from "../models";
@@ -10,7 +10,7 @@ import { ServiceCatalog } from "../catalog";
 
 const PAGE_LENGTH = 5;
 
-export class PostsPanel {
+export class PostsPanel implements PostListViewDelegate {
     rootElement : any
     addPostDialog : AddPostDialog
     addButton : any
@@ -38,9 +38,9 @@ export class PostsPanel {
         this.setupViews();
     }
 
-    async open(site : Site) : Promise<Post[]> {
-        var parent = this.rootElement.parent();
+    async open(site : Site) : Promise<Nullable<Post>> {
         /*
+        var parent = this.rootElement.parent();
         var margins = parseInt(parent.css("margin-left")) + 
                       parseInt(parent.css("margin-right"));
         */
@@ -49,6 +49,9 @@ export class PostsPanel {
         var self = this;
         self.site = site;
         self.postListView.site = site;
+        self.postListView.posts = [];
+        setVisible(this.prevButton, false);
+        setVisible(this.nextButton, false);
         return new Promise((resolve, reject) => {
             self.resolveFunc = resolve;
             self.rejectFunc = reject;
@@ -66,8 +69,6 @@ export class PostsPanel {
 
     setupViews() {
         var self = this;
-        var postService = this.services.postService;
-
         this.searchBarDiv = ensureElement("search_bar_div", this.rootElement);
         this.orderbyField = ensureElement("orderby", this.rootElement);
         this.orderField = ensureElement("order", this.rootElement);
@@ -95,6 +96,7 @@ export class PostsPanel {
 
         var postListDiv = this.rootElement.find("#post_list_div");
         this.postListView = new PostListView(postListDiv, this.services);
+        this.postListView.delegate = this;
 
         this.prevButton = this.rootElement.find("#prev_button");
         this.prevButton.button().on("click", function() {
@@ -179,4 +181,13 @@ export class PostsPanel {
         setEnabled(this.prevButton, enable).css('opacity',opacity);
         setEnabled(this.nextButton, enable).css('opacity',opacity);
     }
+
+    postSelected(plv : PostListView, post : Post) : void {
+        this.site.selectedPost = {
+            "id": post.id,
+            "title": post.options.title
+        };
+        this.services.siteService.saveSite(this.site).then(() => { });
+    }
 };
+

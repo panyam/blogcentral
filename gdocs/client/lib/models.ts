@@ -15,7 +15,7 @@ export class Site {
     site_host : string
     username : string
     config : any
-    selectedPosts : Post[] = [];
+    selectedPost : any = null;
 
     constructor(site_type : SiteType,
                 site_host : string,
@@ -28,12 +28,12 @@ export class Site {
     }
 
     get payload() : any {
-        var selectedPosts = this.selectedPosts;
+        var selectedPost = this.selectedPost;
         return {
             "site_type": this.site_type, 
             "site_host": this.site_host, 
             "username": this.username,
-            "selectedPosts": selectedPosts.map(p => p.payload),
+            "selectedPost": selectedPost, // s.map(p => p.payload),
             "config": this.config || {}
         };
     }

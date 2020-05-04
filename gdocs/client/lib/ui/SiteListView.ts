@@ -5,22 +5,21 @@ import { Int, Nullable } from "../types";
 import { SiteType, Site, Post } from "../models";
 import { ServiceCatalog } from "../catalog";
 
-export interface PostSelector {
+export interface SiteListViewDelegate {
     /**
      * Lets one select one or more posts in a site.
      */
-    selectPosts(site : Site, index : Int) : Promise<Post[]>;
+    selectPost(site : Site, index : Int) : Promise<Nullable<Post>>;
 }
 
 export class SiteListView {
     rootElement : any
     services : ServiceCatalog
-    postSelector : any
+    delegate : Nullable<SiteListViewDelegate> = null
 
     constructor(elem_or_id : any, services : ServiceCatalog) {
         this.rootElement = ensureElement(elem_or_id);
         this.services = services;
-        this.postSelector = null;
         this.refresh();
     }
 
@@ -105,18 +104,14 @@ export class SiteListView {
         });
     }
 
-    onSelectPostClicked(event : any) {
+    async onSelectPostClicked(event : any) {
         var self = this;
         var siteService = this.services.siteService;
         var index = parseInt(event.currentTarget.id.substring("select_post_".length));
         var site = siteService.siteAt(index);
-        if (self.postSelector != null) {
-            self.postSelector.selectPosts(site, index)
-            .then((posts : Post[]) => {
-                site.selectedPosts = posts;
-                siteService.saveSite(site);
-                self.refresh();
-            });
+        if (this.delegate != null) {
+            var post = await this.delegate.selectPost(site, index);
+            this.refresh();
         }
     }
 

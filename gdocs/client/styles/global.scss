@@ -1,9 +1,10 @@
 
-:root {
-    --toolbar-button-height: 30px;
-    --posts-panel-search-bar-height: 90px;
-    --default-bg: aliceblue;
-}
+$default_bg: aliceblue;
+$posts_panel_header_height: 50px;
+$posts_panel_header_button_height: 30px;
+$posts_panel_search_bar_height: 120px;
+$posts_panel_search_field_height: 30px;
+$posts_panel_search_button_height: 30px;
 
 // body { background-color: yellow; }
 
@@ -41,7 +42,7 @@ fieldset {
     right: 0px;
     position: absolute;
     overflow: scroll;
-    background: var(--default-bg);
+    background: $default_bg;
 }
 
 #posts_panel_div {
@@ -53,15 +54,43 @@ fieldset {
     position: absolute;
     opacity: 1;
     // background: aliceblue;
-    background: var(--default-bg);
+    background: $default_bg;
+}
+
+#posts_panel_div > #header_div #add_button {
+    position: absolute;
+    top: ($posts_panel_header_height - $posts_panel_header_button_height) / 2;
+    right: 0px;
+    height: $posts_panel_header_button_height;
+}
+
+#posts_panel_div > #header_div #close_button {
+    position: absolute;
+    top: ($posts_panel_header_height - $posts_panel_header_button_height) / 2;
+    left: 0px;
+    height: $posts_panel_header_button_height;
+}
+
+#posts_panel_div > #header_div {
+    position: absolute;
+    top: 0px;
+    height: $posts_panel_header_height;
+    left: 0px;
+    right: 0px;
+}
+
+#posts_panel_div > #header_div h2 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    text-align: center;
 }
 
 #posts_panel_div > #search_bar_div {
     position: absolute;
+    top: $posts_panel_header_height;
     left: 0px;
     right: 0px;
-    top: 0px;
-    height: var(--posts-panel-search-bar-height);
+    height: $posts_panel_search_bar_height;
 }
 
 #posts_panel_div > #search_bar_div > #search_field {
@@ -70,40 +99,39 @@ fieldset {
     left: 0px;
     right: 80px;
     width: 100%;
-    bottom: 0px;
-    height: 30px;
+    height: $posts_panel_search_field_height;
 }
 
-#posts_panel_div > #search_bar_div > #search_button {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    float: right;
-    bottom: 0px;
-    height: 30px;
-}
-
-#posts_panel_div > #search_bar_div > #search_form_div {
+#posts_panel_div > #search_bar_div > #search_options_div {
     position: absolute;
     left: 0px;
     right: 0px;
-    top: 35px;
+    padding-top: 10px;
+    top: $posts_panel_search_field_height;
     text-align: center;
 }
 
-#posts_panel_div #search_form_div fieldset > label  {
+#posts_panel_div > #search_bar_div > #button_panel {
+    position: absolute;
+    text-align: center;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+}
+
+#posts_panel_div #search_options_div fieldset > label  {
     margin-left: 20px;
     font-weight: bold;
 }
 
-// #posts_panel_div #search_form_div fieldset > select { width: 80px; }
+// #posts_panel_div #search_options_div fieldset > select { width: 80px; }
 
-#posts_panel_div #search_form_div fieldset td {
+#posts_panel_div #search_options_div fieldset td {
     padding-top: 0px;
     padding-bottom: 0px;
 }
 
-#posts_panel_div #search_form_div fieldset thead td {
+#posts_panel_div #search_options_div fieldset thead td {
     font-weight: bold;
 }
 
@@ -111,8 +139,8 @@ fieldset {
     position: absolute;
     left: 0px;
     right: 0px;
-    bottom: var(--toolbar-button-height);
-    top: var(--posts-panel-search-bar-height);
+    bottom: 0px;
+    top: $posts_panel_header_height + $posts_panel_search_bar_height;
     border-top: solid 2px;
     border-bottom: solid 2px;
     margin-bottom: 5px;
@@ -121,14 +149,17 @@ fieldset {
 
 // #posts_panel_div > #post_list_div span.post_title { font-weight: bold; }
 
+/*
+$toolbar_button_height: 30px;
 #posts_panel_div > #button_panel {
     overflow: scroll;
     bottom: 0px;
     left: 0px;
     right: 0px;
-    height: var(--toolbar-button-height);
+    height: $toolbar_button_height;
     position: absolute;
 }
+*/
 
 #add_post_dialog fieldset label {
     font-weight: bold;

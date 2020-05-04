@@ -1,15 +1,15 @@
 
-declare var Handlebars : any;
-import { Dialog } from "./Dialog";
 import { AddSiteDialog } from "./AddSiteDialog";
-import { SiteListView } from "./SiteListView";
+import { SiteListView, SiteListViewDelegate  } from "./SiteListView";
 import { ensureElement } from "../utils";
 import { Int, Nullable } from "../types";
-import { SiteType, Site, Post } from "../models";
+import { PostsPanel } from "./PostsPanel";
+import { Site, Post } from "../models";
 import { ServiceCatalog } from "../catalog";
 
-export class SitesPanel {
+export class SitesPanel implements SiteListViewDelegate {
     rootElement : any
+    postsPanel : PostsPanel
     addSiteDialog : AddSiteDialog
     addButton : any
     siteListView : SiteListView
@@ -30,9 +30,12 @@ export class SitesPanel {
         }
 
         this.addSiteDialog = new AddSiteDialog(addSiteDialogElem);
+        var postsPanelElem = ensureElement("posts_panel_div", this.rootElement);
+        this.postsPanel = new PostsPanel(postsPanelElem, this.services);
 
         var siteListDiv = this.rootElement.find("#site_list_div");
         this.siteListView = new SiteListView(siteListDiv, this.services);
+        this.siteListView.delegate = this;
 
         this.addButton = this.rootElement.find("#add_button");
         this.addButton.button().on("click", function() {
@@ -47,5 +50,16 @@ export class SitesPanel {
         this.services.siteService.loadAll().then(() => {
             self.siteListView.refresh();
         });
+    }
+
+    /**
+     * Lets one select one or more posts in a site.
+     */
+    async selectPost(site : Site, index : Int) {
+        var siteService = this.services.siteService;
+        var post = await this.postsPanel.open(site) as Nullable<Post>;
+        site.selectedPost = post;
+        await siteService.saveSite(site);
+        return post;
     }
 };

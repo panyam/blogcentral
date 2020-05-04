@@ -5,11 +5,16 @@ import { Int, Nullable } from "../types";
 import { SiteType, Site, Post } from "../models";
 import { ServiceCatalog } from "../catalog";
 
+export interface PostListViewDelegate {
+    postSelected(plv : PostListView, post : Post) : void
+}
+
 export class PostListView {
     rootElement : any
     services : ServiceCatalog
     _posts : Post[] = []
     site : Site
+    delegate : Nullable<PostListViewDelegate> = null;
 
     constructor(elem_or_id : any, services : ServiceCatalog) {
         this.rootElement = ensureElement(elem_or_id);
@@ -86,6 +91,13 @@ export class PostListView {
         await services.siteGateway.removePost(this.site, post.id);
         this._posts.splice(index, 1);
         this.refresh();
+    }
+
+    async onSelectPostClicked(event : any) {
+        var services = this.services;
+        var index = parseInt(event.currentTarget.id.substring("remove_post_".length));
+        var post = this._posts[index];
+        if (this.delegate != null) this.delegate.postSelected(this, post);
     }
 }
 
