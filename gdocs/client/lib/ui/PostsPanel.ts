@@ -27,7 +27,7 @@ export class PostsPanel {
     services : ServiceCatalog
     resolveFunc : any
     rejectFunc : any
-    site : Nullable<Site> = null;
+    site : Site
     activityIndicator : ActivityIndicator
     currentPage = 1;
     hasNextPage = false;
@@ -48,6 +48,7 @@ export class PostsPanel {
         this.rootElement.animate({ width: width });
         var self = this;
         self.site = site;
+        self.postListView.site = site;
         return new Promise((resolve, reject) => {
             self.resolveFunc = resolve;
             self.rejectFunc = reject;
@@ -111,6 +112,7 @@ export class PostsPanel {
 
         this.addButton = this.rootElement.find("#add_button");
         this.addButton.button().on("click", function() {
+            self.onAddPost();
         });
 
         this.closeButton = this.rootElement.find("#close_button");
@@ -134,7 +136,7 @@ export class PostsPanel {
             this.activityIndicator.show();
             var posts = await services.siteGateway.getPosts(site, {
                 "order": order,
-                "orderBy": orderBy,
+                "orderby": orderBy,
                 "searchIn": searchIn,
                 "query": query,
                 "page": page,
@@ -151,6 +153,24 @@ export class PostsPanel {
         }
         this.activityIndicator.hide();
         this.enableButtons();
+    }
+
+    async onAddPost() {
+        var site = this.site;
+        if (site == null) return ;
+
+        var services = this.services;
+        var newPost = (await this.addPostDialog.open()) as Post;
+        if (newPost == null) return ;
+
+        try {
+            console.log("Creating New Post: ", newPost);
+            this.activityIndicator.show();
+            var post = await services.siteGateway.createPost(site, newPost);
+        } catch (e) {
+            console.log("Create Post Exception: ", e);
+        }
+        this.activityIndicator.hide();
     }
 
     enableButtons(enable : boolean = true) {

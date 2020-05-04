@@ -1,7 +1,7 @@
 
 :root {
     --toolbar-button-height: 30px;
-    --posts-panel-search-bar-height: 60px;
+    --posts-panel-search-bar-height: 90px;
 }
 
 // body { background-color: yellow; }
@@ -87,8 +87,15 @@ fieldset {
     font-weight: bold;
 }
 
-#posts_panel_div #search_form_div fieldset > select {
-    width: 80px;
+// #posts_panel_div #search_form_div fieldset > select { width: 80px; }
+
+#posts_panel_div #search_form_div fieldset td {
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+#posts_panel_div #search_form_div fieldset thead td {
+    font-weight: bold;
 }
 
 #posts_panel_div > #post_list_div {
@@ -103,9 +110,7 @@ fieldset {
     overflow: scroll;
 }
 
-#posts_panel_div > #post_list_div span.post_title {
-    font-weight: bold;
-}
+// #posts_panel_div > #post_list_div span.post_title { font-weight: bold; }
 
 #posts_panel_div > #button_panel {
     overflow: scroll;
@@ -114,4 +119,32 @@ fieldset {
     right: 0px;
     height: var(--toolbar-button-height);
     position: absolute;
+}
+
+#add_post_dialog fieldset label {
+    font-weight: bold;
+    display: block;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#add_post_dialog fieldset input,textarea {
+    display: block;
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#site_login_dialog fieldset label {
+    font-weight: bold;
+    display: block;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#site_login_dialog fieldset input,textarea {
+    display: block;
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }

@@ -132,17 +132,17 @@ export class SiteService {
 
 export class Post {
     id : Nullable<string>
-    config : any
-    constructor(id : Nullable<string> = null, config : any = null) {
-        config = config || {};
+    options : any
+    constructor(id : Nullable<string> = null, options : any = null) {
+        options = options || {};
         this.id = id;
-        this.config = config;
+        this.options = options;
     }
 
     get payload() : any {
         return {
             "id": this.id,
-            "config": this.config
+            "options": this.options
         };
     }
 }

@@ -9,6 +9,7 @@ export class PostListView {
     rootElement : any
     services : ServiceCatalog
     _posts : Post[] = []
+    site : Site
 
     constructor(elem_or_id : any, services : ServiceCatalog) {
         this.rootElement = ensureElement(elem_or_id);
@@ -27,11 +28,25 @@ export class PostListView {
         <table class = "post_table" width="100%" id = "post_table_{{@index}}" >
         <tr>
             <td>
-                <span class="post_title"> {{{ this.title.rendered }}} </span>
+                <h3 class="post_title"> 
+                    <a target="_blank" href="{{ this.link }}">
+                        {{{ this.title.rendered }}} 
+                    </a>
+                </h3>
+                <span class="post_created_at">
+                    Created: {{this.date}}
+                </span>
+                <span class="post_modified_at">
+                    Modified: {{this.modified}}
+                </span>
             </td>
             <td width="50px">
                 <button class = "select_post_button"
                         id = "select_post_{{@index}}">Select</button>
+                <br/>
+                <button class="remove_post_button ui-button ui-widget ui-corner-all ui-button-icon-only" title="Remove Post" id = "remove_post_{{@index}}">
+                    <span class="ui-icon ui-icon-trash"></span> Remove
+                </button>
             </td>
         </tr>
         </table>
@@ -53,6 +68,22 @@ export class PostListView {
             var post = self._posts[index];
             console.log("Selected Post: ", index, post);
         });
+
+        var remove_post_buttons = this.rootElement.find(".remove_post_button");
+        remove_post_buttons.on( "click", function( event : any) {
+            self.onRemovePostClicked(event);
+        });
+    }
+
+    async onRemovePostClicked(event : any) {
+        var self = this;
+        var services = this.services;
+        var index = parseInt(event.currentTarget.id.substring("remove_post_".length));
+        var post = self._posts[index];
+        console.log("Removing Post at: ", index);
+        await services.siteGateway.removePost(this.site, post.id);
+        this._posts.splice(index, 1);
+        this.refresh();
     }
 }
 
