@@ -2,9 +2,10 @@
 import { Nullable } from "./types"
 import { Store } from "./stores"
 import { Request, Response, HttpClient } from "./net"
+import { ContentPublisher } from "./publishers"
+import { Site, Post } from "./models"
 
 declare var google : any;
-declare var UrlFetchApp : any;
 export class PropertiesStore extends Store {
     async get(key : string) {
         key = this.normalizedKey(key);
@@ -66,3 +67,17 @@ export class GAppsHttpClient extends HttpClient {
         return out;
     }
 }
+
+export class GAppsPublisher implements ContentPublisher {
+    async publishToSite(site : Site, content : any) {
+        return new Promise((resolve, reject) => {
+            google.script.run
+                    .withSuccessHandler(resolve)
+                    .withFailureHandler(reject)
+                    .doc2content(site.payload,
+                                 site.selectedPost.options,
+                                 content);
+        });
+    }
+}
+

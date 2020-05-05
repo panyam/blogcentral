@@ -71,4 +71,16 @@ export class SitesPanel implements SiteListViewDelegate {
         }
         return post;
     }
+
+    /**
+     * Kicks of publishing of content to the given site.
+     */
+    async publishPost(site : Site, index : Int) {
+        var siteService = this.services.siteService;
+        if (site.selectedPost == null) {
+            alert("Please select a post for this site to publish to");
+            return null;
+        }
+        return this.services.contentPublisher.publishToSite(site, null);
+    }
 };

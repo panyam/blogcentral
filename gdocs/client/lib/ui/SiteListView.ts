@@ -10,6 +10,11 @@ export interface SiteListViewDelegate {
      * Lets one select one or more posts in a site.
      */
     selectPost(site : Site, index : Int) : Promise<Nullable<Post>>;
+
+    /**
+     * Kicks of publishing of content to the given site.
+     */
+    publishPost(site : Site, index : Int) : Promise<Nullable<boolean>>;
 }
 
 export class SiteListView {
@@ -125,12 +130,19 @@ export class SiteListView {
         }
     }
 
-    onPublishPostClicked(event : any) {
-        var self = this;
+    async onPublishPostClicked(event : any) {
         var siteService = this.services.siteService;
         var index = parseInt(event.currentTarget.id.substring("publish_post_".length));
         var site = siteService.siteAt(index);
-        console.log("Publish to site: ", index, site);
+        if (site.selectedPost == null) {
+            if (this.delegate != null) {
+                var post = await this.delegate.selectPost(site, index);
+                this.refresh();
+            }
+        }
+        if (this.delegate != null) {
+            return this.delegate.publishPost(site, index);
+        }
     }
 
     onRemoveSiteClicked(event : any) {
