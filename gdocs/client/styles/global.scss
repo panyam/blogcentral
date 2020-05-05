@@ -163,6 +163,20 @@ $toolbar_button_height: 30px;
 }
 */
 
+#add_site_dialog fieldset label {
+    font-weight: bold;
+    display: block;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#add_site_dialog fieldset input,textarea,select {
+    display: block;
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
 #add_post_dialog fieldset label {
     font-weight: bold;
     display: block;
@@ -170,7 +184,7 @@ $toolbar_button_height: 30px;
     padding-bottom: 5px;
 }
 
-#add_post_dialog fieldset input,textarea {
+#add_post_dialog fieldset input,textarea,select {
     display: block;
     width: 100%;
     padding-top: 5px;
@@ -184,7 +198,7 @@ $toolbar_button_height: 30px;
     padding-bottom: 5px;
 }
 
-#site_login_dialog fieldset input,textarea {
+#site_login_dialog fieldset input,textarea,select {
     display: block;
     width: 100%;
     padding-top: 5px;

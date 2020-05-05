@@ -73,7 +73,7 @@ export class SiteLoginDialog extends Dialog implements SiteLoginProvider {
         `
     }
 
-    buttons() {
+    buttons() : any {
         var self = this;
         return {
             "Login": function() {
@@ -82,9 +82,7 @@ export class SiteLoginDialog extends Dialog implements SiteLoginProvider {
                     self.resolveFunc(self.credentials);
                 }
             },
-            Cancel: function() {
-                self.close(null);
-            }
+            Cancel: function() { self.close(null); }
         };
     }
 

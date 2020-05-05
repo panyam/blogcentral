@@ -43,15 +43,13 @@ export class AddSiteDialog extends Dialog {
         `
     }
 
-    buttons() {
+    buttons() : any {
         var self = this;
         return {
             "Add Site": function() {
                 self.close(self.site);
             },
-            Cancel: function() {
-                self.close(null);
-            }
+            Cancel: function() { self.close(null); }
         };
     }
 

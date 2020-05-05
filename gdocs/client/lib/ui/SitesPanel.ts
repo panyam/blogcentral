@@ -41,9 +41,11 @@ export class SitesPanel implements SiteListViewDelegate {
         this.addButton.button().on("click", function() {
             self.addSiteDialog.open()
                 .then((site : Site) => {
-                    self.services.siteService.addSite(site as Site).then(() => {
-                        self.siteListView.refresh();
-                    });
+                    if (site != null) {
+                        self.services.siteService.addSite(site as Site).then(() => {
+                            self.siteListView.refresh();
+                        });
+                    }
                 });
         });
 

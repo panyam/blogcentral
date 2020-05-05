@@ -48,15 +48,13 @@ export class AddPostDialog extends Dialog {
         });
     }
 
-    buttons() {
+    buttons() : any {
         var self = this;
         return {
             "Create Post": function() {
                 self.close(self.post);
             },
-            Cancel: function() {
-                self.close(null);
-            }
+            Cancel: function() { self.close(null); }
         };
     }
 
