@@ -54,7 +54,7 @@ class Printer {
         this.level += this.delta;
 
         try {
-            block();
+            block(this);
 
             if (this.atFirstCol) {
                 // first col so "remove" trailing spaces
@@ -66,7 +66,7 @@ class Printer {
                 }
             }
             this.level -= this.delta;
-            if (this.end_with_nl) this.nextline();
+            if (end_with_nl) this.nextline();
         } catch (e) {
             this.level = 0;
             this.nextline();
