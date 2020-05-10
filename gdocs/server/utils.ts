@@ -1,17 +1,7 @@
 
 //////////// Helper utility functions
 
-// var CURRENT_USER_TZ_OFFSET : number = new Date().getTimezoneOffset();
-var DOCUMENT_TIMEZONE : any= null;
-
 import { DefaultProperties } from "./Defaults"
-
-export function getDocumentTimeZone() {
-    if (DOCUMENT_TIMEZONE == null) {
-        DOCUMENT_TIMEZONE = DocumentApp.getActiveSpreadsheet().getSpreadsheetTimeZone();
-    }
-    return DOCUMENT_TIMEZONE;
-}
 
 export function loadDocProperties() {
   var properties : any = null;

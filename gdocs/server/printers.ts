@@ -6,7 +6,7 @@ export class Printer {
   value = "";
   tab_size = 2;
 
-  constructor(options: any) {
+  constructor(options: any = null) {
     this.options = options = options || {};
     this.level = options.level || 0;
     this.tab_size = options.tab_size || 2;

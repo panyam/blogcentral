@@ -1,7 +1,7 @@
 {
     "exclude": [
         "node_modules/*",
-        "dist/server/*"
+        "dist/*"
     ],
   "compilerOptions": {
     "skipLibCheck": true,
@@ -9,13 +9,12 @@
     "noImplicitAny": true,
     "module": "es6",
     "target": "es5",
-    "jsx": "react",
     "allowJs": false,
     "strictNullChecks": true,
     "typeRoots": [ 
         "node_modules/types"
     ],
-    "types": [ "jquery", "node" ],
+    "types": [ "jquery", "node", "google-apps-script" ],
     "lib":[ "es2015", "dom", "esnext" ],
     "experimentalDecorators": true,
     "plugins": [
