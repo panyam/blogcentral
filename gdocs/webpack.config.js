@@ -177,7 +177,10 @@ module.exports = (env, options) => {
                 },
                 {
                     test: /\.ts$/,
-                    exclude: /node_modules/,
+                    exclude: [
+                        /node_modules/,
+                        /server/,
+                    ],
                     use: ['ts-loader']
                 },
                 /*

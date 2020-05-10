@@ -1,18 +1,20 @@
 
 //////////// Helper utility functions
 
-var CURRENT_USER_TZ_OFFSET = new Date().getTimezoneOffset();
-var DOCUMENT_TIMEZONE = null;
+// var CURRENT_USER_TZ_OFFSET : number = new Date().getTimezoneOffset();
+var DOCUMENT_TIMEZONE : any= null;
 
-function getDocumentTimeZone() {
+import { DefaultProperties } from "./Defaults"
+
+export function getDocumentTimeZone() {
     if (DOCUMENT_TIMEZONE == null) {
         DOCUMENT_TIMEZONE = DocumentApp.getActiveSpreadsheet().getSpreadsheetTimeZone();
     }
     return DOCUMENT_TIMEZONE;
 }
 
-function loadDocProperties() {
-  var properties = null;
+export function loadDocProperties() {
+  var properties : any = null;
   var docProps = PropertiesService.getDocumentProperties();
   var allProperties = docProps.getProperties();
   // Logger.log("All Properties: ", allProperties);
@@ -27,8 +29,8 @@ function loadDocProperties() {
   return properties;
 }
 
-function saveDocProperties(newProperties) {
-  var out = {};
+export function saveDocProperties(newProperties : any) {
+  var out : any = {};
   for (var key in newProperties) {
     var value = newProperties[key];
     out[key] = JSON.stringify(value)
@@ -37,17 +39,17 @@ function saveDocProperties(newProperties) {
   docProps.setProperties(out, false);
 }
 
-function getUserProperty(key) {
+export function getUserProperty(key : string) {
     var properties = PropertiesService.getUserProperties();
     return properties.getProperty(key);
 }
 
-function setUserProperty(key, value) {
+export function setUserProperty(key : string, value : string) {
     var properties = PropertiesService.getUserProperties();
     properties.setProperty(key, value);
 }
 
-function urlfetch(url, options) {
+export function urlfetch(url : string, options : any) {
     // TODO: Remove after dev
     console.log("UrlFetch, URL: ", url);
     console.log("UrlFetch, Options: ", options);
