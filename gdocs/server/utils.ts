@@ -44,8 +44,9 @@ export function urlfetch(url : string, options : any) {
     console.log("UrlFetch, URL: ", url);
     console.log("UrlFetch, Options: ", options);
     var response = UrlFetchApp.fetch(url, options);
+    console.log("UrlFetch, Response: ", response);
     var respText = response.getContentText()
-    console.log("UrlFetch, Response: ", respText);
+    console.log("UrlFetch, ResponseText: ", respText);
     // var data = response.getContent();
     // var b2s = String.fromCharCode.apply(String, response.data);
     // var parsed = JSON.parse(b2s);

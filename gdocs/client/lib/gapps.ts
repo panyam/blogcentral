@@ -37,7 +37,7 @@ export class GAppsHttpClient extends HttpClient {
         var options : any = {
             "method": request.method,
             "headers": request.headers,
-            "muteHttpExceptions": false
+            "muteHttpExceptions": true
         };
         if (request.contentType) {
             options.contentType = request.contentType;
@@ -53,7 +53,11 @@ export class GAppsHttpClient extends HttpClient {
         return new Promise((resolve, reject) => {
             google.script.run
                     .withSuccessHandler((response : any) => {
-                        resolve(self.toResponse(request, response));
+                        if (response.status < 400) {
+                            resolve(self.toResponse(request, response));
+                        } else {
+                            reject(self.toResponse(request, response));
+                        }
                     })
                     .withFailureHandler(reject)
                     .urlfetch(request.url, options);

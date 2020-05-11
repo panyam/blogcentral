@@ -91,65 +91,116 @@ export class Processor {
   }
 
   processBody(elem: GoogleAppsScript.Document.Body) {
+    var attribs = elem.getAttributes();
+    console.log("Attribs: ", attribs);
+    this.processChildren(elem);
     throw new Error("'Body' Not Supported");
   }
   processComment(elem: GoogleAppsScript.Document.Element) {
+    var attribs = elem.getAttributes();
+    console.log("Attribs: ", attribs);
     throw new Error("'Comment' Not Supported");
   }
   processEquation(elem: GoogleAppsScript.Document.Equation) {
+    var attribs = elem.getAttributes();
+    console.log("Attribs: ", attribs);
+    this.processChildren(elem);
     throw new Error("'Equation' Not Supported");
   }
   processEquationFunction(elem: GoogleAppsScript.Document.EquationFunction) {
+    var attribs = elem.getAttributes();
+    console.log("Attribs: ", attribs);
+    this.processChildren(elem);
     throw new Error("'EquationFunction' Not Supported");
   }
   processEquationSymbol(elem: GoogleAppsScript.Document.EquationSymbol) {
+    var attribs = elem.getAttributes();
+    console.log("Attribs: ", attribs);
     throw new Error("'EquationSymbol' Not Supported");
   }
   processEquationFunctionArgumentSeparator(
     elem: GoogleAppsScript.Document.EquationFunctionArgumentSeparator
   ) {
+    var attribs = elem.getAttributes();
+    console.log("Attribs: ", attribs);
     throw new Error("'EquationFunctionArgumentSeparator' Not Supported");
   }
   processHeaderSection(elem: GoogleAppsScript.Document.HeaderSection) {
+    var attribs = elem.getAttributes();
+    console.log("Attribs: ", attribs);
+    this.processChildren(elem);
     throw new Error("'HeaderSection' Not Supported");
   }
   processFooterSection(elem: GoogleAppsScript.Document.FooterSection) {
+    var attribs = elem.getAttributes();
+    console.log("Attribs: ", attribs);
+    this.processChildren(elem);
     throw new Error("'FooterSection' Not Supported");
   }
   processFootnote(elem: GoogleAppsScript.Document.Footnote) {
+    var attribs = elem.getAttributes();
+    console.log("Attribs: ", attribs);
     throw new Error("'Footnote' Not Supported");
   }
   processFootnoteSection(elem: GoogleAppsScript.Document.FootnoteSection) {
+    var attribs = elem.getAttributes();
+    console.log("Attribs: ", attribs);
+    this.processChildren(elem);
     throw new Error("'FootnoteSection' Not Supported");
   }
   processHorizontalRule(elem: GoogleAppsScript.Document.HorizontalRule) {
+    var attribs = elem.getAttributes();
+    console.log("Attribs: ", attribs);
     throw new Error("'HorizontalRule' Not Supported");
   }
   processInlineImage(elem: GoogleAppsScript.Document.InlineImage) {
+    var attribs = elem.getAttributes();
+    console.log("Attribs: ", attribs);
     throw new Error("'InlineImage' Not Supported");
   }
   processInlineDrawing(elem: GoogleAppsScript.Document.InlineDrawing) {
+    var attribs = elem.getAttributes();
+    console.log("Attribs: ", attribs);
     throw new Error("'InlineDrawing' Not Supported");
   }
   processListItem(elem: GoogleAppsScript.Document.ListItem) {
+    var attribs = elem.getAttributes();
+    console.log("Attribs: ", attribs);
+    this.processChildren(elem);
     throw new Error("'ListItem' Not Supported");
   }
   processPageBreak(elem: GoogleAppsScript.Document.PageBreak) {
+    var attribs = elem.getAttributes();
+    console.log("Attribs: ", attribs);
     throw new Error("'PageBreak' Not Supported");
   }
   processParagraph(elem: GoogleAppsScript.Document.Paragraph) {
+    var attribs = elem.getAttributes();
+    console.log("Attribs: ", attribs);
+    this.processChildren(elem);
     throw new Error("'Paragraph' Not Supported");
   }
   processTable(elem: GoogleAppsScript.Document.Table) {
+    var attribs = elem.getAttributes();
+    console.log("Attribs: ", attribs);
+    this.processChildren(elem);
     throw new Error("'Table' Not Supported");
   }
   processTableCell(elem: GoogleAppsScript.Document.TableCell) {
+    var attribs = elem.getAttributes();
+    console.log("Attribs: ", attribs);
+    this.processChildren(elem);
     throw new Error("'TableCell' Not Supported");
   }
   processTableOfContents(elem: GoogleAppsScript.Document.TableOfContents) {
+    var attribs = elem.getAttributes();
+    console.log("Attribs: ", attribs);
+    this.processChildren(elem);
     throw new Error("'TableOfContents' Not Supported");
   }
   processText(elem: GoogleAppsScript.Document.Text) {
+    var attribs = elem.getAttributes();
+    console.log("Attribs: ", attribs);
     throw new Error("'Text' Not Supported");
   }
 }

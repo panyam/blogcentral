@@ -62,7 +62,7 @@ export class SiteLoginDialog extends Dialog implements SiteLoginProvider {
               <label for="site_password">Password</label>
               <input type="password" name="site_password" 
                      id="site_password" 
-                     value="qFsxYc0GzNVJxkwFm(9swPM1"
+                     value=""
                      class="text ui-widget-content ui-corner-all">
 
 
@@ -115,9 +115,9 @@ export class SiteLoginDialog extends Dialog implements SiteLoginProvider {
     /** LoginProvider interface */
     async ensureLoggedIn(site : Site) {
         var gateway = this.services.siteGateway;
-        var siteToken = site.config.token || null;
-        if (siteToken == null) {
-            while (true) {
+        while (true) {
+            site.config.token = site.config.token || null;
+            if (site.config.token == null) {
                 this.site = site;
                 var credentials : any = await this.open();
                 if (credentials == null) return false;
@@ -129,7 +129,8 @@ export class SiteLoginDialog extends Dialog implements SiteLoginProvider {
                         return false;
                     } else {
                         site.config.tokenTimestamp = Date.now();
-                        break ;
+                        // Save what we have so far
+                        await this.services.siteService.saveSite(site);
                     }
                 } catch (e) {
                     console.log("Received Exception: ", e);
@@ -138,21 +139,22 @@ export class SiteLoginDialog extends Dialog implements SiteLoginProvider {
                     this.errorMessage = message;
                 }
             }
-        }
 
-        // Save what we have so far
-        await this.services.siteService.saveSite(site);
-
-        // validate token
-        var validatedDelta = Date.now() - (site.config.tokenValidatedAt || 0);
-        if (validatedDelta > TOKEN_VALIDATION_FREQUENCY) {
-            var validated = await gateway.validateToken(site);
-            if (!validated) {
-                return false;
+            if (site.config.token != null) {
+                // validate token if too old needed
+                var validatedDelta = Date.now() - (site.config.tokenValidatedAt || 0);
+                if (validatedDelta > TOKEN_VALIDATION_FREQUENCY) {
+                    var validated = await gateway.validateToken(site);
+                    if (validated) {
+                        await this.services.siteService.saveSite(site);
+                        return true;
+                    } else {
+                        // validation failed - may be token is invalid
+                        site.config.token = null;
+                    }
+                }
             }
         }
-
-        await this.services.siteService.saveSite(site);
         return true;
     }
 }
