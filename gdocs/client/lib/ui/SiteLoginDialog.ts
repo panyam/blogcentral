@@ -152,6 +152,8 @@ export class SiteLoginDialog extends Dialog implements SiteLoginProvider {
                         // validation failed - may be token is invalid
                         site.config.token = null;
                     }
+                } else {
+                    return true;
                 }
             }
         }
