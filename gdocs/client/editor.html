@@ -1,20 +1,16 @@
 <link href="https:://cdn.quilljs.com/1.3.6/quill.snow.css" />
 <style>
-  #sites_panel_div {
-    width: 320px;
-  }
   #post_editor_root_div {
     right: 320px;
   }
-  #site_list_div {
-    top: 50px;
-  }
 </style>
 <div id="post_editor_root_div">
-  <h2><center>Enter Content Here</center></h2>
-  <!--<textarea id="post_content_textarea"> </textarea>-->
+  {% if true %}
+  <textarea placeholder="Enter Post Content Here..." id="post_content_textarea">
+  </textarea>
+  {% else %}
   <div id="quill_editor">
-    <div id="toolbar"></div>
     <div id="editor_container"></div>
   </div>
+  {% endif %}
 </div>
