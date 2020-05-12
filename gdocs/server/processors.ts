@@ -5,6 +5,12 @@ export interface ElementContainer {
   getChild(childIndex: number): GoogleAppsScript.Document.Element;
 }
 
+function debugBlock(id: string, callback: any) {
+  console.log("BEGIN: ", id);
+  callback();
+  console.log("END: ", id);
+}
+
 export class Processor {
   printer: Printer;
   constructor(printer: Printer) {
@@ -21,22 +27,33 @@ export class Processor {
 
   processElement(elem: GoogleAppsScript.Document.Element) {
     var elemType = elem.getType();
+    var self = this;
 
     switch (elemType) {
       case DocumentApp.ElementType.BODY_SECTION:
-        this.processBody(elem.asBody());
+        debugBlock("Body", () => {
+          self.processBody(elem.asBody());
+        });
         break;
       case DocumentApp.ElementType.COMMENT_SECTION:
-        this.processComment(elem);
+        debugBlock("Comment", () => {
+          self.processComment(elem);
+        });
         break;
       case DocumentApp.ElementType.EQUATION:
-        this.processEquation(elem.asEquation());
+        debugBlock("Equation", () => {
+          self.processEquation(elem.asEquation());
+        });
         break;
       case DocumentApp.ElementType.EQUATION_FUNCTION:
-        this.processEquationFunction(elem.asEquationFunction());
+        debugBlock("EquationFunction", () => {
+          self.processEquationFunction(elem.asEquationFunction());
+        });
         break;
       case DocumentApp.ElementType.EQUATION_FUNCTION:
-        this.processEquationSymbol(elem.asEquationSymbol());
+        debugBlock("EquationSymbol", () => {
+          self.processEquationSymbol(elem.asEquationSymbol());
+        });
         break;
       case DocumentApp.ElementType.EQUATION_FUNCTION_ARGUMENT_SEPARATOR:
         this.processEquationFunctionArgumentSeparator(
@@ -44,46 +61,74 @@ export class Processor {
         );
         break;
       case DocumentApp.ElementType.HEADER_SECTION:
-        this.processHeaderSection(elem.asHeaderSection());
+        debugBlock("HeaderSection", () => {
+          self.processHeaderSection(elem.asHeaderSection());
+        });
         break;
       case DocumentApp.ElementType.FOOTER_SECTION:
-        this.processFooterSection(elem.asFooterSection());
+        debugBlock("FooterSection", () => {
+          self.processFooterSection(elem.asFooterSection());
+        });
         break;
       case DocumentApp.ElementType.FOOTNOTE:
-        this.processFootnote(elem.asFootnote());
+        debugBlock("Footnote", () => {
+          self.processFootnote(elem.asFootnote());
+        });
         break;
       case DocumentApp.ElementType.FOOTNOTE_SECTION:
-        this.processFootnoteSection(elem.asFootnoteSection());
+        debugBlock("FootnoteSection", () => {
+          self.processFootnoteSection(elem.asFootnoteSection());
+        });
         break;
       case DocumentApp.ElementType.HORIZONTAL_RULE:
-        this.processHorizontalRule(elem.asHorizontalRule());
+        debugBlock("HorizontalRule", () => {
+          self.processHorizontalRule(elem.asHorizontalRule());
+        });
         break;
       case DocumentApp.ElementType.INLINE_IMAGE:
-        this.processInlineImage(elem.asInlineImage());
+        debugBlock("InlineImage", () => {
+          self.processInlineImage(elem.asInlineImage());
+        });
         break;
       case DocumentApp.ElementType.INLINE_DRAWING:
-        this.processInlineDrawing(elem.asInlineDrawing());
+        debugBlock("InlineDrawing", () => {
+          self.processInlineDrawing(elem.asInlineDrawing());
+        });
         break;
       case DocumentApp.ElementType.LIST_ITEM:
-        this.processListItem(elem.asListItem());
+        debugBlock("ListItem", () => {
+          self.processListItem(elem.asListItem());
+        });
         break;
       case DocumentApp.ElementType.PAGE_BREAK:
-        this.processPageBreak(elem.asPageBreak());
+        debugBlock("PageBreak", () => {
+          self.processPageBreak(elem.asPageBreak());
+        });
         break;
       case DocumentApp.ElementType.PARAGRAPH:
-        this.processParagraph(elem.asParagraph());
+        debugBlock("Paragraph", () => {
+          self.processParagraph(elem.asParagraph());
+        });
         break;
       case DocumentApp.ElementType.TABLE:
-        this.processTable(elem.asTable());
+        debugBlock("Table", () => {
+          self.processTable(elem.asTable());
+        });
         break;
       case DocumentApp.ElementType.TABLE_CELL:
-        this.processTableCell(elem.asTableCell());
+        debugBlock("TableCell", () => {
+          self.processTableCell(elem.asTableCell());
+        });
         break;
       case DocumentApp.ElementType.TABLE_OF_CONTENTS:
-        this.processTableOfContents(elem.asTableOfContents());
+        debugBlock("TableOfContents", () => {
+          self.processTableOfContents(elem.asTableOfContents());
+        });
         break;
       case DocumentApp.ElementType.TEXT:
-        this.processText(elem.asText());
+        debugBlock("Text", () => {
+          self.processText(elem.asText());
+        });
         break;
       default:
         throw new Error("Invalid case: " + elemType);
@@ -91,117 +136,120 @@ export class Processor {
   }
 
   processBody(elem: GoogleAppsScript.Document.Body) {
-    var attribs = elem.getAttributes();
-    console.log("Attribs: ", attribs);
+    // var attribs = elem.getAttributes(); console.log("Body Attribs: ", attribs);
     this.processChildren(elem);
-    throw new Error("'Body' Not Supported");
+    // throw new Error("'Body' Not Supported");
   }
   processComment(elem: GoogleAppsScript.Document.Element) {
-    var attribs = elem.getAttributes();
-    console.log("Attribs: ", attribs);
+    // var attribs = elem.getAttributes(); console.log("Attribs: ", attribs);
     throw new Error("'Comment' Not Supported");
   }
   processEquation(elem: GoogleAppsScript.Document.Equation) {
-    var attribs = elem.getAttributes();
-    console.log("Attribs: ", attribs);
+    // var attribs = elem.getAttributes(); console.log("Attribs: ", attribs);
     this.processChildren(elem);
     throw new Error("'Equation' Not Supported");
   }
   processEquationFunction(elem: GoogleAppsScript.Document.EquationFunction) {
-    var attribs = elem.getAttributes();
-    console.log("Attribs: ", attribs);
+    // var attribs = elem.getAttributes(); console.log("Attribs: ", attribs);
     this.processChildren(elem);
     throw new Error("'EquationFunction' Not Supported");
   }
   processEquationSymbol(elem: GoogleAppsScript.Document.EquationSymbol) {
-    var attribs = elem.getAttributes();
-    console.log("Attribs: ", attribs);
+    // var attribs = elem.getAttributes(); console.log("Attribs: ", attribs);
     throw new Error("'EquationSymbol' Not Supported");
   }
   processEquationFunctionArgumentSeparator(
     elem: GoogleAppsScript.Document.EquationFunctionArgumentSeparator
   ) {
-    var attribs = elem.getAttributes();
-    console.log("Attribs: ", attribs);
+    // var attribs = elem.getAttributes(); console.log("Attribs: ", attribs);
     throw new Error("'EquationFunctionArgumentSeparator' Not Supported");
   }
   processHeaderSection(elem: GoogleAppsScript.Document.HeaderSection) {
-    var attribs = elem.getAttributes();
-    console.log("Attribs: ", attribs);
+    // var attribs = elem.getAttributes(); console.log("Attribs: ", attribs);
     this.processChildren(elem);
     throw new Error("'HeaderSection' Not Supported");
   }
   processFooterSection(elem: GoogleAppsScript.Document.FooterSection) {
-    var attribs = elem.getAttributes();
-    console.log("Attribs: ", attribs);
+    // var attribs = elem.getAttributes(); console.log("Attribs: ", attribs);
     this.processChildren(elem);
     throw new Error("'FooterSection' Not Supported");
   }
   processFootnote(elem: GoogleAppsScript.Document.Footnote) {
-    var attribs = elem.getAttributes();
-    console.log("Attribs: ", attribs);
+    // var attribs = elem.getAttributes(); console.log("Attribs: ", attribs);
     throw new Error("'Footnote' Not Supported");
   }
   processFootnoteSection(elem: GoogleAppsScript.Document.FootnoteSection) {
-    var attribs = elem.getAttributes();
-    console.log("Attribs: ", attribs);
+    // var attribs = elem.getAttributes(); console.log("Attribs: ", attribs);
     this.processChildren(elem);
     throw new Error("'FootnoteSection' Not Supported");
   }
   processHorizontalRule(elem: GoogleAppsScript.Document.HorizontalRule) {
-    var attribs = elem.getAttributes();
-    console.log("Attribs: ", attribs);
+    // var attribs = elem.getAttributes(); console.log("Attribs: ", attribs);
     throw new Error("'HorizontalRule' Not Supported");
   }
   processInlineImage(elem: GoogleAppsScript.Document.InlineImage) {
-    var attribs = elem.getAttributes();
-    console.log("Attribs: ", attribs);
+    // var attribs = elem.getAttributes(); console.log("Attribs: ", attribs);
     throw new Error("'InlineImage' Not Supported");
   }
   processInlineDrawing(elem: GoogleAppsScript.Document.InlineDrawing) {
-    var attribs = elem.getAttributes();
-    console.log("Attribs: ", attribs);
+    // var attribs = elem.getAttributes(); console.log("Attribs: ", attribs);
     throw new Error("'InlineDrawing' Not Supported");
   }
   processListItem(elem: GoogleAppsScript.Document.ListItem) {
-    var attribs = elem.getAttributes();
-    console.log("Attribs: ", attribs);
+    // var attribs = elem.getAttributes(); console.log("Attribs: ", attribs);
     this.processChildren(elem);
     throw new Error("'ListItem' Not Supported");
   }
   processPageBreak(elem: GoogleAppsScript.Document.PageBreak) {
-    var attribs = elem.getAttributes();
-    console.log("Attribs: ", attribs);
+    // var attribs = elem.getAttributes(); console.log("Attribs: ", attribs);
     throw new Error("'PageBreak' Not Supported");
   }
   processParagraph(elem: GoogleAppsScript.Document.Paragraph) {
     var attribs = elem.getAttributes();
-    console.log("Attribs: ", attribs);
+    var heading = elem.getHeading();
+    var tag = "p";
+    if (heading == DocumentApp.ParagraphHeading.NORMAL) {
+      tag = "p";
+    } else if (heading == DocumentApp.ParagraphHeading.HEADING1) {
+      tag = "h1";
+    } else if (heading == DocumentApp.ParagraphHeading.HEADING2) {
+      tag = "h2";
+    } else if (heading == DocumentApp.ParagraphHeading.HEADING3) {
+      tag = "h3";
+    } else if (heading == DocumentApp.ParagraphHeading.HEADING4) {
+      tag = "h4";
+    } else if (heading == DocumentApp.ParagraphHeading.HEADING5) {
+      tag = "h5";
+    } else if (heading == DocumentApp.ParagraphHeading.HEADING6) {
+      tag = "h6";
+    }
+
+    this.printer.write("<" + tag + ">");
     this.processChildren(elem);
-    throw new Error("'Paragraph' Not Supported");
+    this.printer.writeLn("</" + tag + ">");
   }
   processTable(elem: GoogleAppsScript.Document.Table) {
-    var attribs = elem.getAttributes();
-    console.log("Attribs: ", attribs);
+    // var attribs = elem.getAttributes(); console.log("Attribs: ", attribs);
     this.processChildren(elem);
     throw new Error("'Table' Not Supported");
   }
   processTableCell(elem: GoogleAppsScript.Document.TableCell) {
-    var attribs = elem.getAttributes();
-    console.log("Attribs: ", attribs);
+    // var attribs = elem.getAttributes(); console.log("Attribs: ", attribs);
     this.processChildren(elem);
     throw new Error("'TableCell' Not Supported");
   }
   processTableOfContents(elem: GoogleAppsScript.Document.TableOfContents) {
-    var attribs = elem.getAttributes();
-    console.log("Attribs: ", attribs);
+    // var attribs = elem.getAttributes(); console.log("Attribs: ", attribs);
     this.processChildren(elem);
     throw new Error("'TableOfContents' Not Supported");
   }
   processText(elem: GoogleAppsScript.Document.Text) {
     var attribs = elem.getAttributes();
-    console.log("Attribs: ", attribs);
-    throw new Error("'Text' Not Supported");
+    console.log("Text Attribs: ", attribs);
+    console.log("Text: ", elem.getText());
+    this.printer.write("<span>");
+    this.printer.write(elem.getText());
+    this.printer.write("</span>");
   }
 }
 

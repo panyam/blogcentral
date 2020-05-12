@@ -1,7 +1,10 @@
 <!-- The sidebar will have a input box and the search button -->
 <div id ="sites_panel_div">
-    <center> <button class="blue" id="add_button">Add</button> </center>
     <div id = "site_list_div"> </div>
+    <div id = "sites_panel_footer_div">
+        <button class="blue" id="add_button">Add</button>
+    </div>
+
     <div id="add_site_dialog" title="Add Site"> </div>
 
     <div id ="posts_panel_div">
@@ -34,8 +37,8 @@
                             </td>
                             <td>
                             <select name = "orderby" id = "orderby">
-                                <option value="date">Date</option>
                                 <option value="title">Title</option>
+                                <option value="date">Date</option>
                                 <option value="modified">Modified</option>
                                 <option value="author">Author</option>
                                 <option value="slug">Slug</option>

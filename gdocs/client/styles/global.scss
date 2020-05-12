@@ -8,6 +8,11 @@ $posts_panel_search_bar_height: 120px;
 $posts_panel_search_field_height: 30px;
 $posts_panel_search_button_height: 30px;
 
+$sites_panel_div_width: 320px;
+$sites_panel_header_height: 50px;
+$sites_panel_footer_height: 40px;
+$sites_panel_footer_padding: 10px;
+
 // body { background-color: yellow; }
 
 /*
@@ -37,14 +42,67 @@ fieldset {
     width: 80px;
 }
 
-#sites_panel_div {
+.icons-publish-post {
+}
+
+.icons-select-post {
+}
+
+.icons-remove-site {
+}
+
+#post_editor_root_div {
     left: 0px;
+    top: 0px;
+    bottom: 0px;
+    right: $sites_panel_div_width;
+    position: absolute;
+    overflow: scroll;
+    background: $default_bg;
+}
+
+#post_editor_root_div > #post_content_textarea {
+    left: 0px;
+    top: 50px;
+    bottom: 0px;
+    right: 0px;
+    position: absolute;
+    overflow: scroll;
+    // background: $default_bg;
+    // resize: none;
+}
+
+#sites_panel_div {
     top: 0px;
     bottom: 0px;
     right: 0px;
     position: absolute;
     overflow: scroll;
     background: $default_bg;
+}
+
+#sites_panel_div > #site_list_div {
+    // border: solid 1px blue;
+    position: absolute;
+    overflow: scroll;
+    top: $sites_panel_header_height;
+    bottom: $sites_panel_footer_height + $sites_panel_footer_padding;
+    left: 0px;
+    right: 0px;
+}
+
+#sites_panel_div > #sites_panel_footer_div {
+    // border: solid 1px red;
+    position: absolute;
+    overflow: scroll;
+
+    height: $sites_panel_footer_height;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+
+    text-align: center;
+    padding-top: $sites_panel_footer_padding;
 }
 
 #posts_panel_div {

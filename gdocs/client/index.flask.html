@@ -1,7 +1,17 @@
 <html>
-    <head> 
-        <script> CLIENT_ENV = "flask" </script>
-        {% include "client/ext.html" %} 
-    </head>
-    <body> {% include "client/body.html" %} </body>
+  <head>
+    {% include "client/ext.html" %}
+    <style>
+      #sites_panel_div {
+        width: 320px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="post_editor_root_div">
+      <h2><center>Enter Content Here</center></h2>
+      <textarea id="post_content_textarea"> </textarea>
+    </div>
+    {% include "client/body.html" %}
+  </body>
 </html>

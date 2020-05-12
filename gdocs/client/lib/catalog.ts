@@ -4,7 +4,7 @@ import { SiteGateway } from "./gateway";
 import { Store } from "./stores";
 import { HttpClient } from "./net";
 import { SiteLoginProvider } from "./auth";
-import { ContentPublisher } from "./publishers";
+import { ContentExtractor } from "./extractors";
 
 export class ServiceCatalog {
     store : Store
@@ -12,7 +12,7 @@ export class ServiceCatalog {
     httpClient : HttpClient
     siteLoginProvider : SiteLoginProvider
     siteGateway : SiteGateway
-    contentPublisher : ContentPublisher
+    contentExtractor : ContentExtractor
 
     constructor(store : Store, httpClient : HttpClient) {
         this.store = store;

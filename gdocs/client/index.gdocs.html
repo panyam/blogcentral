@@ -1,8 +1,10 @@
 <html>
     <head>
-    <script> CLIENT_ENV = "gdocs" </script>
-    <link href="https://ssl.gstatic.com/docs/script/css/add-ons.css" rel="stylesheet">
+    <!-- <link href="https://ssl.gstatic.com/docs/script/css/add-ons.css" rel="stylesheet">-->
     <?!=HtmlService.createHtmlOutputFromFile('client/ext.html').getContent()?>
+    <style>
+        #sites_panel_div { left: 0px; }
+    </style>
     </head>
     <body>
         <?!=HtmlService.createHtmlOutputFromFile('client/body.html').getContent()?>

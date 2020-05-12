@@ -1,6 +1,5 @@
 
-import { Int, Nullable, Undefined } from "./types"
-declare var CLIENT_ENV : string;
+import { Int } from "./types"
 
 export class Request {
     url : string

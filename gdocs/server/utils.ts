@@ -40,13 +40,17 @@ export function setUserProperty(key : string, value : string) {
 }
 
 export function urlfetch(url : string, options : any) {
-    // TODO: Remove after dev
-    console.log("UrlFetch, URL: ", url);
-    console.log("UrlFetch, Options: ", options);
     var response = UrlFetchApp.fetch(url, options);
-    console.log("UrlFetch, Response: ", response);
     var respText = response.getContentText()
-    console.log("UrlFetch, ResponseText: ", respText);
+
+    // TODO: Remove after dev
+    if (false) {
+        console.log("UrlFetch, URL: ", url);
+        console.log("UrlFetch, Options: ", options);
+        console.log("UrlFetch, Response: ", response);
+        console.log("UrlFetch, ResponseText: ", respText);
+    }
+
     // var data = response.getContent();
     // var b2s = String.fromCharCode.apply(String, response.data);
     // var parsed = JSON.parse(b2s);

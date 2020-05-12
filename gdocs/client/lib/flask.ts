@@ -2,6 +2,8 @@
 import { Nullable } from "./types"
 import { Store } from "./stores"
 import { Request, Response, HttpClient } from "./net"
+import { ContentExtractor } from "./extractors";
+import { Site } from "./models";
 
 export class LocalStore extends Store {
     async get(key : string) {
@@ -54,3 +56,11 @@ export class JQHttpClient extends HttpClient {
     }
 }
 
+export class LocalExtractor implements ContentExtractor {
+  async extractHtml(_site: Site) {
+    return new Promise((resolve, _reject) => {
+        var val = $("#post_content_textarea").val();
+        resolve(val);
+    });
+  }
+}
