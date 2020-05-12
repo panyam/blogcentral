@@ -1,0 +1,66 @@
+
+$default_bg: aliceblue;
+
+#post_editor_root_div {
+  left: 0px;
+  top: 0px;
+  bottom: 0px;
+  position: absolute;
+  overflow: none;
+  background: $default_bg;
+}
+
+#quill_editor {
+  left: 0px;
+  top: 50px;
+  bottom: 0px;
+  right: 0px;
+  position: absolute;
+  overflow: none;
+  // background: $default_bg;
+  // resize: none;
+}
+
+#quill_editor > #editor_container{
+  left: 0px;
+  top: 50px;
+  bottom: 0px;
+  right: 0px;
+  position: absolute;
+  overflow: none;
+  border: solid 1px green;
+  // background: $default_bg;
+  // resize: none;
+}
+
+#quill_editor > #toolbar {
+  left: 0px;
+  height: 50px;
+  right: 0px;
+  position: absolute;
+  overflow: none;
+  background: "#ccc";
+  // background: $default_bg;
+  // resize: none;
+}
+
+#quill_editor .ql-toolbar {
+  position: absolute;
+  z-index: 100;
+  left: 0px;
+  top: 0px;
+  right: 0px;
+  height: 50px;
+}
+
+#quill_editor .ql-editor {
+  position: absolute;
+  z-index: 100;
+  background: #fff;
+  left: 0px;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  overflow: scroll;
+}
+

@@ -2,6 +2,7 @@
 // var $ = import("jquery"); import("jquery-ui");
 
 import "./styles/global";
+import "./styles/editor";
 
 import { BCJS } from "./lib/index";
 import { ServiceCatalog } from "./lib/catalog";
@@ -14,7 +15,7 @@ $(function () {
   var httpClient = new JQHttpClient();
   var catalog = new ServiceCatalog(store, httpClient);
   catalog.siteGateway = new SiteGateway(catalog);
-  catalog.contentExtractor = new LocalExtractor();
+  catalog.contentExtractor = new LocalExtractor("editor_container");
   (window as any).bcApp = new BCJS.App.App(catalog);
 });
 

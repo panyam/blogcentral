@@ -1,66 +1,79 @@
-
-import { Nullable } from "./types"
-import { Store } from "./stores"
-import { Request, Response, HttpClient } from "./net"
+import { Nullable } from "./types";
+import { Store } from "./stores";
+import { Request, Response, HttpClient } from "./net";
 import { ContentExtractor } from "./extractors";
 import { Site } from "./models";
 
+declare var Quill: any;
 export class LocalStore extends Store {
-    async get(key : string) {
-             key = this.normalizedKey(key);
-        var value = window.localStorage.getItem(key);
-        if (value != null) 
-            value = JSON.parse(value);
-        return value;
-    }
+  async get(key: string) {
+    key = this.normalizedKey(key);
+    var value = window.localStorage.getItem(key);
+    if (value != null) value = JSON.parse(value);
+    return value;
+  }
 
-    async set(key : string, value : Nullable<any>) {
-        key = this.normalizedKey(key);
-        window.localStorage.setItem(key, JSON.stringify(value));
-        return null as any;
-    }
+  async set(key: string, value: Nullable<any>) {
+    key = this.normalizedKey(key);
+    window.localStorage.setItem(key, JSON.stringify(value));
+    return null as any;
+  }
 
-    async remove(key : string) {
-        key = this.normalizedKey(key);
-        window.localStorage.removeItem(key);
-        return null as any;
-    }
-};
+  async remove(key: string) {
+    key = this.normalizedKey(key);
+    window.localStorage.removeItem(key);
+    return null as any;
+  }
+}
 
 export class JQHttpClient extends HttpClient {
-    async send(request : Request) : Promise<Response> {
-        var options : any = {
-            "url": request.url,
-            "method": request.method,
-            "headers": request.headers
-        };
-        if (request.body != null) {
-            options.data = request.body;
-        }
-        return new Promise((resolve : any, reject : any) => {
-            $.ajax(options).done((data, textStatus, jqXHR) => {
-                var response = new Response(jqXHR.status, jqXHR.statusText, data);
-                response.headers = jqXHR.getAllResponseHeaders();
-                resolve(response);
-            }).fail((jqXHR, textStatus, errorThrown) => {
-                var response = new Response(jqXHR.status, jqXHR.statusText);
-                response.headers = jqXHR.getAllResponseHeaders();
-                response.error = errorThrown;
-                reject(response);
-            });
+  async send(request: Request): Promise<Response> {
+    var options: any = {
+      url: request.url,
+      method: request.method,
+      headers: request.headers,
+    };
+    if (request.body != null) {
+      options.data = request.body;
+    }
+    return new Promise((resolve: any, reject: any) => {
+      $.ajax(options)
+        .done((data, textStatus, jqXHR) => {
+          var response = new Response(jqXHR.status, jqXHR.statusText, data);
+          response.headers = jqXHR.getAllResponseHeaders();
+          resolve(response);
+        })
+        .fail((jqXHR, textStatus, errorThrown) => {
+          var response = new Response(jqXHR.status, jqXHR.statusText);
+          response.headers = jqXHR.getAllResponseHeaders();
+          response.error = errorThrown;
+          reject(response);
         });
-    }
+    });
+  }
 
-    toResponse(response : any) : Response {
-        return new Response();
-    }
+  toResponse(response: any): Response {
+    return new Response();
+  }
 }
 
 export class LocalExtractor implements ContentExtractor {
+  elemid: string;
+  quill: any;
+
+  constructor(elemid: string) {
+    this.elemid = elemid;
+    this.quill = new Quill("#" + elemid, {
+      theme: "snow",
+      debug: "info",
+      modules: { toolbar: true } // "#quill_editor > #toolbar", },
+    });
+  }
   async extractHtml(_site: Site) {
+    var self = this;
     return new Promise((resolve, _reject) => {
-        var val = $("#post_content_textarea").val();
-        resolve(val);
+      var val = $("#" + self.elemid).val();
+      resolve(val);
     });
   }
 }

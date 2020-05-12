@@ -37,11 +37,13 @@ export class SiteListView {
           <td> {{this.site_host}} </td>
           <td rowspan = 2>
             <center>
-            <button class="remove_site_button ui-button ui-widget ui-corner-all ui-button-icon-only ui-icon ui-icon-trash" title="Remove Site" 
-                id = "remove_site_{{@index}}">
-              Remove Site
-            </button>
-            <button class = "select_post_button ui-button ui-widget ui-corner-all" title="Select Post" 
+            <button class="remove_site_button ui-button ui-widget ui-corner-all ui-button-icon-only"
+                    title="Remove Site"
+                    id = "remove_site_{{@index}}">
+                <span class="ui-icon ui-icon-trash"></span> Remove Site
+            </button><br/>
+            <button class = "select_post_button ui-button ui-widget ui-corner-all"
+                title="Select Post" 
                 id = "select_post_{{@index}}">Posts</button>
             </center>
           </td>
@@ -60,7 +62,7 @@ export class SiteListView {
           </td>
           <td>
             <center>
-              <button class = "publish_post_button"
+              <button class = "publish_post_button ui-button ui-widget ui-corner-all"
                   id = "publish_post_{{@index}}">Publish</button>
             </center>
           </td>

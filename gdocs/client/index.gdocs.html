@@ -1,14 +1,22 @@
 <html>
-    <head>
-    <!-- <link href="https://ssl.gstatic.com/docs/script/css/add-ons.css" rel="stylesheet">-->
+  <head>
+    <link
+      href="https://ssl.gstatic.com/docs/script/css/add-ons.css"
+      rel="stylesheet"
+    />
     <?!=HtmlService.createHtmlOutputFromFile('client/ext.html').getContent()?>
     <style>
-        #sites_panel_div { left: 0px; }
+      #sites_panel_div {
+        left: 0px;
+      }
+      #site_list_div {
+        top: 0px;
+      }
     </style>
-    </head>
-    <body>
-        <?!=HtmlService.createHtmlOutputFromFile('client/body.html').getContent()?>
-        <?!=HtmlService.createHtmlOutputFromFile('client/index.flask~gdocs.js.html').getContent()?>
-        <?!=HtmlService.createHtmlOutputFromFile('client/index.gdocs.js.html').getContent()?>
-    </body>
+  </head>
+  <body>
+    <?!=HtmlService.createHtmlOutputFromFile('client/body.html').getContent()?>
+    <?!=HtmlService.createHtmlOutputFromFile('client/index.flask~gdocs.js.html').getContent()?>
+    <?!=HtmlService.createHtmlOutputFromFile('client/index.gdocs.js.html').getContent()?>
+  </body>
 </html>
