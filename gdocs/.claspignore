@@ -1,0 +1,3 @@
+client/*.js
+client/index.flask.html
+client/editor.html

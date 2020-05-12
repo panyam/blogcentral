@@ -67,7 +67,7 @@
     "clean": "rm -rf dist/*",
     "build": "webpack",
     "devbuild": "webpack --mode=development",
-    "pushOnly": "cd dist ; rm client/*.js client/index.flask.html ; clasp push",
+    "pushOnly": "cd dist ; clasp push",
     "push": "npm run build && npm run pushOnly",
     "devpush": "npm run devbuild && npm run pushOnly"
   }

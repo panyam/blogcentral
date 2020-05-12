@@ -42,6 +42,10 @@ module.exports = (env, options) => {
                 to: 'appsscript.json'
             },
             {
+                from: path.resolve(__dirname, '.claspignore'),
+                to: './'
+            },
+            {
                 from: path.resolve(__dirname, 'server/'),
                 to: 'server/'
             },
