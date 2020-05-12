@@ -93,7 +93,8 @@ export class LocalExtractor implements ContentExtractor {
       theme: "snow",
       debug: "info",
       placeholder: 'Enter Post Content Here...',
-      modules: { toolbar: true } // "#quill_editor > #toolbar", },
+      scrollingContainer: '#quill_editor',
+      modules: { toolbar: this.toolbarOptions } // "#quill_editor > #toolbar", },
     });
   }
   async extractHtml(_site: Site) {
