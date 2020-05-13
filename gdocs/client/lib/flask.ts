@@ -89,6 +89,7 @@ export class LocalExtractor implements ContentExtractor {
 
   constructor(elemid: string) {
     this.elemid = elemid;
+    /*
     this.quill = new Quill("#" + elemid, {
       theme: "snow",
       debug: "info",
@@ -96,6 +97,7 @@ export class LocalExtractor implements ContentExtractor {
       scrollingContainer: '#quill_editor',
       modules: { toolbar: this.toolbarOptions } // "#quill_editor > #toolbar", },
     });
+   */
   }
   async extractHtml(_site: Site) {
     var self = this;
