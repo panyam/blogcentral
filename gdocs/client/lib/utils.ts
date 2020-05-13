@@ -6,7 +6,11 @@ export function ensureElement(elem_or_id : any, root : any = null) {
         else
             return $("#" + elem_or_id);
     } else {
-        return elem_or_id;
+        if (elem_or_id.find) {
+            return elem_or_id;
+        } else {
+            return $(elem_or_id);
+        }
     }
 }
 
