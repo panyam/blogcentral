@@ -48,28 +48,35 @@ export class Printer {
     this.value += indent;
   }
 
-  indent(delta: number, end_with_nl: boolean, block: any) {
-    if (this.atFirstCol) {
-      // first col so add more spaces
-      var indent_string = this.indentString(delta);
-      this.value += indent_string;
-      this.col += indent_string.length;
-    }
-    this.level += delta;
+  indentBy(delta : number) {
+      if (delta > 0) {
+        if (this.atFirstCol) {
+          // first col so add more spaces
+          var indent_string = this.indentString(delta);
+          this.value += indent_string;
+          this.col += indent_string.length;
+        }
+        this.level += delta;
+      } else {
+          if (this.atFirstCol) {
+            // first col so "remove" trailing spaces
+            var indent_string = this.indentString(delta);
+            if (this.value.endsWith(indent_string)) {
+              var L = indent_string.length;
+              this.value = this.value.slice(0, -L);
+              this.col -= L;
+            }
+          }
+          this.level -= delta;
+      }
+  }
 
+  indent(delta: number, end_with_nl: boolean, block: any) {
+      this.indentBy(1);
     try {
       block(this);
 
-      if (this.atFirstCol) {
-        // first col so "remove" trailing spaces
-        var indent_string = this.indentString(delta);
-        if (this.value.endsWith(indent_string)) {
-          var L = indent_string.length;
-          this.value = this.value.slice(0, -L);
-          this.col -= L;
-        }
-      }
-      this.level -= delta;
+      this.indentBy(-1);
       if (end_with_nl) this.nextline();
     } catch (e) {
       this.level = 0;
