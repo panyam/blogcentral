@@ -22,11 +22,14 @@ export class Printer {
   }
 
   writeLn(text: string) {
-    this.write(text);
-    this.nextline();
+    if (text != null) {
+      this.write(text);
+      this.nextline();
+    }
   }
 
   write(text: string) {
+    if (text == null) return 0;
     var lines = text.split("\n");
     var nlines = lines.length;
     for (var index = 0; index < nlines; index++) {

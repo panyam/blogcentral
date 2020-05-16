@@ -4,7 +4,7 @@ export interface ElementContainer {
   getChild(childIndex: number): GoogleAppsScript.Document.Element;
 }
 
-let Attribute = GoogleAppsScript.Document.Attribute;
+var Attribute = DocumentApp.Attribute;
 
 const styleMapping: any = {};
 styleMapping[Attribute.BACKGROUND_COLOR.toString()] = "background-color";
@@ -56,6 +56,10 @@ styleMapping[Attribute.BORDER_WIDTH.toString()] = "border-width";
 // styleMapping[Attribute.PAGE_HEIGHT.toString()] = "The page height setting in points, for documents.";
 // styleMapping[Attribute.PAGE_WIDTH.toString()] = "The page width setting in points, for documents.";
 
+function getAttrib(attribs: any, attrib: GoogleAppsScript.Document.Attribute) {
+  return attribs[attrib.toString()] || null;
+}
+
 function hasAttrib(
   attribs: any,
   attrib: GoogleAppsScript.Document.Attribute
@@ -82,10 +86,10 @@ function extractStyles(attribs: any): any {
   // styleMapping[Attribute.STRIKETHROUGH.toString()] = "The strike-through setting, for rich text.";
   // styleMapping[Attribute.UNDERLINE.toString()] = "The underline setting, for rich text.";
   if (attribs[Attribute.STRIKETHROUGH.toString()]) {
-    styleMapping["text-decoration"] = "line-through";
+    styles["text-decoration"] = "line-through";
   }
   if (attribs[Attribute.UNDERLINE.toString()]) {
-    styleMapping["text-decoration"] = "underline";
+    styles["text-decoration"] = "underline";
   }
 
   // check for "combined ones"
@@ -273,10 +277,16 @@ export class Processor {
   }
   processInlineImage(elem: GoogleAppsScript.Document.InlineImage) {
     var params: any = {};
-    var styles = extractStyles(elem.getAttributes());
+    var attribs = elem.getAttributes();
+    var styles = extractStyles(attribs);
     var title = elem.getAltTitle();
     var desc = elem.getAltDescription();
-    var url = elem.getLinkUrl();
+    var url = elem.getLinkUrl() || getAttrib(attribs, Attribute.LINK_URL);
+    console.log(
+      "Image: url, urlattr: ",
+      elem.getLinkUrl(),
+      getAttrib(attribs, Attribute.LINK_URL)
+    );
     var width = elem.getWidth();
     var height = elem.getHeight();
 
