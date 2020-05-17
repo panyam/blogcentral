@@ -31,6 +31,7 @@ export function doc2content(site: any, post: any) {
   var body = doc.getBody();
   var printer = new Printer();
   var processor = new WPProcessor(printer);
+  processor.debug = true;
   processor.processElement(body);
   return processor.printer.value;
 }

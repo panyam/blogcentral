@@ -6,27 +6,44 @@ export interface ElementContainer {
 
 var Attribute = DocumentApp.Attribute;
 
-const styleMapping: any = {};
-styleMapping[Attribute.BACKGROUND_COLOR.toString()] = "background-color";
-styleMapping[Attribute.FOREGROUND_COLOR.toString()] = "color";
-styleMapping[Attribute.FONT_SIZE.toString()] = "font-size";
-styleMapping[Attribute.FONT_FAMILY.toString()] = "font-family";
-styleMapping[Attribute.BOLD.toString()] = "font-weight";
-styleMapping[Attribute.ITALIC.toString()] = "font-style";
-styleMapping[Attribute.MARGIN_BOTTOM.toString()] = "margin-bottom";
-styleMapping[Attribute.MARGIN_LEFT.toString()] = "margin-left";
-styleMapping[Attribute.MARGIN_RIGHT.toString()] = "margin-right";
-styleMapping[Attribute.MARGIN_TOP.toString()] = "margin-top";
-styleMapping[Attribute.PADDING_BOTTOM.toString()] = "padding-bottom";
-styleMapping[Attribute.PADDING_LEFT.toString()] = "padding-left";
-styleMapping[Attribute.PADDING_RIGHT.toString()] = "padding-right";
-styleMapping[Attribute.PADDING_TOP.toString()] = "padding-top";
-styleMapping[Attribute.HORIZONTAL_ALIGNMENT.toString()] = "text-align";
-styleMapping[Attribute.HEIGHT.toString()] = "height";
-styleMapping[Attribute.WIDTH.toString()] = "width";
-styleMapping[Attribute.MINIMUM_HEIGHT.toString()] = "min-height";
-styleMapping[Attribute.BORDER_COLOR.toString()] = "border-color";
-styleMapping[Attribute.BORDER_WIDTH.toString()] = "border-width";
+function attribMapper(newName: string) {
+  return function (_attribs: any, _key: string, value: any, outStyles: any) {
+    outStyles[newName] = value;
+  };
+}
+
+function pixelAttribMapper(newName: string) {
+  return function (_attribs: any, _key: string, value: any, outStyles: any) {
+    outStyles[newName] = value + "px";
+  };
+}
+
+const styleMappers: any = {};
+function setStyleMapper(
+  attrib: GoogleAppsScript.Document.Attribute,
+  mapper: any
+) {
+  styleMappers[attrib.toString()] = mapper;
+}
+
+setStyleMapper(Attribute.BACKGROUND_COLOR, attribMapper("background-color"));
+setStyleMapper(Attribute.FOREGROUND_COLOR, attribMapper("color"));
+setStyleMapper(Attribute.FONT_SIZE, attribMapper("font-size"));
+setStyleMapper(Attribute.FONT_FAMILY, attribMapper("font-family"));
+setStyleMapper(Attribute.MARGIN_BOTTOM, pixelAttribMapper("margin-bottom"));
+setStyleMapper(Attribute.MARGIN_LEFT, pixelAttribMapper("margin-left"));
+setStyleMapper(Attribute.MARGIN_RIGHT, pixelAttribMapper("margin-right"));
+setStyleMapper(Attribute.MARGIN_TOP, pixelAttribMapper("margin-top"));
+setStyleMapper(Attribute.PADDING_BOTTOM, pixelAttribMapper("padding-bottom"));
+setStyleMapper(Attribute.PADDING_LEFT, pixelAttribMapper("padding-left"));
+setStyleMapper(Attribute.PADDING_RIGHT, pixelAttribMapper("padding-right"));
+setStyleMapper(Attribute.PADDING_TOP, pixelAttribMapper("padding-top"));
+setStyleMapper(Attribute.HORIZONTAL_ALIGNMENT, attribMapper("text-align"));
+setStyleMapper(Attribute.HEIGHT, pixelAttribMapper("height"));
+setStyleMapper(Attribute.WIDTH, pixelAttribMapper("width"));
+setStyleMapper(Attribute.MINIMUM_HEIGHT, pixelAttribMapper("min-height"));
+setStyleMapper(Attribute.BORDER_COLOR, attribMapper("border-color"));
+setStyleMapper(Attribute.BORDER_WIDTH, pixelAttribMapper("border-width"));
 
 // use text-decoration
 // styleMapping[Attribute.STRIKETHROUGH.toString()] = "The strike-through setting, for rich text.";
@@ -71,8 +88,8 @@ function extractStyles(attribs: any): any {
   var styles: any = {};
   for (var key in attribs) {
     var value = attribs[key];
-    if (value != null && key in styleMapping) {
-      styles[styleMapping[key]] = value;
+    if (value != null && key in styleMappers) {
+      styleMappers[key](attribs, key, value, styles);
     }
   }
 
@@ -90,6 +107,13 @@ function extractStyles(attribs: any): any {
   }
   if (attribs[Attribute.UNDERLINE.toString()]) {
     styles["text-decoration"] = "underline";
+  }
+
+  if (attribs[Attribute.BOLD.toString()]) {
+    styles["font-weight"] = "bold";
+  }
+  if (attribs[Attribute.ITALIC.toString()]) {
+    styles["font-style"] = "italic";
   }
 
   // check for "combined ones"
@@ -119,7 +143,9 @@ export class Processor {
       Logger.log(name, ", Attribs: ");
       for (var key in attribs) {
         var value = attribs[key];
-        Logger.log("        " + key + " -> " + value);
+        if (value != null) {
+          Logger.log("        " + key + "(" + typeof key + ") -> " + value);
+        }
       }
     }
   }
@@ -227,6 +253,7 @@ export class Processor {
     var styles = extractStyles(attribs);
     this.startTag("math", params, styles);
     this.processChildren(elem);
+    this.endTag();
     throw new Error("'EquationFunction' Not Supported");
   }
   processEquationSymbol(elem: GoogleAppsScript.Document.EquationSymbol) {
@@ -261,7 +288,7 @@ export class Processor {
     var styles = extractStyles(attribs);
     this.footnoteSections.push(elem.getFootnoteContents());
     // TODO: Create a link to a footnote anchor at the end
-    this.startTag("a", params, styles, true);
+    this.startTag("a", params, styles, { end: true });
   }
   processFootnoteSection(elem: GoogleAppsScript.Document.FootnoteSection) {
     // var params : any = {}; var styles = extractStyles(elem.getAttributes()); Logger.log("Attribs: ", attribs);
@@ -273,7 +300,7 @@ export class Processor {
     var params: any = {};
     var styles = extractStyles(attribs);
     Logger.log("HR Attribs: ", params, styles);
-    this.startTag("hr", params, styles, true);
+    this.startTag("hr", params, styles, { end: true });
   }
   processInlineImage(elem: GoogleAppsScript.Document.InlineImage) {
     var params: any = {};
@@ -302,7 +329,7 @@ export class Processor {
     var attribs = elem.getAttributes();
     var params: any = {};
     var styles = extractStyles(attribs);
-    this.startTag("drawing", params, styles, true);
+    this.startTag("drawing", params, styles, { end: true });
     // this.processParagraph(elem.asParagraph());
   }
   processListItem(elem: GoogleAppsScript.Document.ListItem) {
@@ -318,7 +345,7 @@ export class Processor {
     var attribs = elem.getAttributes();
     var params: any = {};
     var styles = extractStyles(attribs);
-    this.startTag("br", params, styles, true);
+    this.startTag("br", params, styles, { end: true });
   }
 
   processParagraph(elem: GoogleAppsScript.Document.Paragraph) {
@@ -357,6 +384,7 @@ export class Processor {
     var attribs = elem.getAttributes();
     var params: any = {};
     var styles = extractStyles(attribs);
+    this.logAttributes(attribs, "Table");
     this.startTag("table", params, styles);
     this.processChildren(elem);
     this.endTag();
@@ -366,6 +394,7 @@ export class Processor {
     var attribs = elem.getAttributes();
     var params: any = {};
     var styles = extractStyles(attribs);
+    this.logAttributes(attribs, "TableRow");
     this.startTag("tr", params, styles);
     this.processChildren(elem);
     this.endTag();
@@ -373,10 +402,16 @@ export class Processor {
   processTableCell(elem: GoogleAppsScript.Document.TableCell) {
     var attribs = elem.getAttributes();
     var params: any = {};
-    var styles = extractStyles(attribs);
-    this.startTag("td", params, styles);
-    this.processChildren(elem);
-    this.endTag();
+    var span = elem.getColSpan();
+
+    if (span == null || span > 0) {
+      if (span != null) params["colspan"] = span;
+      var styles = extractStyles(attribs);
+      this.logAttributes(attribs, "TableCell");
+      this.startTag("td", params, styles);
+      this.processChildren(elem);
+      this.endTag();
+    }
   }
   processTableOfContents(elem: GoogleAppsScript.Document.TableOfContents) {
     var attribs = elem.getAttributes();
@@ -390,9 +425,34 @@ export class Processor {
     var attribs = elem.getAttributes();
     var params: any = {};
     var styles = extractStyles(attribs);
-    this.startTag("span", params, styles);
-    this.printer.write(elem.getText());
-    this.endTag();
+    var attribIndices = elem.getTextAttributeIndices();
+    var text = elem.getText();
+    console.log("Processing Text: ", text);
+    attribIndices.push(text.length);
+    styles["white-space"] = "pre-wrap";
+    // styles["display"] = "inline-block";
+    // emit a bunch of spans here
+    for (var i = 0; i < attribIndices.length - 1; i++) {
+      var startIndex = attribIndices[i];
+      var endIndex = attribIndices[i + 1];
+      var runAttribs = elem.getAttributes(startIndex);
+      var runStyles = extractStyles(runAttribs);
+      var run = text.substring(startIndex, endIndex);
+      var extStyles = Object.assign(Object.assign({}, styles), runStyles);
+
+      console.log(
+        "TextRun: {",
+        run + "}, hasCR: ",
+        run.indexOf("\r") + "hasNL: ",
+        run.indexOf("\n")
+      );
+      console.log("TextStyles: ", runStyles, extStyles);
+      this.startTag("span", params, extStyles);
+      this.printer.write(run);
+      this.endTag();
+      // this.printer.write(" ");
+    }
+    console.log("///Ending Text");
   }
 
   /**
@@ -405,8 +465,9 @@ export class Processor {
     tag: string,
     params: any = null,
     styles: any = null,
-    end: boolean = false
+    options: any = null
   ) {
+    options = options || { end: false };
     var tagClass = "gdocs_" + tag;
     if (!(tagClass in this.styleMap)) {
       this.styleMap[tagClass] = {};
@@ -435,8 +496,6 @@ export class Processor {
       }
     }
 
-    this.printer.nextline();
-    this.printer.indentBy(1);
     var tagString = "<" + tag;
     if (paramsString.length > 0) {
       tagString += paramsString;
@@ -446,13 +505,13 @@ export class Processor {
     }
     tagString += ">";
     this.printer.write(tagString);
-    if (end) this.endTag();
+    if (options.end) {
+      this.endTag();
+    }
   }
 
   endTag() {
     var tag = this.tagStack.pop();
-    this.printer.nextline();
-    this.printer.indentBy(-1);
     this.printer.write("</" + tag + ">");
   }
 }
