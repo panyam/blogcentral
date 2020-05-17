@@ -96,14 +96,23 @@ export class SiteService {
         return index;
     }
 
+    async remove(id : string) {
+        var index = this.indexOf(id);
+        return this.removeAt(index);
+    }
+
     /**
      * Removes the site at a given index and returns it.
      */
     async removeAt(index : Int) {
-        var site : Site = this.sites.splice(index, 1)[0];
-        await this.saveSiteIds();
-        await this.store.remove("site:" + site.id);
-        return site;
+        if (index < 0) {
+            return null;
+        } else {
+            var site : Site = this.sites.splice(index, 1)[0];
+            await this.saveSiteIds();
+            await this.store.remove("site:" + site.id);
+            return site;
+        }
     }
 
     async loadSite(id : string) : Promise<Site> {

@@ -51,7 +51,7 @@ export class SiteLoginDialog extends Dialog implements SiteLoginProvider {
     setEnabled(this.siteHostElem, s == null);
     setEnabled(this.siteTypeElem, s == null);
     setVisible(this.passwordElem, s != null);
-    var passwordLabel = $("label[for='site_password']");
+    var passwordLabel = this.rootElement.find("label[for='site_password']");
     setVisible(passwordLabel, s != null);
   }
 
@@ -79,7 +79,7 @@ export class SiteLoginDialog extends Dialog implements SiteLoginProvider {
             <fieldset class = "dialog_fields">
               <label for="site_type">Site Type</label>
               <select id = "site_type">
-                <option>WordPress Blog</option>
+                <option value="WORDPRESS">WordPress Blog</option>
               </select>
 
               <label for="site_host">Site Host</label>

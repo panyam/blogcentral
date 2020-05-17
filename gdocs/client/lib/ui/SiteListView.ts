@@ -10,12 +10,12 @@ export interface SiteListViewDelegate {
   /**
    * Lets one select one or more posts in a site.
    */
-  selectPost(site: Site, index: Int): Promise<Nullable<Post>>;
+  selectPost(site: Site): Promise<Nullable<Post>>;
 
   /**
    * Kicks of publishing of content to the given site.
    */
-  publishPost(site: Site, index: Int): Promise<Nullable<boolean>>;
+  publishPost(site: Site): Promise<Nullable<boolean>>;
 }
 
 export class SiteListView {
@@ -52,57 +52,53 @@ export class SiteListView {
         var siteView = new SiteView(elem, siteService.sites[i], i);
         siteView.showProgress(false);
         siteView.selectPostButton.button().on("click", (event: any) => {
-          self.onSelectPostClicked(event);
+          self.onSelectPostClicked(siteView);
         });
 
         siteView.publishPostButton.button().on("click", (event: any) => {
-          self.onPublishPostClicked(event);
+          self.onPublishPostClicked(siteView);
         });
 
         siteView.removeButton.button().on("click", (event: any) => {
-          self.onRemoveSiteClicked(event);
+          self.onRemoveSiteClicked(siteView);
         });
         return siteView;
       });
   }
 
-  async onSelectPostClicked(event: any) {
-    var siteService = this.services.siteService;
-    var index = parseInt(
-      event.currentTarget.id.substring("select_post_".length)
-    );
-    var site = siteService.siteAt(index);
+  async onSelectPostClicked(siteView : SiteView) {
+    var site = siteView.site;
     if (this.delegate != null) {
-      var post = await this.delegate.selectPost(site, index);
+      await this.delegate.selectPost(site);
       this.refresh();
     }
   }
 
-  async onPublishPostClicked(event: any) {
+  async onPublishPostClicked(siteView : SiteView) {
+    /*
     var siteService = this.services.siteService;
     var index = parseInt(
       event.currentTarget.id.substring("publish_post_".length)
     );
-    var site = siteService.siteAt(index);
+   */
+    var site = siteView.site; // siteService.siteAt(index);
     if (site.selectedPost == null) {
       if (this.delegate != null) {
-        var post = await this.delegate.selectPost(site, index);
+        await this.delegate.selectPost(site);
         this.refresh();
       }
     }
     if (this.delegate == null) {
       throw new Error("Delegate for SiteListView not found");
     }
-    return this.delegate.publishPost(site, index);
+    return this.delegate.publishPost(site);
   }
 
-  onRemoveSiteClicked(event: any) {
+  onRemoveSiteClicked(siteView : SiteView) {
     var self = this;
     var siteService = this.services.siteService;
-    var index = parseInt(
-      event.currentTarget.id.substring("remove_site_".length)
-    );
-    console.log("Removing Site at: ", index);
-    siteService.removeAt(index).then(() => self.refresh());
+    var site = siteView.site;
+    console.log("Removing Site: ", site);
+    siteService.remove(site.id).then(() => self.refresh());
   }
 }

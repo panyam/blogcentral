@@ -63,7 +63,7 @@ export class SitesPanel implements SiteListViewDelegate {
   /**
    * Lets one select one or more posts in a site.
    */
-  async selectPost(site: Site, index: Int) {
+  async selectPost(site: Site) {
     var siteService = this.services.siteService;
     var post = (await this.postsPanel.open(site)) as Nullable<Post>;
     console.log("Post Selected from Panel: ", post);
@@ -81,7 +81,7 @@ export class SitesPanel implements SiteListViewDelegate {
   /**
    * Kicks of publishing of content to the given site.
    */
-  async publishPost(site: Site, _index: Int) {
+  async publishPost(site: Site) {
     var services = this.services;
     if (site.selectedPost == null) {
       alert("Please select a post for this site to publish to");
