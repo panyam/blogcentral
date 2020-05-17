@@ -35,7 +35,7 @@ export class SiteView {
     this.activityIndicator = new ActivityIndicator(aidiv);
     this.publishPostButton = this.rootElement.find(".publish_post_button");
     this.selectPostButton = this.rootElement.find(".select_post_button");
-    this.removeButton = this.rootElement.find(".remove_post_button");
+    this.removeButton = this.rootElement.find(".remove_site_button");
   }
 
   showBusy(busy: boolean) {

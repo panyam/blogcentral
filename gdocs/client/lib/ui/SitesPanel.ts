@@ -1,4 +1,4 @@
-import { AddSiteDialog } from "./AddSiteDialog";
+import { SiteLoginDialog } from "./SiteLoginDialog";
 import { ActivityIndicator } from "./ActivityIndicator";
 import { SiteListView, SiteListViewDelegate } from "./SiteListView";
 import { ensureElement } from "./utils";
@@ -10,7 +10,7 @@ import { ServiceCatalog } from "../catalog";
 export class SitesPanel implements SiteListViewDelegate {
   rootElement: any;
   postsPanel: PostsPanel;
-  addSiteDialog: AddSiteDialog;
+  addSiteDialog: SiteLoginDialog;
   addButton: any;
   siteListView: SiteListView;
   services: ServiceCatalog;
@@ -24,6 +24,9 @@ export class SitesPanel implements SiteListViewDelegate {
 
   setupViews() {
     var self = this;
+    var aidiv = this.rootElement.find(".activity_indicator");
+    this.activityIndicator = new ActivityIndicator(aidiv);
+
     var addSiteDialogElem: any = ensureElement(
       "add_site_dialog",
       this.rootElement
@@ -32,11 +35,8 @@ export class SitesPanel implements SiteListViewDelegate {
       addSiteDialogElem = $("<div id='add_site_dialog'></div>");
       this.rootElement.append(addSiteDialogElem);
     }
+    this.addSiteDialog = new SiteLoginDialog(addSiteDialogElem, this.services);
 
-    var aidiv = this.rootElement.find(".activity_indicator");
-    this.activityIndicator = new ActivityIndicator(aidiv);
-
-    this.addSiteDialog = new AddSiteDialog(addSiteDialogElem);
     var postsPanelElem = ensureElement("posts_panel_div", this.rootElement);
     this.postsPanel = new PostsPanel(postsPanelElem, this.services);
 

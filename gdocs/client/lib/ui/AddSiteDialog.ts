@@ -1,5 +1,4 @@
 
-declare var Handlebars : any;
 import { Dialog } from "./Dialog"
 import { ensureElement } from "./utils";
 import { Int, Nullable } from "../types";
@@ -32,10 +31,10 @@ export class AddSiteDialog extends Dialog {
               </select>
 
               <label for="site_host">Site Host</label>
-              <input type="url" name="site_host" id="site_host" value="https://leetcoach.com/" class="text ui-widget-content ui-corner-all">
+              <input type="url" name="site_host" id="site_host" class="text ui-widget-content ui-corner-all">
 
               <label for="site_username">Username</label>
-              <input type="url" name="site_username" id="site_username" value="panyam" class="text ui-widget-content ui-corner-all">
+              <input type="url" name="site_username" id="site_username" value="" class="text ui-widget-content ui-corner-all">
 
               <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
             </fieldset>
