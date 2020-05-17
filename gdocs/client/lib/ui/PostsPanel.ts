@@ -1,7 +1,7 @@
 import { AddPostDialog } from "./AddPostDialog";
 import { ActivityIndicator } from "./ActivityIndicator";
 import { PostListView, PostListViewDelegate } from "./PostListView";
-import { setVisible, setEnabled, ensureElement } from "../utils";
+import { setVisible, setEnabled, ensureElement } from "./utils";
 import { Int, Nullable } from "../types";
 import { Site, Post } from "../models";
 import { ServiceCatalog } from "../catalog";

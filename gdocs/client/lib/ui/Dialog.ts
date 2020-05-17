@@ -1,5 +1,5 @@
 
-import { ensureElement } from "../utils";
+import { ensureElement } from "./utils";
 import { Nullable } from "../types";
 
 export class Dialog {

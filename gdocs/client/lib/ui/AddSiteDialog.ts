@@ -1,7 +1,7 @@
 
 declare var Handlebars : any;
 import { Dialog } from "./Dialog"
-import { ensureElement } from "../utils";
+import { ensureElement } from "./utils";
 import { Int, Nullable } from "../types";
 import { SiteType, Site, Post } from "../models";
 import { ServiceCatalog } from "../catalog";

@@ -1,7 +1,7 @@
 import { AddSiteDialog } from "./AddSiteDialog";
 import { ActivityIndicator } from "./ActivityIndicator";
 import { SiteListView, SiteListViewDelegate } from "./SiteListView";
-import { ensureElement } from "../utils";
+import { ensureElement } from "./utils";
 import { Int, Nullable } from "../types";
 import { PostsPanel } from "./PostsPanel";
 import { Site, Post } from "../models";

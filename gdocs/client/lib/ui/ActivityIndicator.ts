@@ -1,7 +1,7 @@
 declare var Handlebars: any;
 import { AddPostDialog } from "./AddPostDialog";
 import { PostListView } from "./PostListView";
-import { ensureElement } from "../utils";
+import { ensureElement } from "./utils";
 import { Int, Nullable } from "../types";
 import { SiteType, Site, Post } from "../models";
 import { ServiceCatalog } from "../catalog";
