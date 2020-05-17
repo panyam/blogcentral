@@ -88,20 +88,20 @@ export class SitesPanel implements SiteListViewDelegate {
       return null;
     }
 
+    this.activityIndicator.show();
     var html = await this.services.contentExtractor.extractHtml(site);
     console.log("Published Post, HTML: ", html);
 
     // Now publish it!
     if (await services.siteLoginProvider.ensureLoggedIn(site)) {
-      this.activityIndicator.show();
       var result = await services.siteGateway.updatePost(
         site,
         site.selectedPost.id,
         { content: html }
       );
       console.log("Published Post, Result: ", result);
-      this.activityIndicator.hide();
     }
+    this.activityIndicator.hide();
     return true;
   }
 }
