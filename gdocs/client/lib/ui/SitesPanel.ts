@@ -33,7 +33,8 @@ export class SitesPanel implements SiteListViewDelegate {
       this.rootElement.append(addSiteDialogElem);
     }
 
-    this.activityIndicator = new ActivityIndicator(this.rootElement);
+    var aidiv = this.rootElement.find(".activity_indicator");
+    this.activityIndicator = new ActivityIndicator(aidiv);
 
     this.addSiteDialog = new AddSiteDialog(addSiteDialogElem);
     var postsPanelElem = ensureElement("posts_panel_div", this.rootElement);

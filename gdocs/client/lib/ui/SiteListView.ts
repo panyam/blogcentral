@@ -1,8 +1,10 @@
 declare var Handlebars: any;
 import { ensureElement } from "../utils";
 import { Int, Nullable } from "../types";
-import { SiteType, Site, Post } from "../models";
+import { Site, Post } from "../models";
 import { ServiceCatalog } from "../catalog";
+import { SiteView } from "./SiteView";
+import { ActivityIndicator } from "./ActivityIndicator";
 
 export interface SiteListViewDelegate {
   /**
@@ -20,6 +22,7 @@ export class SiteListView {
   rootElement: any;
   services: ServiceCatalog;
   delegate: Nullable<SiteListViewDelegate> = null;
+  siteViews: SiteView[];
 
   constructor(elem_or_id: any, services: ServiceCatalog) {
     this.rootElement = ensureElement(elem_or_id);
@@ -29,70 +32,9 @@ export class SiteListView {
 
   get template(): string {
     return `
-      {{# each siteService.sites }}
-      <table width="100%" class = "site_table"
-           id = "site_table_{{@index}}" >
-        <tr>
-          <td class = "td_param_name"> Site Host: </td>
-          <td> {{this.site_host}} </td>
-          <td rowspan = 2>
-            <center>
-            <button class="remove_site_button ui-button ui-widget ui-corner-all ui-button-icon-only"
-                    title="Remove Site"
-                    id = "remove_site_{{@index}}">
-                <span class="ui-icon ui-icon-trash"></span> Remove Site
-            </button><br/>
-            <button class = "select_post_button ui-button ui-widget ui-corner-all"
-                title="Select Post" 
-                id = "select_post_{{@index}}">Posts</button>
-            </center>
-          </td>
-        </tr>
-        <tr>
-          <td class = "td_param_name"> Username: </td>
-          <td> {{this.username}} </td>
-        </tr>
-        {{# if this.selectedPost }}
-        <tr>
-          <td colspan = 2>
-            <h3 style="margin-bottom: 0px">Post:</h3>
-              <a target="_blank" href="{{ this.selectedPost.link }}">
-                {{this.selectedPost.id}} : {{{ this.selectedPost.title.rendered }}} 
-              </a>
-          </td>
-          <td>
-            <center>
-              <button class = "publish_post_button ui-button ui-widget ui-corner-all"
-                  id = "publish_post_{{@index}}">Publish</button>
-            </center>
-          </td>
-        </tr>
-        {{/if}}
-        <tr>
-          <td colspan = 3>
-            <center>
-              <div class = "progressbar"
-                 id="progressbar_{{@index}}"></div>
-            </center>
-          </td>
-        </tr>
-      </table>
-      <hr/>
+      {{# each sites }}
+        <div class = "site_div" id = "site_div_{{@index}}"> </div>
       {{/each}}`;
-  }
-
-  setConnecting(index: Int, connecting: boolean) {
-    var progressbar = this.rootElement.find("#progressbar_" + index);
-    var publish_post_button = this.rootElement.find("#publish_post_" + index);
-    var remove_button = this.rootElement.find("#remove_site_" + index);
-    publish_post_button.prop("disabled", connecting);
-    remove_button.prop("disabled", connecting);
-    if (connecting) {
-      progressbar.progressbar("option", "value", false);
-      progressbar.show();
-    } else {
-      progressbar.hide();
-    }
   }
 
   refresh() {
@@ -100,32 +42,31 @@ export class SiteListView {
     var siteService = this.services.siteService;
     var siteServiceTemplate = Handlebars.compile(this.template);
     var html = siteServiceTemplate({
-      siteService: siteService,
+      sites: siteService.sites,
     });
     this.rootElement.html(html);
 
-    var progressbars = this.rootElement.find(".progressbar");
-    progressbars.progressbar({ value: false });
-    progressbars.hide();
+    this.siteViews = this.rootElement
+      .find(".site_div")
+      .map((i: Int, elem: any) => {
+        var siteView = new SiteView(elem, siteService.sites[i], i);
+        siteView.showProgress(false);
+        siteView.selectPostButton.button().on("click", (event: any) => {
+          self.onSelectPostClicked(event);
+        });
 
-    var select_post_buttons = this.rootElement.find(".select_post_button");
-    select_post_buttons.button().on("click", (event: any) => {
-      self.onSelectPostClicked(event);
-    });
+        siteView.publishPostButton.button().on("click", (event: any) => {
+          self.onPublishPostClicked(event);
+        });
 
-    var publish_post_buttons = this.rootElement.find(".publish_post_button");
-    publish_post_buttons.button().on("click", (event: any) => {
-      self.onPublishPostClicked(event);
-    });
-
-    var remove_buttons = this.rootElement.find(".remove_site_button");
-    remove_buttons.button().on("click", (event: any) => {
-      self.onRemoveSiteClicked(event);
-    });
+        siteView.removeButton.button().on("click", (event: any) => {
+          self.onRemoveSiteClicked(event);
+        });
+        return siteView;
+      });
   }
 
   async onSelectPostClicked(event: any) {
-    var self = this;
     var siteService = this.services.siteService;
     var index = parseInt(
       event.currentTarget.id.substring("select_post_".length)
