@@ -11,6 +11,7 @@ export class Dialog {
     constructor(elem_or_id : any) {
         this.rootElement = ensureElement(elem_or_id);
         this.setupViews();
+        this.rootElement.css("z-Index", 1000);
     }
 
     setupViews() {

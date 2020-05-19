@@ -6,14 +6,16 @@ import { SiteType, Site } from "../models";
 import { ServiceCatalog } from "../catalog";
 
 const TOKEN_VALIDATION_FREQUENCY = 600000;
-const DEFAULT_HOSTNAME = "https://leetcoach.com/";
+const DEFAULT_HOSTNAME = "https://wordpress.com/";
 const DEFAULT_USERNAME = "panyam";
 
 export class SiteLoginDialog extends Dialog implements SiteLoginProvider {
   siteTypeElem: JQuery<HTMLElement>;
+  siteHostLabel: JQuery<HTMLElement>;
   siteHostElem: JQuery<HTMLElement>;
   usernameElem: JQuery<HTMLElement>;
   passwordElem: JQuery<HTMLElement>;
+  passwordLabel: JQuery<HTMLElement>;
   errorMessageElem: JQuery<HTMLElement>;
   allFields: JQuery<any>;
   dialog: any;
@@ -43,16 +45,17 @@ export class SiteLoginDialog extends Dialog implements SiteLoginProvider {
       this.usernameElem.val(s.username);
       this.siteHostElem.val(s.site_host);
       this.siteTypeElem.val(s.site_type);
+      this.selectedSiteType = s.site_type;
     } else {
-      this.siteHostElem.val(DEFAULT_HOSTNAME);
+      this.selectedSiteType = SiteType.WORDPRESS;
       this.usernameElem.val(DEFAULT_USERNAME);
       this.passwordElem.val("");
     }
     setEnabled(this.siteHostElem, s == null);
     setEnabled(this.siteTypeElem, s == null);
     setVisible(this.passwordElem, s != null);
-    var passwordLabel = this.rootElement.find("label[for='site_password']");
-    setVisible(passwordLabel, s != null);
+
+    setVisible(this.passwordLabel, s != null);
   }
 
   get credentials(): any {
@@ -80,6 +83,7 @@ export class SiteLoginDialog extends Dialog implements SiteLoginProvider {
               <label for="site_type">Site Type</label>
               <select id = "site_type">
                 <option value="WORDPRESS">WordPress Blog</option>
+                <option value="MEDIUM">Medium</option>
               </select>
 
               <label for="site_host">Site Host</label>
@@ -124,14 +128,62 @@ export class SiteLoginDialog extends Dialog implements SiteLoginProvider {
     return out;
   }
 
+  set selectedSiteType(siteType: SiteType) {
+    if (siteType == SiteType.WORDPRESS) {
+      this.siteTypeElem.val("WORDPRESS");
+    } else if (siteType == SiteType.LINKEDIN) {
+      this.siteTypeElem.val("LINKEDIN");
+    } else if (siteType == SiteType.MEDIUM) {
+      this.siteTypeElem.val("MEDIUM");
+    }
+    this.onSiteTypeChanged();
+  }
+
+  get selectedSiteType(): SiteType {
+    var siteType = this.siteTypeElem.val();
+    if (siteType == "WORDPRESS") {
+      return SiteType.WORDPRESS;
+    } else if (siteType == "MEDIUM") {
+      return SiteType.MEDIUM;
+    } else if (siteType == "LINKEDIN") {
+      return SiteType.LINKEDIN;
+    }
+    return -1;
+  }
+
+  onSiteTypeChanged() {
+    var siteType = this.selectedSiteType;
+    console.log("Selected Type: ", siteType);
+    setEnabled(this.siteHostElem, siteType == SiteType.WORDPRESS);
+    setEnabled(this.siteHostLabel, siteType == SiteType.WORDPRESS);
+    if (this._site == null) {
+      if (siteType == SiteType.WORDPRESS)
+        this.siteHostElem.val(DEFAULT_HOSTNAME);
+      else if (siteType == SiteType.MEDIUM)
+        this.siteHostElem.val("https://medium.com");
+      else if (siteType == SiteType.LINKEDIN)
+        this.siteHostElem.val("https://linkedin.com");
+    }
+  }
+
   setupViews() {
     var self = this;
     this.rootElement.html(this.template);
     this.siteTypeElem = this.rootElement.find("select");
     this.siteHostElem = this.rootElement.find("#site_host");
+    this.siteHostLabel = this.rootElement.find("label[for='site_host']");
     this.usernameElem = this.rootElement.find("#site_username");
     this.passwordElem = this.rootElement.find("#site_password");
+    this.passwordLabel = this.rootElement.find("label[for='site_password']");
     this.errorMessageElem = this.rootElement.find("#error_message_span");
+    if (this.site != null) {
+      this.siteTypeElem.val(this.site.site_type);
+      this.onSiteTypeChanged();
+    }
+    this.siteTypeElem.change(function (evt: any) {
+      self.onSiteTypeChanged();
+    });
+
     this.allFields = $([])
       .add(this.siteTypeElem)
       .add(this.siteHostElem)

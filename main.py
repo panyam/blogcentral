@@ -33,7 +33,14 @@ def client():
 def homepage():
     return render_template("homepage.html", **common_properties())
 
+@app.route('/')
+def homepage():
+    return render_template("homepage.html", **common_properties())
+
 if __name__ == '__main__':
+    import os, sys
+    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = "1"
+
     # This is used when running locally only. When deploying to Google App
     # Engine, a webserver process such as Gunicorn will serve the app. This
     # can be configured by adding an `entrypoint` to app.yaml.
