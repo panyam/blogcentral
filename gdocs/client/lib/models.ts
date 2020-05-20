@@ -2,27 +2,87 @@ import { Store } from "./stores";
 import { Int, Nullable } from "./types";
 
 export enum SiteType {
-  WORDPRESS,
-  LINKEDIN,
-  MEDIUM,
+  WP_JWT,
+  WP_OAUTH2,
+  MEDIUM_IT,
+  MEDIUM_OAUTH2,
 }
+
+export class WPJWTConfig {
+  baseUrl: string;
+  apiPath: string;
+  tokenPath: string;
+  validatePath: string;
+
+  constructor(config: any) {
+    this.baseUrl = config.baseUrl;
+    this.apiPath = config.apiPath || "wp-json/wp/v2/";
+    this.tokenPath = config.tokenPath || "wp-json/jwt-auth/v1/token/";
+    this.validatePath =
+      config.vlidatePath || "wp-json/jwt-auth/v1/token/validate/";
+  }
+}
+
+/**
+ * Configs for the publicly hosted wordpress sites that allow OAuth based login for BlogCentral.
+ */
+export class WPOAuth2Config {
+  siteUrl: string;
+  apiPath: string;
+  clientId: string;
+  clientSecret: string;
+  requestTokenUrl: string;
+  authorizeUrl: string;
+  authenticateUrl: string;
+
+  constructor(config: any) {
+    this.siteUrl = config.siteUrl;
+    this.clientId = config.clientId;
+    this.clientSecret = config.clientSecret;
+    this.apiPath = config.apiPath;
+    this.requestTokenUrl =
+      config.requestTokenUrl || "https://public-api.wordpress.com/oauth2/token";
+    this.authorizeUrl =
+      config.authorizeUrl ||
+      "https://public-api.wordpress.com/oauth2/authorize";
+    this.authenticateUrl =
+      config.authenticateUrl ||
+      "https://public-api.wordpress.com/oauth2/authenticate";
+  }
+}
+
+export class MediumITConfig {
+  username: string;
+  integrationToken: string;
+
+  constructor(config: any) {
+    this.username = config.username;
+    this.integrationToken = config.integrationToken;
+  }
+}
+
+/*
+export class MediumOAuthConfig {
+  username: string;
+  apiUrl: string;
+  requestTokenUrl: string;
+  authorizeUrl: string;
+
+  constructor(config: any) {
+    this.username = config.username;
+    this.apiUrl = config.apiUrl || "https://api.medium.com/v1/";
+    this.authorizeUrl = "https://medium.com/m/oauth/authorize";
+  }
+}
+*/
 
 export class Site {
   site_type: SiteType;
-  site_host: string;
-  username: string;
-  config: any;
+  siteConfig: WPJWTConfig | WPOAuth2Config | MediumITConfig;
   selectedPost: any = null;
 
-  constructor(
-    site_type: SiteType,
-    site_host: string,
-    username: string,
-    config: Nullable<any> = null
-  ) {
+  constructor(site_type: SiteType, config: siteConfig) {
     this.site_type = site_type;
-    this.site_host = site_host;
-    this.username = username;
     this.config = config || {};
   }
 

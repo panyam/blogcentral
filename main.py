@@ -33,7 +33,7 @@ def client():
 def homepage():
     return render_template("homepage.html", **common_properties())
 
-@app.route('/')
+@app.route('/oauth/callback')
 def homepage():
     return render_template("homepage.html", **common_properties())
 

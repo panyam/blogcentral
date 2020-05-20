@@ -1,8 +1,9 @@
 import { ensureElement, setEnabled, setVisible } from "./utils";
 import { Dialog } from "./Dialog";
+import { LoginDetailsView, WPLoginView } from "./LoginViews";
 import { SiteLoginProvider } from "../auth";
 import { Nullable } from "../types";
-import { SiteType, Site } from "../models";
+import { SitePlatform, Site } from "../models";
 import { ServiceCatalog } from "../catalog";
 
 const TOKEN_VALIDATION_FREQUENCY = 600000;
@@ -10,18 +11,14 @@ const DEFAULT_HOSTNAME = "https://wordpress.com/";
 const DEFAULT_USERNAME = "panyam";
 
 export class SiteLoginDialog extends Dialog implements SiteLoginProvider {
-  siteTypeElem: JQuery<HTMLElement>;
-  siteHostLabel: JQuery<HTMLElement>;
-  siteHostElem: JQuery<HTMLElement>;
-  usernameElem: JQuery<HTMLElement>;
-  passwordElem: JQuery<HTMLElement>;
-  passwordLabel: JQuery<HTMLElement>;
+  sitePlatformElem: JQuery<HTMLElement>;
+  loginViewDiv : JQuery<HTMLElement>
   errorMessageElem: JQuery<HTMLElement>;
   allFields: JQuery<any>;
   dialog: any;
   form: any;
-  _site: Nullable<Site> = null;
   services: ServiceCatalog;
+  loginDetailsView : LoginDetailsView
 
   constructor(elem_or_id: any, services: ServiceCatalog) {
     super(elem_or_id);
@@ -29,37 +26,57 @@ export class SiteLoginDialog extends Dialog implements SiteLoginProvider {
     this.site = null;
   }
 
-  get site(): Nullable<Site> {
+  set selectedSitePlatform(sitePlatform: SitePlatform) {
+    if (sitePlatform == SitePlatform.WORDPRESS) {
+      this.sitePlatformElem.val("WORDPRESS");
+    } else if (sitePlatform == SitePlatform.LINKEDIN) {
+      this.sitePlatformElem.val("LINKEDIN");
+    } else if (sitePlatform == SitePlatform.MEDIUM) {
+      this.sitePlatformElem.val("MEDIUM");
+    }
+    this.onSitePlatformChanged();
+  }
+
+  get selectedSitePlatform(): SitePlatform {
+    var sitePlatform = this.sitePlatformElem.val();
+    if (sitePlatform == "WORDPRESS") {
+      return SitePlatform.WORDPRESS;
+    } else if (sitePlatform == "MEDIUM") {
+      return SitePlatform.MEDIUM;
+    } else if (sitePlatform == "LINKEDIN") {
+      return SitePlatform.LINKEDIN;
+    }
+    return -1;
+  }
+
+  onSitePlatformChanged() {
+    var sitePlatform = this.selectedSitePlatform;
+    console.log("Selected Type: ", sitePlatform);
+    setEnabled(this.siteHostElem, sitePlatform == SitePlatform.WORDPRESS);
+    setEnabled(this.siteHostLabel, sitePlatform == SitePlatform.WORDPRESS);
     if (this._site == null) {
-      var username: string = this.usernameElem.val() as string;
-      var siteHost: string = this.siteHostElem.val() as string;
-      return new Site(SiteType.WORDPRESS, siteHost, username);
-    } else {
-      return this._site;
+      if (sitePlatform == SitePlatform.WORDPRESS)
+        this.siteHostElem.val(DEFAULT_HOSTNAME);
+      else if (sitePlatform == SitePlatform.MEDIUM)
+        this.siteHostElem.val("https://medium.com");
+      else if (sitePlatform == SitePlatform.LINKEDIN)
+        this.siteHostElem.val("https://linkedin.com");
     }
   }
 
-  set site(s: Nullable<Site>) {
-    this._site = s;
-    if (s != null) {
-      this.usernameElem.val(s.username);
-      this.siteHostElem.val(s.site_host);
-      this.siteTypeElem.val(s.site_type);
-      this.selectedSiteType = s.site_type;
-    } else {
-      this.selectedSiteType = SiteType.WORDPRESS;
-      this.usernameElem.val(DEFAULT_USERNAME);
-      this.passwordElem.val("");
-    }
-    setEnabled(this.siteHostElem, s == null);
-    setEnabled(this.siteTypeElem, s == null);
-    setVisible(this.passwordElem, s != null);
-
-    setVisible(this.passwordLabel, s != null);
+  get site() { return this.loginDetailsView.site; }
+  set site(s : Nullable<Site>) { 
+      if (s != null) {
+      this.selectedSitePlatform = s.site_type;
+      } else {
+      this.selectedSitePlatform = SitePlatform.WORDPRESS;
+      }
+      this.loginDetailsView.site = s;
+    setEnabled(this.sitePlatformElem, s == null);
   }
 
   get credentials(): any {
-    // var siteType : string = this.siteTypeElem.val() as string;
+    // var sitePlatform : string = this.sitePlatformElem.val() as string;
     var username: string = this.usernameElem.val() as string;
     var password: string = this.passwordElem.val() as string;
     return {
@@ -80,24 +97,15 @@ export class SiteLoginDialog extends Dialog implements SiteLoginProvider {
     return `
           <form>
             <fieldset class = "dialog_fields">
-              <label for="site_type">Site Type</label>
-              <select id = "site_type">
+              <label for="platform">Platform</label>
+              <select id = "platform">
                 <option value="WORDPRESS">WordPress Blog</option>
                 <option value="MEDIUM">Medium</option>
+                <option value="LINKEDIN">LinkedIn</option>
               </select>
 
-              <label for="site_host">Site Host</label>
-              <input type="url" name="site_host" id="site_host" class="text ui-widget-content ui-corner-all">
-
-              <label for="site_username">Username</label>
-              <input type="text" name="site_username" id="site_username" class="text ui-widget-content ui-corner-all">
-
-              <label for="site_password">Password</label>
-              <input type="password" name="site_password" 
-                     id="site_password" 
-                     value=""
-                     class="text ui-widget-content ui-corner-all">
-
+              <div class = "platform_details">
+              </div>
 
               <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
               <span id = "error_message_span"></span>
@@ -128,48 +136,10 @@ export class SiteLoginDialog extends Dialog implements SiteLoginProvider {
     return out;
   }
 
-  set selectedSiteType(siteType: SiteType) {
-    if (siteType == SiteType.WORDPRESS) {
-      this.siteTypeElem.val("WORDPRESS");
-    } else if (siteType == SiteType.LINKEDIN) {
-      this.siteTypeElem.val("LINKEDIN");
-    } else if (siteType == SiteType.MEDIUM) {
-      this.siteTypeElem.val("MEDIUM");
-    }
-    this.onSiteTypeChanged();
-  }
-
-  get selectedSiteType(): SiteType {
-    var siteType = this.siteTypeElem.val();
-    if (siteType == "WORDPRESS") {
-      return SiteType.WORDPRESS;
-    } else if (siteType == "MEDIUM") {
-      return SiteType.MEDIUM;
-    } else if (siteType == "LINKEDIN") {
-      return SiteType.LINKEDIN;
-    }
-    return -1;
-  }
-
-  onSiteTypeChanged() {
-    var siteType = this.selectedSiteType;
-    console.log("Selected Type: ", siteType);
-    setEnabled(this.siteHostElem, siteType == SiteType.WORDPRESS);
-    setEnabled(this.siteHostLabel, siteType == SiteType.WORDPRESS);
-    if (this._site == null) {
-      if (siteType == SiteType.WORDPRESS)
-        this.siteHostElem.val(DEFAULT_HOSTNAME);
-      else if (siteType == SiteType.MEDIUM)
-        this.siteHostElem.val("https://medium.com");
-      else if (siteType == SiteType.LINKEDIN)
-        this.siteHostElem.val("https://linkedin.com");
-    }
-  }
-
   setupViews() {
     var self = this;
     this.rootElement.html(this.template);
-    this.siteTypeElem = this.rootElement.find("select");
+    this.sitePlatformElem = this.rootElement.find("select");
     this.siteHostElem = this.rootElement.find("#site_host");
     this.siteHostLabel = this.rootElement.find("label[for='site_host']");
     this.usernameElem = this.rootElement.find("#site_username");
@@ -177,18 +147,15 @@ export class SiteLoginDialog extends Dialog implements SiteLoginProvider {
     this.passwordLabel = this.rootElement.find("label[for='site_password']");
     this.errorMessageElem = this.rootElement.find("#error_message_span");
     if (this.site != null) {
-      this.siteTypeElem.val(this.site.site_type);
-      this.onSiteTypeChanged();
+      this.sitePlatformElem.val(this.site.site_type);
+      this.onSitePlatformChanged();
     }
-    this.siteTypeElem.change(function (evt: any) {
-      self.onSiteTypeChanged();
+    this.sitePlatformElem.change(function (evt: any) {
+      self.onSitePlatformChanged();
     });
 
     this.allFields = $([])
-      .add(this.siteTypeElem)
-      .add(this.siteHostElem)
-      .add(this.usernameElem)
-      .add(this.passwordElem);
+      .add(this.sitePlatformElem);
     this.dialog = this.rootElement.dialog({
       autoOpen: false,
       position: { my: "center top", at: "center top", of: window },

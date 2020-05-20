@@ -1,6 +1,42 @@
 
 import { Int } from "./types"
 
+/**
+ * A helper for building URLs.
+ */
+export class URLBuilder {
+  baseUrl: string;
+  params: any = [];
+  constructor(baseUrl: string) {
+    this.baseUrl = baseUrl;
+  }
+
+  appendPath(path: string) {
+    if (!this.baseUrl.endsWith("/") && !path.startsWith("/")) {
+      this.baseUrl += "/";
+    }
+    this.baseUrl += path;
+    return this;
+  }
+
+  addParam(key: string, value: string) {
+    this.params.push([key, value]);
+    return this;
+  }
+
+  build(): string {
+    var url = this.baseUrl;
+    var params = this.params;
+    var paramString = params
+      .map((item: any, _index: Int) => {
+        var [key, value] = item;
+        return encodeURIComponent(key) + "=" + encodeURIComponent(value);
+      })
+      .join("&");
+    return url + (url.indexOf("?") >= 0 ? "&" : "?") + paramString;
+  }
+}
+
 export class Request {
     url : string
     options : any;
