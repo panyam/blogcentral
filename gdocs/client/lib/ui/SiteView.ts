@@ -1,7 +1,7 @@
 
 declare var Handlebars: any;
 import { ensureElement } from "./utils";
-import { Site } from "../models";
+import { Site } from "../sites";
 import { ActivityIndicator } from "./ActivityIndicator";
 
 export class SiteView {

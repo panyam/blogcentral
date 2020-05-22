@@ -2,7 +2,7 @@ import { Nullable } from "./types";
 import { Store } from "./stores";
 import { Request, Response, HttpClient } from "./net";
 import { ContentExtractor } from "./extractors";
-import { Site } from "./models";
+import { Site } from "./sites";
 
 declare var google: any;
 export class PropertiesStore extends Store {

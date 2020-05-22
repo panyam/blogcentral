@@ -10,6 +10,13 @@ export enum SiteType {
   LINKEDIN,
 }
 
+export interface AuthUI {
+  /**
+   * Ensures that we are logged in to the site via this auth method.
+   */
+  ensureLoggedIn(authType : AuthType, site : Site): Promise<boolean>;
+}
+
 export function createSiteApi(
   siteType: SiteType,
   name: string,

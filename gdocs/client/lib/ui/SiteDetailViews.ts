@@ -1,36 +1,27 @@
 declare var Handlebars: any;
 import { ensureElement, setEnabled, setVisible } from "./utils";
 import { Nullable } from "../types";
-import { Site } from "../models";
+import { Site } from "../sites";
 import { ActivityIndicator } from "./ActivityIndicator";
 
-export class LoginDetailsView {
+export class SiteDetailView {
   rootElement: any;
   activityIndicator: ActivityIndicator;
   allFields: JQuery<any>;
-  _site: Nullable<Site> = null;
+  readonly site: Site;
 
-  constructor(elem_or_id: any, site: Site) {
+  constructor(elem_or_id: any, site: Nullable<Site> = null) {
     this.rootElement = ensureElement(elem_or_id);
     this.setupViews();
-    this.site = null;
-  }
-
-  get site(): Nullable<Site> {
-    return null;
-  }
-
-  set site(s: Nullable<Site>) {
-    this._site = s;
-    this.onSiteChanged();
+    this.site = site || new Site({});
   }
 
   onSiteChanged() {}
 
   setupViews() {
-    var siteTemplate = Handlebars.compile(this.template);
-    var html = siteTemplate({
-      site: this._site,
+    var template = Handlebars.compile(this.template);
+    var html = template({
+      site: this.site,
     });
     this.rootElement.html(html);
   }
@@ -40,17 +31,47 @@ export class LoginDetailsView {
   }
 }
 
-/**
- * A view to capture details about logging into publicly hosted wordpress site.
- */
-export class WPJWTLoginView extends LoginDetailsView {
-  siteHostLabel: JQuery<HTMLElement>;
-  siteHostElem: JQuery<HTMLElement>;
-  usernameElem: JQuery<HTMLElement>;
-  passwordElem: JQuery<HTMLElement>;
+export class WPSiteDetailView extends SiteDetailView {
+  tokenLabel: JQuery<HTMLElement>;
+  tokenElem: JQuery<HTMLElement>;
+  expiresAtLabel: JQuery<HTMLElement>;
+  expiresAtElem: JQuery<HTMLElement>;
 
   setupViews() {
     super.setupViews();
+    this.tokenElem = this.rootElement.find("#token");
+    this.tokenLabel = this.rootElement.find("label[for='token']");
+    this.expiresAtElem = this.rootElement.find("#expiresAt");
+    this.expiresAtLabel = this.rootElement.find("label[for='expiresAt']");
+  }
+
+  onSiteChanged() {
+    var s = this.site;
+    this.tokenElem.val(s.token || "");
+    this.expiresAtElem.val(s.tokenExpiresAt || "");
+  }
+
+  get template(): string {
+    return `
+        <label for="token">Token</label>
+        <input type="text" name="token" id="token" class="text ui-widget-content ui-corner-all">
+        <label for="expiresAt">Expires At</label>
+        <input type="date" name="expiresAt" id="expiresAt" value="" class="text ui-widget-content ui-corner-all">
+      `;
+  }
+}
+
+/**
+ * A view to capture details about logging into publicly hosted wordpress site.
+ */
+export class LISiteDetailView extends SiteDetailView {
+  tokenLabel: JQuery<HTMLElement>;
+  tokenElem: JQuery<HTMLElement>;
+
+  setupViews() {
+    super.setupViews();
+    this.tokenElem = this.rootElement.find("#token");
+    this.tokenLabel = this.rootElement.find("label[for='token']");
   }
 
   onSiteChanged() {

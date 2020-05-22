@@ -3,7 +3,7 @@ import { AddPostDialog } from "./AddPostDialog";
 import { PostListView } from "./PostListView";
 import { ensureElement } from "./utils";
 import { Int, Nullable } from "../types";
-import { SiteType, Site, Post } from "../models";
+import { SiteType, Site, Post } from "../sites";
 import { ServiceCatalog } from "../catalog";
 
 export class ActivityIndicator {

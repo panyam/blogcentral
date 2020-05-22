@@ -2,7 +2,7 @@
 declare var Handlebars : any;
 import { ensureElement } from "./utils";
 import { Int, Nullable } from "../types";
-import { SiteType, Site, Post } from "../models";
+import { SiteType, Site, Post } from "../sites";
 import { ServiceCatalog } from "../catalog";
 
 export interface PostListViewDelegate {

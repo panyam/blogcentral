@@ -3,7 +3,7 @@ import { ActivityIndicator } from "./ActivityIndicator";
 import { PostListView, PostListViewDelegate } from "./PostListView";
 import { setVisible, setEnabled, ensureElement } from "./utils";
 import { Int, Nullable } from "../types";
-import { Site, Post } from "../models";
+import { Site, Post } from "../sites";
 import { ServiceCatalog } from "../catalog";
 
 const PAGE_LENGTH = 5;

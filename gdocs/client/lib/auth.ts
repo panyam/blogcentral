@@ -27,11 +27,6 @@ export function createAuthClient(
 
 export interface AuthClient {
   /**
-   * Ensures that we are logged in to the site via this auth method.
-   */
-  ensureLoggedIn(): Promise<boolean>;
-
-  /**
    * Creates a request decorated with all auth details.
    */
   decorateRequest(request: Request): Request;
@@ -68,7 +63,7 @@ export class OAuthClient implements AuthClient {
 export class TokenAuthClient implements AuthClient {
   services: ServiceCatalog;
   token: Nullable<string> = null;
-  tokenValidatedAt: Nullable<number> = null;
+  tokenExpiresAt: Nullable<number> = null;
   constructor(services: ServiceCatalog, config: any) {
     this.services = services;
     this.token = config.token || null;
@@ -121,4 +116,5 @@ export class JWTAuthClient extends TokenAuthClient {
     request = this.decorateRequest(request);
     return await this.services.httpClient.send(request);
   }
+
 }

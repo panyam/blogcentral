@@ -2,9 +2,9 @@ import { SiteLoginDialog } from "./SiteLoginDialog";
 import { ActivityIndicator } from "./ActivityIndicator";
 import { SiteListView, SiteListViewDelegate } from "./SiteListView";
 import { ensureElement } from "./utils";
-import { Int, Nullable } from "../types";
+import { Nullable } from "../types";
 import { PostsPanel } from "./PostsPanel";
-import { Site, Post } from "../models";
+import { Site, Post } from "../sites";
 import { ServiceCatalog } from "../catalog";
 
 export class SitesPanel implements SiteListViewDelegate {
