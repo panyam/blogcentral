@@ -18,9 +18,9 @@ const TOKEN_VALIDATION_FREQUENCY = 600000;
 const DEFAULT_HOSTNAME = "https://wordpress.com/";
 const DEFAULT_USERNAME = "panyam";
 
-export class SiteDetailsDialog extends Dialog {
+export class SiteDetailDialog extends Dialog {
   siteTypeElem: JQuery<HTMLElement>;
-  authDetailsElem: JQuery<HTMLElement>;
+  authDetailElem: JQuery<HTMLElement>;
   authDetailView: AuthDetailView;
   errorMessageElem: JQuery<HTMLElement>;
   allFields: JQuery<any>;
@@ -61,8 +61,8 @@ export class SiteDetailsDialog extends Dialog {
     var siteType = this.selectedSiteType;
     console.log("Selected Type: ", siteType);
     // show the different view based on the type
-    this.authDetailsElem = this.rootElement.find(".auth_details_view");
-    this.authDetailView = new AuthDetailView(this.authDetailsElem);
+    this.authDetailElem = this.rootElement.find(".auth_details_view");
+    this.authDetailView = new AuthDetailView(this.authDetailElem);
 
     /*
     setEnabled(this.siteHostElem, siteType == SiteType.WORDPRESS);

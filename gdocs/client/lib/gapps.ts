@@ -76,7 +76,7 @@ export class GAppsExtractor implements ContentExtractor {
       google.script.run
         .withSuccessHandler(resolve)
         .withFailureHandler(reject)
-        .doc2content(site.payload, site.selectedPost.options);
+        .doc2content(site.config, site.selectedPost.options);
     });
   }
 }

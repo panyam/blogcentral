@@ -146,7 +146,7 @@ export class PostsPanel implements PostListViewDelegate {
     if (site != null) {
       if (await services.siteLoginProvider.ensureLoggedIn(site)) {
         this.activityIndicator.show();
-        var posts = await services.siteGateway.getPosts(site, {
+        var posts = await site.getPosts({
           order: order,
           orderby: orderBy,
           searchIn: searchIn,
@@ -179,7 +179,7 @@ export class PostsPanel implements PostListViewDelegate {
     try {
       console.log("Creating New Post: ", newPost);
       this.activityIndicator.show();
-      var post = await services.siteGateway.createPost(site, newPost);
+      var post = await site.createPost(newPost);
     } catch (e) {
       console.log("Create Post Exception: ", e);
     }

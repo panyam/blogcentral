@@ -1,4 +1,4 @@
-import { SiteLoginDialog } from "./SiteLoginDialog";
+import { SiteDetailDialog } from "./SiteDetailDialog";
 import { ActivityIndicator } from "./ActivityIndicator";
 import { SiteListView, SiteListViewDelegate } from "./SiteListView";
 import { ensureElement } from "./utils";
@@ -10,7 +10,7 @@ import { ServiceCatalog } from "../catalog";
 export class SitesPanel implements SiteListViewDelegate {
   rootElement: any;
   postsPanel: PostsPanel;
-  addSiteDialog: SiteLoginDialog;
+  addSiteDialog: SiteDetailDialog;
   addButton: any;
   siteListView: SiteListView;
   services: ServiceCatalog;
@@ -35,7 +35,7 @@ export class SitesPanel implements SiteListViewDelegate {
       addSiteDialogElem = $("<div id='add_site_dialog'></div>");
       this.rootElement.append(addSiteDialogElem);
     }
-    this.addSiteDialog = new SiteLoginDialog(addSiteDialogElem, this.services);
+    this.addSiteDialog = new SiteDetailDialog(addSiteDialogElem, this.services);
 
     var postsPanelElem = ensureElement("posts_panel_div", this.rootElement);
     this.postsPanel = new PostsPanel(postsPanelElem, this.services);
@@ -94,9 +94,7 @@ export class SitesPanel implements SiteListViewDelegate {
 
     // Now publish it!
     if (await services.siteLoginProvider.ensureLoggedIn(site)) {
-      var result = await services.siteGateway.updatePost(
-        site,
-        site.selectedPost.id,
+      var result = await site.updatePost(site.selectedPost.id,
         { content: html }
       );
       console.log("Published Post, Result: ", result);

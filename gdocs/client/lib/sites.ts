@@ -14,7 +14,7 @@ export interface AuthUI {
   /**
    * Ensures that we are logged in to the site via this auth method.
    */
-  ensureLoggedIn(authType : AuthType, site : Site): Promise<boolean>;
+  ensureLoggedIn(authType: AuthType, site: Site): Promise<boolean>;
 }
 
 export function createSiteApi(
@@ -119,17 +119,6 @@ export class WPRestApi extends SiteApi {
     var qp = params.join("&");
     var request = this.newRequest(path + "?" + qp);
     return request;
-    /*
-    try {
-      var response = await httpClient.send(request);
-      return response.data.map((p: any) => {
-        return new Post(p.id, p);
-      });
-    } catch (e) {
-      console.log("Get Posts Exception: ", e);
-      throw e;
-    }
-   */
   }
 
   removePostRequest(id: any) {
@@ -137,7 +126,6 @@ export class WPRestApi extends SiteApi {
     var request = this.newRequest(path);
     request.options.method = "DELETE";
     return request;
-    // return this.services.httpClient.send(request);
   }
 }
 
@@ -243,6 +231,25 @@ export class Site {
       siteConfig: this.siteConfig,
       authConfig: this.authConfig,
     };
+  }
+
+  async createPost(post: Post, options: any): Request {}
+  async updatePost(postid: String, options: any): Request {}
+  async getPosts(options: any): Post[] {
+    var request = this.siteApi.getPostsRequest(options);
+    try {
+      var response = await this.services.httpClient.send(request);
+      return response.data.map((p: any) => {
+        return new Post(p.id, p);
+      });
+    } catch (e) {
+      console.log("Get Posts Exception: ", e);
+      throw e;
+    }
+  }
+  async removePost(id: any) {
+    var request = this.siteApi.removePostRequest(id);
+    return this.services.httpClient.send(request);
   }
   async ensureLoggedIn() {}
 }

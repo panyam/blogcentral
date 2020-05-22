@@ -51,10 +51,6 @@ export class OAuthClient implements AuthClient {
     this.authenticateUrl = ensureParam(config, "authenticateUrl");
   }
 
-  async ensureLoggedIn() {
-    return false;
-  }
-
   decorateRequest(request: Request): Request {
     return request;
   }
@@ -74,13 +70,6 @@ export class TokenAuthClient implements AuthClient {
       request.headers["Authorization"] = "Bearer " + this.token;
     }
     return request;
-  }
-
-  /**
-   * Token already provided and do not expire so no login required.
-   */
-  async ensureLoggedIn() {
-    return true;
   }
 }
 
@@ -116,5 +105,4 @@ export class JWTAuthClient extends TokenAuthClient {
     request = this.decorateRequest(request);
     return await this.services.httpClient.send(request);
   }
-
 }
