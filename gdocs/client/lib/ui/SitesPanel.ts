@@ -73,7 +73,8 @@ export class SitesPanel implements SiteListViewDelegate {
         title: post.options.title,
         link: post.options.link,
       };
-      await siteService.saveSite(site);
+      // await siteService.saveSite(site);
+      await siteService.saveAll();
     }
     return post;
   }
@@ -94,7 +95,7 @@ export class SitesPanel implements SiteListViewDelegate {
 
     // Now publish it!
     if (await services.siteLoginProvider.ensureLoggedIn(site)) {
-      var result = await site.updatePost(site.selectedPost.id,
+      var result = await services.updatePost(site, site.selectedPost.id,
         { content: html }
       );
       console.log("Published Post, Result: ", result);

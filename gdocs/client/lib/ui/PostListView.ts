@@ -80,20 +80,18 @@ export class PostListView {
   }
 
   async onRemovePostClicked(event: any) {
-    var self = this;
     var services = this.services;
     var index = parseInt(
       event.currentTarget.id.substring("remove_post_".length)
     );
-    var post = self._posts[index];
+    var post = this._posts[index];
     console.log("Removing Post at: ", index);
-    await this.site.removePost(post.id);
+    await services.removePost(this.site, post.id);
     this._posts.splice(index, 1);
     this.refresh();
   }
 
   async onSelectPostClicked(event: any) {
-    var services = this.services;
     var index = parseInt(
       event.currentTarget.id.substring("remove_post_".length)
     );

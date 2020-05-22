@@ -10,13 +10,6 @@ export enum SiteType {
   LINKEDIN,
 }
 
-export interface AuthUI {
-  /**
-   * Ensures that we are logged in to the site via this auth method.
-   */
-  ensureLoggedIn(authType: AuthType, site: Site): Promise<boolean>;
-}
-
 export function createSiteApi(
   siteType: SiteType,
   name: string,
@@ -232,26 +225,6 @@ export class Site {
       authConfig: this.authConfig,
     };
   }
-
-  async createPost(post: Post, options: any): Request {}
-  async updatePost(postid: String, options: any): Request {}
-  async getPosts(options: any): Post[] {
-    var request = this.siteApi.getPostsRequest(options);
-    try {
-      var response = await this.services.httpClient.send(request);
-      return response.data.map((p: any) => {
-        return new Post(p.id, p);
-      });
-    } catch (e) {
-      console.log("Get Posts Exception: ", e);
-      throw e;
-    }
-  }
-  async removePost(id: any) {
-    var request = this.siteApi.removePostRequest(id);
-    return this.services.httpClient.send(request);
-  }
-  async ensureLoggedIn() {}
 }
 
 export class SiteService {
@@ -280,6 +253,10 @@ export class SiteService {
       }
     }
     return -1;
+  }
+
+  async saveSite(_site: Site) {
+    return this.saveAll();
   }
 
   async saveAll() {

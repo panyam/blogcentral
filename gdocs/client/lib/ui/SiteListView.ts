@@ -89,6 +89,6 @@ export class SiteListView {
     var siteService = this.services.siteService;
     var site = siteView.site;
     console.log("Removing Site: ", site);
-    siteService.remove(site.id).then(() => self.refresh());
+    siteService.remove(site).then(() => self.refresh());
   }
 }

@@ -1,13 +1,9 @@
-import { ensureElement, setEnabled, setVisible } from "./utils";
-import { Dialog } from "./Dialog";
-import {
-  AuthDetailView,
-  TokenAuthDetailView,
-  JWTAuthDetailView,
-} from "./AuthDetailViews";
+import { setEnabled } from "./utils";
+import { FormDialog } from "./Dialog";
 import {
   SiteDetailView,
   WPSiteDetailView,
+  MediumSiteDetailView,
   LISiteDetailView,
 } from "./SiteDetailViews";
 import { Nullable } from "../types";
@@ -18,14 +14,10 @@ const TOKEN_VALIDATION_FREQUENCY = 600000;
 const DEFAULT_HOSTNAME = "https://wordpress.com/";
 const DEFAULT_USERNAME = "panyam";
 
-export class SiteDetailDialog extends Dialog {
+export class SiteDetailDialog extends FormDialog {
   siteTypeElem: JQuery<HTMLElement>;
-  authDetailElem: JQuery<HTMLElement>;
-  authDetailView: AuthDetailView;
-  errorMessageElem: JQuery<HTMLElement>;
-  allFields: JQuery<any>;
-  dialog: any;
-  form: any;
+  siteDetailElem: JQuery<HTMLElement>;
+  siteDetailView: SiteDetailView;
   services: ServiceCatalog;
 
   constructor(elem_or_id: any, services: ServiceCatalog) {
@@ -60,26 +52,21 @@ export class SiteDetailDialog extends Dialog {
   onSiteTypeChanged() {
     var siteType = this.selectedSiteType;
     console.log("Selected Type: ", siteType);
-    // show the different view based on the type
-    this.authDetailElem = this.rootElement.find(".auth_details_view");
-    this.authDetailView = new AuthDetailView(this.authDetailElem);
 
-    /*
-    setEnabled(this.siteHostElem, siteType == SiteType.WORDPRESS);
-    setEnabled(this.siteHostLabel, siteType == SiteType.WORDPRESS);
-    if (this._site == null) {
-      if (siteType == SiteType.WORDPRESS)
-        this.siteHostElem.val(DEFAULT_HOSTNAME);
-      else if (siteType == SiteType.MEDIUM)
-        this.siteHostElem.val("https://medium.com");
-      else if (siteType == SiteType.LINKEDIN)
-        this.siteHostElem.val("https://linkedin.com");
-    }
-    */
+    // show the different view based on the type
+    this.siteDetailElem = this.rootElement.find(".site_details_view");
+    this.siteDetailView = new SiteDetailView(this.siteDetailElem);
+
+    if (siteType == SiteType.WORDPRESS)
+      this.siteDetailView = new WPSiteDetailView(this.siteDetailElem);
+    else if (siteType == SiteType.MEDIUM)
+      this.siteDetailView = new MediumSiteDetailView(this.siteDetailElem);
+    else if (siteType == SiteType.LINKEDIN)
+      this.siteDetailView = new LISiteDetailView(this.siteDetailElem);
   }
 
   get site() {
-    return this.authDetailView.site;
+    return this.siteDetailView.site;
   }
   set site(s: Nullable<Site>) {
     if (s != null) {
@@ -87,47 +74,19 @@ export class SiteDetailDialog extends Dialog {
     } else {
       this.selectedSiteType = SiteType.WORDPRESS;
     }
-    this.authDetailView.site = site;
     setEnabled(this.siteTypeElem, s == null);
-  }
-
-  get credentials(): any {
-    // var siteType : string = this.siteTypeElem.val() as string;
-    var username: string = this.usernameElem.val() as string;
-    var password: string = this.passwordElem.val() as string;
-    return {
-      username: username,
-      password: password,
-    };
-  }
-
-  get errorMessage(): string {
-    return this.errorMessageElem.html();
-  }
-
-  set errorMessage(html: string) {
-    this.errorMessageElem.html(html);
   }
 
   get template(): string {
     return `
-          <form>
-            <fieldset class = "dialog_fields">
-              <label for="platform">Platform</label>
-              <select id = "platform">
-                <option value="WORDPRESS">WordPress Blog</option>
-                <option value="MEDIUM">Medium</option>
-                <option value="LINKEDIN">LinkedIn</option>
-              </select>
-
-              <div class = "auth_details_view">
-              </div>
-
-              <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
-              <span id = "error_message_span"></span>
-            </fieldset>
-          </form>
-        `;
+        <label for="platform">Platform</label>
+        <select id = "platform">
+            <option value="WORDPRESS">WordPress Blog</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="LINKEDIN">LinkedIn</option>
+        </select>
+        <div class = "site_details_view"></div>
+    `;
   }
 
   buttons(): any {
@@ -137,7 +96,7 @@ export class SiteDetailDialog extends Dialog {
         self.close(null);
       },
     };
-    if (this._site == null) {
+    if (this.site == null) {
       out["Add Site"] = function () {
         self.close(self.site);
       };
@@ -145,7 +104,7 @@ export class SiteDetailDialog extends Dialog {
       out["Login"] = function () {
         self.errorMessageElem.html("");
         if (self.resolveFunc != null) {
-          self.resolveFunc(self.credentials);
+          self.resolveFunc(null /*self.credentials*/);
         }
       };
     }
@@ -153,38 +112,16 @@ export class SiteDetailDialog extends Dialog {
   }
 
   setupViews() {
-    var self = this;
-    this.rootElement.html(this.template);
+    var self = super.setupViews();
+    this.allFields.add(this.siteTypeElem);
     this.siteTypeElem = this.rootElement.find("select");
-    this.siteHostElem = this.rootElement.find("#site_host");
-    this.siteHostLabel = this.rootElement.find("label[for='site_host']");
-    this.usernameElem = this.rootElement.find("#site_username");
-    this.passwordElem = this.rootElement.find("#site_password");
-    this.passwordLabel = this.rootElement.find("label[for='site_password']");
-    this.errorMessageElem = this.rootElement.find("#error_message_span");
     if (this.site != null) {
-      this.siteTypeElem.val(this.site.site_type);
+      this.selectedSiteType = this.site.siteType;
       this.onSiteTypeChanged();
     }
-    this.siteTypeElem.change(function (evt: any) {
+    this.siteTypeElem.change(function (_evt: any) {
       self.onSiteTypeChanged();
     });
-
-    this.allFields = $([]).add(this.siteTypeElem);
-    this.dialog = this.rootElement.dialog({
-      autoOpen: false,
-      position: { my: "center top", at: "center top", of: window },
-      modal: true,
-      close: function () {
-        self.form[0].reset();
-        self.allFields.removeClass("ui-state-error");
-      },
-    });
-
-    this.form = this.dialog.find("form").on("submit", function (event: any) {
-      event.preventDefault();
-    });
-
     return this;
   }
 

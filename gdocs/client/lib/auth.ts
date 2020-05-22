@@ -1,7 +1,8 @@
 import { Nullable } from "./types";
-import { Request, HttpClient } from "./net";
+import { Request } from "./net";
 import { ensureParam } from "./utils";
 import { ServiceCatalog } from "./catalog";
+import { Dialog } from "./ui/Dialog";
 
 export enum AuthType {
   TOKEN,
@@ -26,6 +27,11 @@ export function createAuthClient(
 }
 
 export interface AuthClient {
+  /**
+   * Ensures that we are logged in to the site via this auth method.
+   */
+  ensureLoggedIn(): Promise<boolean>;
+
   /**
    * Creates a request decorated with all auth details.
    */
@@ -54,6 +60,17 @@ export class OAuthClient implements AuthClient {
   decorateRequest(request: Request): Request {
     return request;
   }
+
+  /**
+   * Ensures that we are logged in to the site via this auth method.
+   */
+  async ensureLoggedIn() {
+    // Present a UI that shows the "authorization URL" that user
+    // has to click and start/complete OAuth flow.  So next time
+    // user
+    throw new Error("Not implemented");
+    return false;
+  }
 }
 
 export class TokenAuthClient implements AuthClient {
@@ -70,6 +87,14 @@ export class TokenAuthClient implements AuthClient {
       request.headers["Authorization"] = "Bearer " + this.token;
     }
     return request;
+  }
+
+  /**
+   * Shows a dialog to the integration/bearer token from the user.
+   */
+  async ensureLoggedIn() {
+    throw new Error("Not implemented");
+    return false;
   }
 }
 
@@ -104,5 +129,13 @@ export class JWTAuthClient extends TokenAuthClient {
     });
     request = this.decorateRequest(request);
     return await this.services.httpClient.send(request);
+  }
+
+  /**
+   * Shows a dialog to get the credentials from the user.
+   */
+  async ensureLoggedIn() {
+    throw new Error("Not implemented");
+    return false;
   }
 }
