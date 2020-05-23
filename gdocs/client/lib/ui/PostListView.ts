@@ -1,8 +1,8 @@
 declare var Handlebars: any;
 import { ensureElement } from "./utils";
-import { Int, Nullable } from "../types";
-import { SiteType, Site, Post } from "../sites";
-import { ServiceCatalog } from "../catalog";
+import { Nullable } from "../types";
+import { Site, Post } from "../sites";
+import { App } from "../app";
 
 export interface PostListViewDelegate {
   postSelected(plv: PostListView, post: Post): void;
@@ -10,14 +10,14 @@ export interface PostListViewDelegate {
 
 export class PostListView {
   rootElement: any;
-  services: ServiceCatalog;
+  app: App;
   _posts: Post[] = [];
   site: Site;
   delegate: Nullable<PostListViewDelegate> = null;
 
-  constructor(elem_or_id: any, services: ServiceCatalog) {
+  constructor(elem_or_id: any, app: App) {
     this.rootElement = ensureElement(elem_or_id);
-    this.services = services;
+    this.app = app;
     this.refresh();
   }
 
@@ -80,13 +80,13 @@ export class PostListView {
   }
 
   async onRemovePostClicked(event: any) {
-    var services = this.services;
+    var app = this.app;
     var index = parseInt(
       event.currentTarget.id.substring("remove_post_".length)
     );
     var post = this._posts[index];
     console.log("Removing Post at: ", index);
-    await services.removePost(this.site, post.id);
+    await app.removePost(this.site, post.id);
     this._posts.splice(index, 1);
     this.refresh();
   }

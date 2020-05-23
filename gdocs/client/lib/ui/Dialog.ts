@@ -6,13 +6,15 @@ export class Dialog {
   dialog: any;
   resolveFunc: any;
   rejectFunc: any;
-  readonly _buttons: any;
-  readonly _template: any;
+  readonly zIndex: number;
+  protected _buttons: any;
+  protected _template: any;
 
   constructor(elem_or_id: any, configs: any = null) {
     configs = configs || {};
     var self = this;
     this.rootElement = ensureElement(elem_or_id);
+    this.zIndex = configs.zIndex || 1000;
     this._template = configs.template || "<div>Hello World</div>";
     this._buttons = configs.buttons || {
       Cancel: function () {
@@ -21,7 +23,6 @@ export class Dialog {
     };
 
     this.setupViews();
-    this.rootElement.css("z-Index", 1000);
   }
 
   get template() {
@@ -35,6 +36,7 @@ export class Dialog {
   setupViews() {
     var self = this;
     this.rootElement.html(this.renderTemplate());
+    this.rootElement.css("z-Index", this.zIndex);
     this.dialog = this.rootElement.dialog({
       autoOpen: false,
       position: { my: "center top", at: "center top", of: window },
@@ -55,15 +57,15 @@ export class Dialog {
     });
   }
 
-  buttons() {
-    return this._buttons;
-  }
-
   close(data: Nullable<any> = null) {
     if (this.resolveFunc != null) {
       this.resolveFunc(data);
     }
     this.dialog.dialog("close");
+  }
+
+  buttons() {
+    return this._buttons;
   }
 }
 
@@ -80,7 +82,7 @@ export class FormDialog extends Dialog {
       `
             <input type="submit" tabindex="-1" 
                    style="position:absolute; top:-1000px">
-            <span id = "error_message_span"></span>
+            <span class = "error_message_span"></span>
         </fieldset>
       </form>`
     );
@@ -96,7 +98,7 @@ export class FormDialog extends Dialog {
 
   setupViews() {
     var self = super.setupViews();
-    this.errorMessageElem = this.rootElement.find("#error_message_span");
+    this.errorMessageElem = this.rootElement.find(".error_message_span");
     this.allFields = $([]);
     this.form = this.dialog.find("form").on("submit", function (e: any) {
       e.preventDefault();

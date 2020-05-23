@@ -1,7 +1,6 @@
 import { Nullable } from "./types";
-import { Store } from "./stores";
-import { Request, Response, HttpClient } from "./net";
-import { ContentExtractor } from "./extractors";
+import { Store, ContentExtractor, HttpClient } from "./interfaces";
+import { Request, Response } from "./net";
 import { Site } from "./sites";
 
 declare var google: any;
@@ -30,7 +29,7 @@ export class PropertiesStore extends Store {
   }
 }
 
-export class GAppsHttpClient extends HttpClient {
+export class GAppsHttpClient implements HttpClient {
   async send(request: Request): Promise<Response> {
     var options: any = {
       method: request.method,

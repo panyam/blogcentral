@@ -1,30 +1,16 @@
-declare var Handlebars: any;
 import { FormDialog } from "./Dialog";
-import { ensureElement } from "./utils";
-import { Int, Nullable } from "../types";
-import { SiteType, Site, Post } from "../sites";
-import { ServiceCatalog } from "../catalog";
+import { Post } from "../sites";
 
 export class AddPostDialog extends FormDialog {
   titleElem: JQuery<HTMLElement>;
   passwordElem: JQuery<HTMLElement>;
   excerptElem: JQuery<HTMLElement>;
+  slugElem: JQuery<HTMLElement>;
 
-  setupViews() {
-    var self = super.setupViews();
-    this.titleElem = this.rootElement.find("#post_title");
-    this.passwordElem = this.rootElement.find("#post_password");
-    this.excerptElem = this.rootElement.find("#post_excerpt");
-    this.allFields
-      .add(this.titleElem)
-      .add(this.passwordElem)
-      .add(this.excerptElem);
-    return self;
-  }
-
-  buttons(): any {
+  constructor(elem_or_id: any) {
+    super(elem_or_id);
     var self = this;
-    return {
+    this._buttons = {
       "Create Post": function () {
         self.close(self.post);
       },
@@ -34,7 +20,21 @@ export class AddPostDialog extends FormDialog {
     };
   }
 
-  get template(): string {
+  setupViews() {
+    var self = super.setupViews();
+    this.titleElem = this.rootElement.find("#post_title");
+    this.passwordElem = this.rootElement.find("#post_password");
+    this.excerptElem = this.rootElement.find("#post_excerpt");
+    this.slugElem = this.rootElement.find("#post_slug");
+    this.allFields
+      .add(this.titleElem)
+      .add(this.passwordElem)
+      .add(this.excerptElem)
+      .add(this.slugElem);
+    return self;
+  }
+
+  get template() {
     return `
         <label for="post_title">Title</label>
         <input type="url" name="post_title" id="post_title" value="Awesome Title!" class="text ui-widget-content ui-corner-all"/>
@@ -54,10 +54,12 @@ export class AddPostDialog extends FormDialog {
     var title = this.titleElem.val() as string;
     var password = this.passwordElem.val() as string;
     var excerpt = this.excerptElem.val() as string;
+    var slug = this.slugElem.val() as string;
     return new Post(null, {
       title: title,
       password: password,
       excerpt: excerpt,
+      slug: slug,
     });
   }
 }

@@ -1,14 +1,8 @@
 import { Int, Nullable } from "./types";
-import { Request, Response, URLBuilder } from "./net";
-import { Store } from "./stores";
+import { Request, URLBuilder } from "./net";
+import { Store, AuthClient, SiteType, AuthType, SiteApi } from "./interfaces";
 import { ensureParam } from "./utils";
-import { AuthType, AuthClient, createAuthClient } from "./auth";
-
-export enum SiteType {
-  WORDPRESS,
-  MEDIUM,
-  LINKEDIN,
-}
+import { createAuthClient } from "./auth";
 
 export function createSiteApi(
   siteType: SiteType,
@@ -24,20 +18,6 @@ export function createSiteApi(
   } else {
     throw new Error("SiteType not supported yet");
   }
-}
-
-export abstract class SiteApi {
-  name: string;
-  config: any;
-  constructor(name: string, config: any) {
-    this.name = name;
-    this.config = config || {};
-  }
-
-  abstract createPostRequest(post: Post, options: any): Request;
-  abstract updatePostRequest(postid: String, options: any): Request;
-  abstract getPostsRequest(options: any): Request;
-  abstract removePostRequest(id: any): Request;
 }
 
 export class WPRestApi extends SiteApi {
@@ -190,6 +170,23 @@ then what is needed is a what to orchestrate between the apiClient and the authC
 So best for apiClient to just create rquest objects and let 
 */
 
+export class Post {
+  id: Nullable<string>;
+  options: any;
+  constructor(id: Nullable<string> = null, options: any = null) {
+    options = options || {};
+    this.id = id;
+    this.options = options;
+  }
+
+  get payload(): any {
+    return {
+      id: this.id,
+      options: this.options,
+    };
+  }
+}
+
 export class Site {
   siteType: SiteType;
   siteConfig: any;
@@ -307,22 +304,5 @@ export class SiteService {
       await this.saveAll();
       return site;
     }
-  }
-}
-
-export class Post {
-  id: Nullable<string>;
-  options: any;
-  constructor(id: Nullable<string> = null, options: any = null) {
-    options = options || {};
-    this.id = id;
-    this.options = options;
-  }
-
-  get payload(): any {
-    return {
-      id: this.id,
-      options: this.options,
-    };
   }
 }

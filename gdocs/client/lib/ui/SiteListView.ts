@@ -2,7 +2,7 @@ declare var Handlebars: any;
 import { ensureElement } from "./utils";
 import { Int, Nullable } from "../types";
 import { Site, Post } from "../sites";
-import { ServiceCatalog } from "../catalog";
+import { App } from "../app";
 import { SiteView } from "./SiteView";
 
 export interface SiteListViewDelegate {
@@ -19,13 +19,13 @@ export interface SiteListViewDelegate {
 
 export class SiteListView {
   rootElement: any;
-  services: ServiceCatalog;
+  app: App;
   delegate: Nullable<SiteListViewDelegate> = null;
   siteViews: SiteView[];
 
-  constructor(elem_or_id: any, services: ServiceCatalog) {
+  constructor(elem_or_id: any, app: App) {
     this.rootElement = ensureElement(elem_or_id);
-    this.services = services;
+    this.app = app;
     this.refresh();
   }
 
@@ -35,7 +35,7 @@ export class SiteListView {
 
   refresh() {
     var self = this;
-    var siteService = this.services.siteService;
+    var siteService = this.app.siteService;
     var siteServiceTemplate = Handlebars.compile(this.template);
     var html = siteServiceTemplate({
       sites: siteService.sites,
@@ -86,7 +86,7 @@ export class SiteListView {
 
   onRemoveSiteClicked(siteView: SiteView) {
     var self = this;
-    var siteService = this.services.siteService;
+    var siteService = this.app.siteService;
     var site = siteView.site;
     console.log("Removing Site: ", site);
     siteService.remove(site).then(() => self.refresh());

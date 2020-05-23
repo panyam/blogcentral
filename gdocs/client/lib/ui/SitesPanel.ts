@@ -5,7 +5,7 @@ import { ensureElement } from "./utils";
 import { Nullable } from "../types";
 import { PostsPanel } from "./PostsPanel";
 import { Site, Post } from "../sites";
-import { ServiceCatalog } from "../catalog";
+import { App } from "../app";
 
 export class SitesPanel implements SiteListViewDelegate {
   rootElement: any;
@@ -13,12 +13,12 @@ export class SitesPanel implements SiteListViewDelegate {
   addSiteDialog: SiteDetailDialog;
   addButton: any;
   siteListView: SiteListView;
-  services: ServiceCatalog;
+  app: App;
   activityIndicator: ActivityIndicator;
 
-  constructor(elem_or_id: string, services: ServiceCatalog) {
+  constructor(elem_or_id: string, app: App) {
     this.rootElement = ensureElement(elem_or_id);
-    this.services = services;
+    this.app = app;
     this.setupViews();
   }
 
@@ -35,27 +35,27 @@ export class SitesPanel implements SiteListViewDelegate {
       addSiteDialogElem = $("<div id='add_site_dialog'></div>");
       this.rootElement.append(addSiteDialogElem);
     }
-    this.addSiteDialog = new SiteDetailDialog(addSiteDialogElem, this.services);
+    this.addSiteDialog = new SiteDetailDialog(addSiteDialogElem, this.app);
 
     var postsPanelElem = ensureElement("posts_panel_div", this.rootElement);
-    this.postsPanel = new PostsPanel(postsPanelElem, this.services);
+    this.postsPanel = new PostsPanel(postsPanelElem, this.app);
 
     var siteListDiv = this.rootElement.find("#site_list_div");
-    this.siteListView = new SiteListView(siteListDiv, this.services);
+    this.siteListView = new SiteListView(siteListDiv, this.app);
     this.siteListView.delegate = this;
 
     this.addButton = this.rootElement.find("#add_button");
     this.addButton.button().on("click", function () {
       self.addSiteDialog.open().then((site: Site) => {
         if (site != null) {
-          self.services.siteService.addSite(site as Site).then(() => {
+          self.app.siteService.addSite(site as Site).then(() => {
             self.siteListView.refresh();
           });
         }
       });
     });
 
-    this.services.siteService.loadAll().then(() => {
+    this.app.siteService.loadAll().then(() => {
       self.siteListView.refresh();
     });
   }
@@ -64,7 +64,7 @@ export class SitesPanel implements SiteListViewDelegate {
    * Lets one select one or more posts in a site.
    */
   async selectPost(site: Site) {
-    var siteService = this.services.siteService;
+    var siteService = this.app.siteService;
     var post = (await this.postsPanel.open(site)) as Nullable<Post>;
     console.log("Post Selected from Panel: ", post);
     if (post != null) {
@@ -83,21 +83,21 @@ export class SitesPanel implements SiteListViewDelegate {
    * Kicks of publishing of content to the given site.
    */
   async publishPost(site: Site) {
-    var services = this.services;
+    var app = this.app;
     if (site.selectedPost == null) {
       alert("Please select a post for this site to publish to");
       return null;
     }
 
     this.activityIndicator.show();
-    var html = await this.services.contentExtractor.extractHtml(site);
+    var html = await this.app.contentExtractor.extractHtml(site);
     console.log("Published Post, HTML: ", html);
 
     // Now publish it!
-    if (await services.siteLoginProvider.ensureLoggedIn(site)) {
-      var result = await services.updatePost(site, site.selectedPost.id,
-        { content: html }
-      );
+    if (await app.ensureLoggedIn(site)) {
+      var result = await app.updatePost(site, site.selectedPost.id, {
+        content: html,
+      });
       console.log("Published Post, Result: ", result);
     }
     this.activityIndicator.hide();

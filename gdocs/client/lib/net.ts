@@ -87,9 +87,3 @@ export class Response {
     }
 }
 
-export class HttpClient {
-    async send(request : Request) : Promise<Response> {
-        return new Response();
-    }
-}
-

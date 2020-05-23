@@ -1,45 +1,23 @@
 import { Nullable } from "./types";
 import { Request } from "./net";
 import { ensureParam } from "./utils";
-import { ServiceCatalog } from "./catalog";
-import { Dialog } from "./ui/Dialog";
+import { App } from "./app";
+import { AuthType, AuthClient } from "./interfaces";
 
-export enum AuthType {
-  TOKEN,
-  JWT,
-  OAUTH2,
-}
-
-export function createAuthClient(
-  authType: AuthType,
-  services: ServiceCatalog,
-  configs: any
-) {
+export function createAuthClient(authType: AuthType, app: App, configs: any) {
   if (authType == AuthType.TOKEN) {
-    return new TokenAuthClient(services, configs);
+    return new TokenAuthClient(app, configs);
   } else if (authType == AuthType.JWT) {
-    return new JWTAuthClient(services, configs);
+    return new JWTAuthClient(app, configs);
   } else if (authType == AuthType.OAUTH2) {
-    return new OAuthClient(services, configs);
+    return new OAuthClient(app, configs);
   } else {
     throw new Error("AuthType not supported yet");
   }
 }
 
-export interface AuthClient {
-  /**
-   * Ensures that we are logged in to the site via this auth method.
-   */
-  ensureLoggedIn(): Promise<boolean>;
-
-  /**
-   * Creates a request decorated with all auth details.
-   */
-  decorateRequest(request: Request): Request;
-}
-
 export class OAuthClient implements AuthClient {
-  services: ServiceCatalog;
+  app: App;
   clientId: string;
   clientSecret: string;
   redirectUrl: string;
@@ -47,8 +25,8 @@ export class OAuthClient implements AuthClient {
   authorizeUrl: string;
   authenticateUrl: string;
 
-  constructor(services: ServiceCatalog, config: any) {
-    this.services = services;
+  constructor(app: App, config: any) {
+    this.app = app;
     this.clientId = ensureParam(config, "clientId");
     this.clientSecret = ensureParam(config, "clientSecret");
     this.requestTokenUrl = ensureParam(config, "requestTokenUrl");
@@ -60,25 +38,14 @@ export class OAuthClient implements AuthClient {
   decorateRequest(request: Request): Request {
     return request;
   }
-
-  /**
-   * Ensures that we are logged in to the site via this auth method.
-   */
-  async ensureLoggedIn() {
-    // Present a UI that shows the "authorization URL" that user
-    // has to click and start/complete OAuth flow.  So next time
-    // user
-    throw new Error("Not implemented");
-    return false;
-  }
 }
 
 export class TokenAuthClient implements AuthClient {
-  services: ServiceCatalog;
+  app: App;
   token: Nullable<string> = null;
   tokenExpiresAt: Nullable<number> = null;
-  constructor(services: ServiceCatalog, config: any) {
-    this.services = services;
+  constructor(app: App, config: any) {
+    this.app = app;
     this.token = config.token || null;
   }
 
@@ -88,22 +55,14 @@ export class TokenAuthClient implements AuthClient {
     }
     return request;
   }
-
-  /**
-   * Shows a dialog to the integration/bearer token from the user.
-   */
-  async ensureLoggedIn() {
-    throw new Error("Not implemented");
-    return false;
-  }
 }
 
 export class JWTAuthClient extends TokenAuthClient {
   tokenUrl: string;
   validateUrl: string;
 
-  constructor(services: ServiceCatalog, config: any) {
-    super(services, config);
+  constructor(app: App, config: any) {
+    super(app, config);
     this.tokenUrl = ensureParam(config, "tokenUrl");
     this.validateUrl = ensureParam(config, "validateUrl");
   }
@@ -118,7 +77,7 @@ export class JWTAuthClient extends TokenAuthClient {
       contentType: "application/json",
       body: payload,
     });
-    var response = await this.services.httpClient.send(request);
+    var response = await this.app.httpClient.send(request);
     return response.data.token;
   }
 
@@ -128,14 +87,6 @@ export class JWTAuthClient extends TokenAuthClient {
       contentType: "application/json",
     });
     request = this.decorateRequest(request);
-    return await this.services.httpClient.send(request);
-  }
-
-  /**
-   * Shows a dialog to get the credentials from the user.
-   */
-  async ensureLoggedIn() {
-    throw new Error("Not implemented");
-    return false;
+    return await this.app.httpClient.send(request);
   }
 }

@@ -1,8 +1,7 @@
 import "./styles/global";
 
 import { BCJS } from "./lib/index";
-import { ServiceCatalog } from "./lib/catalog";
-import { PropertiesStore, GAppsHttpClient  } from "./lib/gapps";
+import { PropertiesStore, GAppsHttpClient } from "./lib/gapps";
 import { GAppsExtractor } from "./lib/gapps";
 // import { JQHttpClient } from "./lib/flask";
 
@@ -10,9 +9,9 @@ $(function () {
   var store = new PropertiesStore("BC");
   var httpClient = new GAppsHttpClient();
   // var httpClient = new JQHttpClient();
-  var catalog = new ServiceCatalog(store, httpClient);
-  catalog.contentExtractor = new GAppsExtractor();
-  (window as any).bcApp = new BCJS.App.App(catalog);
+  var theApp = new BCJS.App.App(store, httpClient);
+  theApp.contentExtractor = new GAppsExtractor();
+  (window as any).bcApp = theApp;
 });
 
 // export default UserList class

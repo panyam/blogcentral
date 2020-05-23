@@ -4,7 +4,7 @@ import { PostListView, PostListViewDelegate } from "./PostListView";
 import { setVisible, setEnabled, ensureElement } from "./utils";
 import { Int, Nullable } from "../types";
 import { Site, Post } from "../sites";
-import { ServiceCatalog } from "../catalog";
+import { App } from "../app";
 
 const PAGE_LENGTH = 5;
 
@@ -23,7 +23,7 @@ export class PostsPanel implements PostListViewDelegate {
   confirmButton: any;
   cancelButton: any;
   postListView: PostListView;
-  services: ServiceCatalog;
+  app: App;
   resolveFunc: any;
   rejectFunc: any;
   site: Site;
@@ -32,9 +32,9 @@ export class PostsPanel implements PostListViewDelegate {
   currentPage = 1;
   hasNextPage = false;
 
-  constructor(elem_or_id: string, services: ServiceCatalog) {
+  constructor(elem_or_id: string, app: App) {
     this.rootElement = ensureElement(elem_or_id);
-    this.services = services;
+    this.app = app;
     this.setupViews();
   }
 
@@ -99,7 +99,7 @@ export class PostsPanel implements PostListViewDelegate {
     this.addPostDialog = new AddPostDialog(addPostDialogElem);
 
     var postListDiv = this.rootElement.find("#post_list_div");
-    this.postListView = new PostListView(postListDiv, this.services);
+    this.postListView = new PostListView(postListDiv, this.app);
     this.postListView.delegate = this;
 
     this.prevButton = this.rootElement.find("#prev_button");
@@ -142,11 +142,11 @@ export class PostsPanel implements PostListViewDelegate {
     var query = this.searchField.val();
 
     var site = this.site;
-    var services = this.services;
+    var app = this.app;
     if (site != null) {
-      if (await services.siteLoginProvider.ensureLoggedIn(site)) {
+      if (await app.ensureLoggedIn(site)) {
         this.activityIndicator.show();
-        var posts = await this.services.getPosts(site, {
+        var posts = await this.app.getPosts(site, {
           order: order,
           orderby: orderBy,
           searchIn: searchIn,
@@ -172,14 +172,14 @@ export class PostsPanel implements PostListViewDelegate {
     var site = this.site;
     if (site == null) return;
 
-    var services = this.services;
+    var app = this.app;
     var newPost = (await this.addPostDialog.open()) as Post;
     if (newPost == null) return;
 
     try {
       console.log("Creating New Post: ", newPost);
       this.activityIndicator.show();
-      await services.createPost(site, newPost, {});
+      await app.createPost(site, newPost, {});
     } catch (e) {
       console.log("Create Post Exception: ", e);
     }
@@ -193,7 +193,7 @@ export class PostsPanel implements PostListViewDelegate {
     setEnabled(this.nextButton, enable).css("opacity", opacity);
   }
 
-  postSelected(plv: PostListView, post: Post): void {
+  postSelected(_plv: PostListView, post: Post): void {
     console.log("Here...: ", post);
     this.selectedPost = post;
   }

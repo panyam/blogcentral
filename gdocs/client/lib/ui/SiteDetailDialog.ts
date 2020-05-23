@@ -7,22 +7,19 @@ import {
   LISiteDetailView,
 } from "./SiteDetailViews";
 import { Nullable } from "../types";
-import { SiteType, Site } from "../sites";
-import { ServiceCatalog } from "../catalog";
-
-const TOKEN_VALIDATION_FREQUENCY = 600000;
-const DEFAULT_HOSTNAME = "https://wordpress.com/";
-const DEFAULT_USERNAME = "panyam";
+import { SiteType } from "../interfaces";
+import { Site } from "../sites";
+import { App } from "../app";
 
 export class SiteDetailDialog extends FormDialog {
   siteTypeElem: JQuery<HTMLElement>;
   siteDetailElem: JQuery<HTMLElement>;
   siteDetailView: SiteDetailView;
-  services: ServiceCatalog;
+  app: App;
 
-  constructor(elem_or_id: any, services: ServiceCatalog) {
+  constructor(elem_or_id: any, app: App) {
     super(elem_or_id);
-    this.services = services;
+    this.app = app;
     this.site = null;
   }
 
@@ -123,52 +120,5 @@ export class SiteDetailDialog extends FormDialog {
       self.onSiteTypeChanged();
     });
     return this;
-  }
-
-  /** LoginProvider interface */
-  async ensureLoggedIn(site: Site) {
-    while (true) {
-      site.config.token = site.config.token || null;
-      if (site.config.token == null) {
-        this.site = site;
-        var credentials: any = await this.open();
-        if (credentials == null) return false;
-        try {
-          site.config.token = await gateway.loginToWordpress(site, credentials);
-          this.close();
-          if (site.config.token == null) {
-            // cancelled
-            return false;
-          } else {
-            site.config.tokenTimestamp = Date.now();
-            // Save what we have so far
-            await this.services.siteService.saveSite(site);
-          }
-        } catch (e) {
-          console.log("Received Exception: ", e);
-          var resjson = e.responseJSON || {};
-          var message = resjson.message || e.statusText;
-          this.errorMessage = message;
-        }
-      }
-
-      if (site.config.token != null) {
-        // validate token if too old needed
-        var validatedDelta = Date.now() - (site.config.tokenValidatedAt || 0);
-        if (validatedDelta > TOKEN_VALIDATION_FREQUENCY) {
-          var validated = await gateway.validateToken(site);
-          if (validated) {
-            await this.services.siteService.saveSite(site);
-            return true;
-          } else {
-            // validation failed - may be token is invalid
-            site.config.token = null;
-          }
-        } else {
-          return true;
-        }
-      }
-    }
-    return true;
   }
 }
