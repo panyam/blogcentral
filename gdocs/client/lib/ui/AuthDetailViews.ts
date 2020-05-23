@@ -2,16 +2,15 @@ declare var Handlebars: any;
 import { ensureElement, setEnabled, setVisible } from "./utils";
 import { Nullable } from "../types";
 import { ActivityIndicator } from "./ActivityIndicator";
+import { View } from "./Views";
 
-export class AuthDetailView {
-  rootElement: any;
+export class AuthDetailView extends View {
   activityIndicator: ActivityIndicator;
   allFields: JQuery<any>;
-  readonly authConfig : any
+  readonly authConfig: any;
 
-  constructor(elem_or_id: any, authConfig : any = null) {
-    this.rootElement = ensureElement(elem_or_id);
-    this.setupViews();
+  constructor(elem_or_id: any, authConfig: any = null) {
+    super(elem_or_id);
     this.authConfig = authConfig || {};
   }
 
@@ -20,9 +19,10 @@ export class AuthDetailView {
   setupViews() {
     var template = Handlebars.compile(this.template);
     var html = template({
-      site: this.authConfig
+      site: this.authConfig,
     });
     this.rootElement.html(html);
+    return this;
   }
 
   get template() {
@@ -42,6 +42,7 @@ export class TokenAuthDetailView extends AuthDetailView {
     this.tokenLabel = this.rootElement.find("label[for='token']");
     this.expiresAtElem = this.rootElement.find("#expiresAt");
     this.expiresAtLabel = this.rootElement.find("label[for='expiresAt']");
+    return this;
   }
 
   onSiteChanged() {
@@ -75,6 +76,7 @@ export class JWTAuthDetailView extends TokenAuthDetailView {
     this.tokenUrlLabel = this.rootElement.find("label[for='tokenUrl']");
     this.validateUrlElem = this.rootElement.find("#validateUrl");
     this.validateUrlLabel = this.rootElement.find("label[for='validateUrl']");
+    return this;
   }
 
   onSiteChanged() {

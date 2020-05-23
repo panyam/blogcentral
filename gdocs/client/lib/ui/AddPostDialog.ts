@@ -1,4 +1,4 @@
-import { FormDialog } from "./Dialog";
+import { FormDialog } from "./Views";
 import { Post } from "../sites";
 
 export class AddPostDialog extends FormDialog {

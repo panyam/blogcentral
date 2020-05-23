@@ -1,5 +1,5 @@
 import { setEnabled } from "./utils";
-import { FormDialog } from "./Dialog";
+import { FormDialog } from "./Views";
 import {
   SiteDetailView,
   WPSiteDetailView,
@@ -52,8 +52,6 @@ export class SiteDetailDialog extends FormDialog {
 
     // show the different view based on the type
     this.siteDetailElem = this.rootElement.find(".site_details_view");
-    this.siteDetailView = new SiteDetailView(this.siteDetailElem);
-
     if (siteType == SiteType.WORDPRESS)
       this.siteDetailView = new WPSiteDetailView(this.siteDetailElem);
     else if (siteType == SiteType.MEDIUM)
@@ -63,7 +61,7 @@ export class SiteDetailDialog extends FormDialog {
   }
 
   get site() {
-    return this.siteDetailView.site;
+    return this.siteDetailView ? this.siteDetailView.site : null;
   }
   set site(s: Nullable<Site>) {
     if (s != null) {
@@ -114,11 +112,13 @@ export class SiteDetailDialog extends FormDialog {
     this.siteTypeElem = this.rootElement.find("select");
     if (this.site != null) {
       this.selectedSiteType = this.site.siteType;
-      this.onSiteTypeChanged();
+    } else {
+      this.selectedSiteType = SiteType.WORDPRESS;
     }
     this.siteTypeElem.change(function (_evt: any) {
       self.onSiteTypeChanged();
     });
+    this.onSiteTypeChanged();
     return this;
   }
 }

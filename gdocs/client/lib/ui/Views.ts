@@ -1,28 +1,25 @@
 import { ensureElement } from "./utils";
 import { Nullable } from "../types";
 
-export class Dialog {
+export class View {
   rootElement: any;
-  dialog: any;
-  resolveFunc: any;
-  rejectFunc: any;
-  readonly zIndex: number;
-  protected _buttons: any;
   protected _template: any;
+  readonly configs: any;
+  readonly zIndex: number;
 
   constructor(elem_or_id: any, configs: any = null) {
     configs = configs || {};
-    var self = this;
-    this.rootElement = ensureElement(elem_or_id);
+    this.configs = configs;
     this.zIndex = configs.zIndex || 1000;
+    this.rootElement = ensureElement(elem_or_id);
     this._template = configs.template || "<div>Hello World</div>";
-    this._buttons = configs.buttons || {
-      Cancel: function () {
-        self.close(null);
-      },
-    };
-
     this.setupViews();
+  }
+
+  setupViews() {
+    this.rootElement.html(this.renderTemplate());
+    this.rootElement.css("z-Index", this.zIndex);
+    return this;
   }
 
   get template() {
@@ -32,16 +29,33 @@ export class Dialog {
   renderTemplate() {
     return this.template;
   }
+}
+
+export class Dialog extends View {
+  dialog: any;
+  resolveFunc: any;
+  rejectFunc: any;
+  protected _buttons: any;
+
+  constructor(elem_or_id: any, configs: any = null) {
+    super(elem_or_id, configs);
+    var self = this;
+    this._buttons = this.configs.buttons || {
+      Cancel: function () {
+        self.close(null);
+      },
+    };
+  }
 
   setupViews() {
-    var self = this;
-    this.rootElement.html(this.renderTemplate());
-    this.rootElement.css("z-Index", this.zIndex);
+    var self = super.setupViews();
     this.dialog = this.rootElement.dialog({
       autoOpen: false,
       position: { my: "center top", at: "center top", of: window },
       modal: true,
-      close: self.onClosed(),
+      close: function () {
+        self.onClosed();
+      },
     });
     return this;
   }

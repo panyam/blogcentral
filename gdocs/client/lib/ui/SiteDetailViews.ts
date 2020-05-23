@@ -1,80 +1,46 @@
 declare var Handlebars: any;
-import { ensureElement, setEnabled, setVisible } from "./utils";
+import { View } from "./Views";
 import { Nullable } from "../types";
 import { Site } from "../sites";
 import { ActivityIndicator } from "./ActivityIndicator";
 
-export class SiteDetailView {
-  rootElement: any;
+export class SiteDetailView extends View {
   activityIndicator: ActivityIndicator;
   allFields: JQuery<any>;
   readonly site: Site;
 
   constructor(elem_or_id: any, site: Nullable<Site> = null) {
-    this.rootElement = ensureElement(elem_or_id);
-    this.setupViews();
-    this.site = site || new Site({});
+    super(elem_or_id);
+    this.site = site || Site.defaultSite();
   }
 
-  onSiteChanged() {}
-
-  setupViews() {
+  renderTemplate() {
     var template = Handlebars.compile(this.template);
     var html = template({
       site: this.site,
     });
-    this.rootElement.html(html);
-  }
-
-  get template() {
-    return "";
+    return html;
   }
 }
 
 export class WPSiteDetailView extends SiteDetailView {
-  tokenLabel: JQuery<HTMLElement>;
-  tokenElem: JQuery<HTMLElement>;
-  expiresAtLabel: JQuery<HTMLElement>;
-  expiresAtElem: JQuery<HTMLElement>;
-
-  setupViews() {
-    super.setupViews();
-    this.tokenElem = this.rootElement.find("#token");
-    this.tokenLabel = this.rootElement.find("label[for='token']");
-    this.expiresAtElem = this.rootElement.find("#expiresAt");
-    this.expiresAtLabel = this.rootElement.find("label[for='expiresAt']");
-  }
-
-  onSiteChanged() {
-  }
-
   get template(): string {
-    return ` `;
+    return `WP Site`;
   }
 }
 
 export class LISiteDetailView extends SiteDetailView {
   setupViews() {
-    super.setupViews();
-  }
-
-  onSiteChanged() {
+    return super.setupViews();
   }
 
   get template(): string {
-    return ` `;
+    return `LI Site`;
   }
 }
 
 export class MediumSiteDetailView extends SiteDetailView {
-  setupViews() {
-    super.setupViews();
-  }
-
-  onSiteChanged() {
-  }
-
   get template(): string {
-    return ` `;
+    return `Medium Site`;
   }
 }

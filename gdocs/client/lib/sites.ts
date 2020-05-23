@@ -197,12 +197,27 @@ export class Site {
   selectedPost: any = null;
 
   constructor(configs: any) {
+    configs = configs || {}
     this.siteType = ensureParam(configs, "siteType");
     this.authType = ensureParam(configs, "authType");
     this.siteConfig = ensureParam(configs, "siteConfig");
     this.authConfig = ensureParam(configs, "authConfig");
     this.siteApi = createSiteApi(this.siteType, name, this.siteConfig);
     this.authClient = createAuthClient(this.authType, name, this.authConfig);
+  }
+
+  static defaultSite() : Site {
+      return new Site({
+          siteType: SiteType.WORDPRESS,
+          authType: AuthType.JWT,
+          siteConfig: {
+            apiUrl: ""
+          },
+          authConfig: {
+            "tokenUrl": "",
+            "validateUrl": "",
+          }
+      });
   }
 
   equals(another: Site): boolean {
@@ -264,7 +279,7 @@ export class SiteService {
   }
 
   async loadAll() {
-    var sites = await this.store.get("sites");
+    var sites = await this.store.get("sites") || [];
     this.sites = sites.map(function (siteConfig: any, _index: Int) {
       return new Site(siteConfig);
     });
