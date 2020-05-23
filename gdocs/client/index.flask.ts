@@ -4,14 +4,14 @@
 import "./styles/global";
 import "./styles/editor";
 
-import { BCJS } from "./lib/index";
+import { App } from "./lib/app";
 import { LocalStore, JQHttpClient } from "./lib/flask";
 import { LocalExtractor } from "./lib/flask";
 
 $(function () {
   var store = new LocalStore("BC");
   var httpClient = new JQHttpClient();
-  var theApp = new BCJS.App.App(store, httpClient);
+  var theApp = new App(store, httpClient);
   theApp.contentExtractor = new LocalExtractor("editor_container");
   (window as any).bcApp = theApp;
 });
