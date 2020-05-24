@@ -43,10 +43,11 @@ export class OAuthClient implements AuthClient {
 export class TokenAuthClient implements AuthClient {
   app: App;
   token: Nullable<string> = null;
-  tokenExpiresAt: Nullable<number> = null;
+  expiresAt: number = 0;
   constructor(app: App, config: any) {
     this.app = app;
     this.token = config.token || null;
+    this.expiresAt = config.expiresAt || Date.now();
   }
 
   decorateRequest(request: Request): Request {

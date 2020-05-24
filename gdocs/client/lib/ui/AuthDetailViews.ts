@@ -59,18 +59,22 @@ export class TokenAuthDetailView extends AuthDetailView {
 
   protected updateAuthConfig() {
       this._authConfig["token"] = this.tokenElem.val() || "";
+      // this._authConfig["expiresAt"] = this.expiresAtElem.val();
   }
 
   protected updateViews(_authConfig: any) {
     this.tokenElem.val(_authConfig.token || "");
+    // this.expiresAtElem.val(_authConfig.expiresAt);
   }
 
   template(): string {
     return `
         <label for="token">Token</label>
         <input type="text" name="token" id="token" class="text ui-widget-content ui-corner-all">
+    <!--
         <label for="expiresAt">Expires At</label>
         <input type="date" name="expiresAt" id="expiresAt" value="" class="text ui-widget-content ui-corner-all">
+        -->
       `;
   }
 }
