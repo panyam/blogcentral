@@ -1,30 +1,30 @@
+import { View } from "./Views";
 import { Int } from "../types";
 
-export class ActivityIndicator {
-  modalElement: any;
+export class ActivityIndicator extends View {
   bgColor: any;
   imageUrl: string;
   zIndex: Int;
   modalId: string;
 
-  constructor(model_elem: any, config: any = null) {
+  constructor(modal_elem: any, config: any = null) {
+    super(modal_elem);
     config = config || {};
-    this.modalElement = model_elem;
     this.zIndex = config.zIndex || 500;
     this.bgColor = config.bgColor || "rgba(10, 10, 10, .6)";
     this.imageUrl = config.imageUrl || "http://i.stack.imgur.com/FhHRx.gif";
     this.modalId = config.modalId || "modal";
-    this.setupViews();
   }
 
-  setupViews() {
-    this.modalElement.css("position", "absolute");
-    this.modalElement.css("z-index", this.zIndex);
-    this.modalElement.css("left", "0px");
-    this.modalElement.css("top", "0px");
-    this.modalElement.css("bottom", "0px");
-    this.modalElement.css("right", "0px");
-    this.modalElement.css(
+  setup(): this {
+    super.setup();
+    this.rootElement.css("position", "absolute");
+    this.rootElement.css("z-index", this.zIndex);
+    this.rootElement.css("left", "0px");
+    this.rootElement.css("top", "0px");
+    this.rootElement.css("bottom", "0px");
+    this.rootElement.css("right", "0px");
+    this.rootElement.css(
       "background",
       this.bgColor +
         "\n" +
@@ -34,16 +34,17 @@ export class ActivityIndicator {
         "50% 50%\n" +
         "no-repeat"
     );
-    this.modalElement.hide();
+    this.rootElement.hide();
+    return this;
   }
 
   show() {
-    // this.modalElement.css("height", "100%");
-    // this.modalElement.css("width", "100%");
-    this.modalElement.show();
+    // this.rootElement.css("height", "100%");
+    // this.rootElement.css("width", "100%");
+    this.rootElement.show();
   }
 
   hide() {
-    this.modalElement.hide();
+    this.rootElement.hide();
   }
 }

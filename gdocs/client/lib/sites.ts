@@ -188,6 +188,7 @@ export class Post {
 }
 
 export class Site {
+  title : string
   siteType: SiteType;
   siteConfig: any;
   siteApi: SiteApi;
@@ -196,7 +197,8 @@ export class Site {
   authClient: AuthClient;
   selectedPost: any = null;
 
-  constructor(configs: any) {
+  constructor(title : string, configs: any) {
+      this.title = title
     configs = configs || {}
     this.siteType = ensureParam(configs, "siteType");
     this.authType = ensureParam(configs, "authType");
@@ -207,7 +209,7 @@ export class Site {
   }
 
   static defaultSite() : Site {
-      return new Site({
+      return new Site("My Amazing Site", {
           siteType: SiteType.WORDPRESS,
           authType: AuthType.JWT,
           siteConfig: {
@@ -222,6 +224,7 @@ export class Site {
 
   equals(another: Site): boolean {
     return (
+      this.title == another.title &&
       this.siteType == another.siteType &&
       this.authType == another.authType &&
       this.authConfig == another.authConfig &&
@@ -231,10 +234,13 @@ export class Site {
 
   get config(): any {
     return {
+      title: this.title,
+      config : {
       siteType: this.siteType,
       authType: this.authType,
       siteConfig: this.siteConfig,
       authConfig: this.authConfig,
+      }
     };
   }
 }
@@ -272,16 +278,16 @@ export class SiteService {
   }
 
   async saveAll() {
-    var siteConfigs = this.sites.map((site: Site) => {
+    var configs = this.sites.map((site: Site) => {
       return site.config;
     });
-    return this.store.set("sites", siteConfigs);
+    return this.store.set("sites", configs);
   }
 
   async loadAll() {
     var sites = await this.store.get("sites") || [];
-    this.sites = sites.map(function (siteConfig: any, _index: Int) {
-      return new Site(siteConfig);
+    this.sites = sites.map(function (data: any, _index: Int) {
+      return new Site(data.title, data.config);
     });
     return true;
   }

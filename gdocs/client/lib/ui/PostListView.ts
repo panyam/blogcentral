@@ -1,5 +1,5 @@
 declare var Handlebars: any;
-import { ensureElement } from "./utils";
+import { View } from "./Views";
 import { Nullable } from "../types";
 import { Site, Post } from "../sites";
 import { App } from "../app";
@@ -8,17 +8,16 @@ export interface PostListViewDelegate {
   postSelected(plv: PostListView, post: Post): void;
 }
 
-export class PostListView {
-  rootElement: any;
+export class PostListView extends View {
   app: App;
   _posts: Post[] = [];
   site: Site;
   delegate: Nullable<PostListViewDelegate> = null;
 
   constructor(elem_or_id: any, app: App) {
-    this.rootElement = ensureElement(elem_or_id);
+    super(elem_or_id);
     this.app = app;
-    this.refresh();
+    this.posts = [];
   }
 
   set posts(posts: Post[]) {
@@ -26,7 +25,7 @@ export class PostListView {
     this.refresh();
   }
 
-  get template(): string {
+  template(): string {
     return `
         {{# each posts }}
         <table class = "post_table" width="100%" id = "post_table_{{@index}}" >
@@ -63,7 +62,7 @@ export class PostListView {
 
   refresh() {
     var self = this;
-    var postsListTemplate = Handlebars.compile(this.template);
+    var postsListTemplate = Handlebars.compile(this.template());
     var html = postsListTemplate({
       posts: this._posts,
     });

@@ -15,7 +15,7 @@ export class App {
     this.store = store;
     this.httpClient = httpClient;
     this.siteService = new SiteService(store);
-    this.sitesPanel = new SitesPanel("sites_panel_div", this);
+    this.sitesPanel = new SitesPanel("sites_panel_div", this).setup();
   }
 
   /**

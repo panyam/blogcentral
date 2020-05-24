@@ -1,9 +1,9 @@
 declare var Handlebars: any;
-import { ensureElement } from "./utils";
+import { View } from "./Views";
 import { Int, Nullable } from "../types";
 import { Site, Post } from "../sites";
 import { App } from "../app";
-import { SiteView } from "./SiteView";
+import { createSiteView, SiteView } from "./SiteViews";
 
 export interface SiteListViewDelegate {
   /**
@@ -17,26 +17,30 @@ export interface SiteListViewDelegate {
   publishPost(site: Site): Promise<Nullable<boolean>>;
 }
 
-export class SiteListView {
-  rootElement: any;
+export class SiteListView extends View {
   app: App;
   delegate: Nullable<SiteListViewDelegate> = null;
   siteViews: SiteView[];
 
   constructor(elem_or_id: any, app: App) {
-    this.rootElement = ensureElement(elem_or_id);
+    super(elem_or_id);
     this.app = app;
-    this.refresh();
   }
 
-  get template(): string {
+  template(): string {
     return `{{# each sites }}<div class = "site_div" id = "site_div_{{@index}}"> </div> {{/each}}`;
+  }
+
+  setup(): this {
+    super.setup();
+    this.refresh();
+    return this;
   }
 
   refresh() {
     var self = this;
     var siteService = this.app.siteService;
-    var siteServiceTemplate = Handlebars.compile(this.template);
+    var siteServiceTemplate = Handlebars.compile(this.template());
     var html = siteServiceTemplate({
       sites: siteService.sites,
     });
@@ -45,7 +49,7 @@ export class SiteListView {
     this.siteViews = this.rootElement
       .find(".site_div")
       .map((i: Int, elem: any) => {
-        var siteView = new SiteView(elem, siteService.sites[i], i);
+        var siteView = createSiteView(elem, siteService.sites[i], i);
         siteView.showProgress(false);
         siteView.selectPostButton.button().on("click", (_event: any) => {
           self.onSelectPostClicked(siteView);

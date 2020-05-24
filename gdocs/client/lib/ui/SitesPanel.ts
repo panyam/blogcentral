@@ -1,31 +1,30 @@
-import { SiteDetailDialog } from "./SiteDetailDialog";
+import { SiteInputDialog } from "./SiteInputDialog";
 import { ActivityIndicator } from "./ActivityIndicator";
 import { SiteListView, SiteListViewDelegate } from "./SiteListView";
 import { ensureElement } from "./utils";
+import { View } from "./Views";
 import { Nullable } from "../types";
 import { PostsPanel } from "./PostsPanel";
 import { Site, Post } from "../sites";
 import { App } from "../app";
 
-export class SitesPanel implements SiteListViewDelegate {
-  rootElement: any;
+export class SitesPanel extends View implements SiteListViewDelegate {
   postsPanel: PostsPanel;
-  addSiteDialog: SiteDetailDialog;
+  addSiteDialog: SiteInputDialog;
   addButton: any;
   siteListView: SiteListView;
   app: App;
   activityIndicator: ActivityIndicator;
 
   constructor(elem_or_id: string, app: App) {
-    this.rootElement = ensureElement(elem_or_id);
+    super(elem_or_id);
     this.app = app;
-    this.setupViews();
   }
 
-  setupViews() {
-    var self = this;
+  setup(): this {
+    var self = super.setup();
     var aidiv = this.rootElement.find(".activity_indicator");
-    this.activityIndicator = new ActivityIndicator(aidiv);
+    this.activityIndicator = new ActivityIndicator(aidiv).setup();
 
     var addSiteDialogElem: any = ensureElement(
       "add_site_dialog",
@@ -35,13 +34,17 @@ export class SitesPanel implements SiteListViewDelegate {
       addSiteDialogElem = $("<div id='add_site_dialog'></div>");
       this.rootElement.append(addSiteDialogElem);
     }
-    this.addSiteDialog = new SiteDetailDialog(addSiteDialogElem, this.app);
+    this.addSiteDialog = new SiteInputDialog(
+      addSiteDialogElem,
+      this.app,
+      true
+    ).setup();
 
     var postsPanelElem = ensureElement("posts_panel_div", this.rootElement);
-    this.postsPanel = new PostsPanel(postsPanelElem, this.app);
+    this.postsPanel = new PostsPanel(postsPanelElem, this.app).setup();
 
     var siteListDiv = this.rootElement.find("#site_list_div");
-    this.siteListView = new SiteListView(siteListDiv, this.app);
+    this.siteListView = new SiteListView(siteListDiv, this.app).setup();
     this.siteListView.delegate = this;
 
     this.addButton = this.rootElement.find("#add_button");
@@ -58,6 +61,7 @@ export class SitesPanel implements SiteListViewDelegate {
     this.app.siteService.loadAll().then(() => {
       self.siteListView.refresh();
     });
+    return this;
   }
 
   /**

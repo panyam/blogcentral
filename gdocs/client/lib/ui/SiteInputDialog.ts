@@ -1,26 +1,27 @@
 import { setEnabled } from "./utils";
 import { FormDialog } from "./Views";
 import {
-  SiteDetailView,
-  WPSiteDetailView,
-  MediumSiteDetailView,
-  LISiteDetailView,
-} from "./SiteDetailViews";
+  SiteInputView,
+  WPSiteInputView,
+  MediumSiteInputView,
+  LISiteInputView,
+} from "./SiteInputViews";
 import { Nullable } from "../types";
 import { SiteType } from "../interfaces";
 import { Site } from "../sites";
 import { App } from "../app";
 
-export class SiteDetailDialog extends FormDialog {
+export class SiteInputDialog extends FormDialog {
   siteTypeElem: JQuery<HTMLElement>;
   siteDetailElem: JQuery<HTMLElement>;
-  siteDetailView: SiteDetailView;
+  siteInputView: SiteInputView;
   app: App;
+  addingSiteMode: boolean = true;
 
-  constructor(elem_or_id: any, app: App) {
+  constructor(elem_or_id: any, app: App, addingSiteMode: boolean) {
     super(elem_or_id);
     this.app = app;
-    this.site = null;
+    this.addingSiteMode = addingSiteMode;
   }
 
   set selectedSiteType(siteType: SiteType) {
@@ -53,15 +54,15 @@ export class SiteDetailDialog extends FormDialog {
     // show the different view based on the type
     this.siteDetailElem = this.rootElement.find(".site_details_view");
     if (siteType == SiteType.WORDPRESS)
-      this.siteDetailView = new WPSiteDetailView(this.siteDetailElem);
+      this.siteInputView = new WPSiteInputView(this.siteDetailElem).setup();
     else if (siteType == SiteType.MEDIUM)
-      this.siteDetailView = new MediumSiteDetailView(this.siteDetailElem);
+      this.siteInputView = new MediumSiteInputView(this.siteDetailElem).setup();
     else if (siteType == SiteType.LINKEDIN)
-      this.siteDetailView = new LISiteDetailView(this.siteDetailElem);
+      this.siteInputView = new LISiteInputView(this.siteDetailElem).setup();
   }
 
   get site() {
-    return this.siteDetailView ? this.siteDetailView.site : null;
+    return this.siteInputView ? this.siteInputView.site : null;
   }
   set site(s: Nullable<Site>) {
     if (s != null) {
@@ -72,7 +73,7 @@ export class SiteDetailDialog extends FormDialog {
     setEnabled(this.siteTypeElem, s == null);
   }
 
-  get template(): string {
+  template(): string {
     return `
         <label for="platform">Platform</label>
         <select id = "platform">
@@ -91,7 +92,7 @@ export class SiteDetailDialog extends FormDialog {
         self.close(null);
       },
     };
-    if (this.site == null) {
+    if (this.addingSiteMode) {
       out["Add Site"] = function () {
         self.close(self.site);
       };
@@ -106,8 +107,8 @@ export class SiteDetailDialog extends FormDialog {
     return out;
   }
 
-  setupViews() {
-    var self = super.setupViews();
+  setup(): this {
+    var self = super.setup();
     this.allFields.add(this.siteTypeElem);
     this.siteTypeElem = this.rootElement.find("select");
     if (this.site != null) {

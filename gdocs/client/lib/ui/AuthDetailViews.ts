@@ -1,6 +1,4 @@
 declare var Handlebars: any;
-import { ensureElement, setEnabled, setVisible } from "./utils";
-import { Nullable } from "../types";
 import { ActivityIndicator } from "./ActivityIndicator";
 import { View } from "./Views";
 
@@ -16,8 +14,8 @@ export class AuthDetailView extends View {
 
   onSiteChanged() {}
 
-  setupViews() {
-    var template = Handlebars.compile(this.template);
+  setup(): this {
+    var template = Handlebars.compile(this.template());
     var html = template({
       site: this.authConfig,
     });
@@ -25,7 +23,7 @@ export class AuthDetailView extends View {
     return this;
   }
 
-  get template() {
+  template() {
     return "";
   }
 }
@@ -36,8 +34,8 @@ export class TokenAuthDetailView extends AuthDetailView {
   expiresAtLabel: JQuery<HTMLElement>;
   expiresAtElem: JQuery<HTMLElement>;
 
-  setupViews() {
-    super.setupViews();
+  setup(): this {
+    super.setup();
     this.tokenElem = this.rootElement.find("#token");
     this.tokenLabel = this.rootElement.find("label[for='token']");
     this.expiresAtElem = this.rootElement.find("#expiresAt");
@@ -45,19 +43,19 @@ export class TokenAuthDetailView extends AuthDetailView {
     return this;
   }
 
-  onSiteChanged() {
-    var ac = this.authConfig;
-    this.tokenElem.val(ac.token || "");
-    this.expiresAtElem.val(ac.tokenExpiresAt || "");
-  }
-
-  get template(): string {
+  template(): string {
     return `
         <label for="token">Token</label>
         <input type="text" name="token" id="token" class="text ui-widget-content ui-corner-all">
         <label for="expiresAt">Expires At</label>
         <input type="date" name="expiresAt" id="expiresAt" value="" class="text ui-widget-content ui-corner-all">
       `;
+  }
+
+  onSiteChanged() {
+    var ac = this.authConfig;
+    this.tokenElem.val(ac.token || "");
+    this.expiresAtElem.val(ac.tokenExpiresAt || "");
   }
 }
 
@@ -70,8 +68,8 @@ export class JWTAuthDetailView extends TokenAuthDetailView {
   validateUrlLabel: JQuery<HTMLElement>;
   validateUrlElem: JQuery<HTMLElement>;
 
-  setupViews() {
-    super.setupViews();
+  setup(): this {
+    super.setup();
     this.tokenUrlElem = this.rootElement.find("#tokenUrl");
     this.tokenUrlLabel = this.rootElement.find("label[for='tokenUrl']");
     this.validateUrlElem = this.rootElement.find("#validateUrl");
@@ -86,7 +84,7 @@ export class JWTAuthDetailView extends TokenAuthDetailView {
     this.validateUrlElem.val(ac.validateUrl || "");
   }
 
-  get template(): string {
+  template(): string {
     return `
         <label for="tokenUrl">Token URL</label>
         <input type="text" name="tokenUrl" id="tokenUrl" class="text ui-widget-content ui-corner-all">

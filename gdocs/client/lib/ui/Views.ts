@@ -13,21 +13,22 @@ export class View {
     this.zIndex = configs.zIndex || 1000;
     this.rootElement = ensureElement(elem_or_id);
     this._template = configs.template || "<div>Hello World</div>";
-    this.setupViews();
   }
 
-  setupViews() {
-    this.rootElement.html(this.renderTemplate());
+  /**
+   * This method is called to create the view hierarchy of this view.
+   * When this method is called the binding to the model has not yet
+   * happened and should not expect any presence of data/models
+   * to populate the views with.
+   */
+  setup(): this {
+    this.rootElement.html(this.template());
     this.rootElement.css("z-Index", this.zIndex);
     return this;
   }
 
-  get template() {
+  template() {
     return this._template;
-  }
-
-  renderTemplate() {
-    return this.template;
   }
 }
 
@@ -39,16 +40,11 @@ export class Dialog extends View {
 
   constructor(elem_or_id: any, configs: any = null) {
     super(elem_or_id, configs);
-    var self = this;
-    this._buttons = this.configs.buttons || {
-      Cancel: function () {
-        self.close(null);
-      },
-    };
   }
 
-  setupViews() {
-    var self = super.setupViews();
+  setup(): this {
+    super.setup();
+    var self = this;
     this.dialog = this.rootElement.dialog({
       autoOpen: false,
       position: { my: "center top", at: "center top", of: window },
@@ -88,13 +84,12 @@ export class FormDialog extends Dialog {
   allFields: JQuery<any>;
   form: any;
   dialog: any;
-  renderTemplate() {
+  template() {
     return (
       `<form>
         <fieldset class = "dialog_fields">` +
-      super.renderTemplate() +
-      `
-            <input type="submit" tabindex="-1" 
+      super.template() +
+      `     <input type="submit" tabindex="-1" 
                    style="position:absolute; top:-1000px">
             <span class = "error_message_span"></span>
         </fieldset>
@@ -110,14 +105,14 @@ export class FormDialog extends Dialog {
     this.errorMessageElem.html(html);
   }
 
-  setupViews() {
-    var self = super.setupViews();
+  setup(): this {
+    super.setup();
     this.errorMessageElem = this.rootElement.find(".error_message_span");
     this.allFields = $([]);
     this.form = this.dialog.find("form").on("submit", function (e: any) {
       e.preventDefault();
     });
-    return self;
+    return this;
   }
 
   onClosed() {

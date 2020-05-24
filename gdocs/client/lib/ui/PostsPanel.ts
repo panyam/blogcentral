@@ -1,3 +1,4 @@
+import { View } from "./Views";
 import { AddPostDialog } from "./AddPostDialog";
 import { ActivityIndicator } from "./ActivityIndicator";
 import { PostListView, PostListViewDelegate } from "./PostListView";
@@ -8,8 +9,7 @@ import { App } from "../app";
 
 const PAGE_LENGTH = 5;
 
-export class PostsPanel implements PostListViewDelegate {
-  rootElement: any;
+export class PostsPanel extends View implements PostListViewDelegate {
   addPostDialog: AddPostDialog;
   addButton: any;
   searchBarDiv: any;
@@ -33,9 +33,8 @@ export class PostsPanel implements PostListViewDelegate {
   hasNextPage = false;
 
   constructor(elem_or_id: string, app: App) {
-    this.rootElement = ensureElement(elem_or_id);
+    super(elem_or_id);
     this.app = app;
-    this.setupViews();
   }
 
   async open(site: Site): Promise<Nullable<Post>> {
@@ -68,8 +67,8 @@ export class PostsPanel implements PostListViewDelegate {
     });
   }
 
-  setupViews() {
-    var self = this;
+  setup(): this {
+    var self = super.setup();
     this.searchBarDiv = ensureElement("search_bar_div", this.rootElement);
     this.orderbyField = ensureElement("orderby", this.rootElement);
     this.orderField = ensureElement("order", this.rootElement);
@@ -96,10 +95,10 @@ export class PostsPanel implements PostListViewDelegate {
       this.rootElement.append(addPostDialogElem);
     }
 
-    this.addPostDialog = new AddPostDialog(addPostDialogElem);
+    this.addPostDialog = new AddPostDialog(addPostDialogElem).setup();
 
     var postListDiv = this.rootElement.find("#post_list_div");
-    this.postListView = new PostListView(postListDiv, this.app);
+    this.postListView = new PostListView(postListDiv, this.app).setup();
     this.postListView.delegate = this;
 
     this.prevButton = this.rootElement.find("#prev_button");
@@ -132,7 +131,8 @@ export class PostsPanel implements PostListViewDelegate {
     });
 
     var aidiv = this.rootElement.find(".activity_indicator");
-    this.activityIndicator = new ActivityIndicator(aidiv);
+    this.activityIndicator = new ActivityIndicator(aidiv).setup();
+    return this;
   }
 
   async searchPosts(page: Int) {

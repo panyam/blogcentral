@@ -20,8 +20,8 @@ export class AddPostDialog extends FormDialog {
     };
   }
 
-  setupViews() {
-    var self = super.setupViews();
+  setup(): this {
+    super.setup();
     this.titleElem = this.rootElement.find("#post_title");
     this.passwordElem = this.rootElement.find("#post_password");
     this.excerptElem = this.rootElement.find("#post_excerpt");
@@ -31,10 +31,10 @@ export class AddPostDialog extends FormDialog {
       .add(this.passwordElem)
       .add(this.excerptElem)
       .add(this.slugElem);
-    return self;
+    return this;
   }
 
-  get template() {
+  template() {
     return `
         <label for="post_title">Title</label>
         <input type="url" name="post_title" id="post_title" value="Awesome Title!" class="text ui-widget-content ui-corner-all"/>
