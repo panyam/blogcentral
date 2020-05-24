@@ -22,12 +22,12 @@ export class View {
    * to populate the views with.
    */
   setup(): this {
-    this.rootElement.html(this.template());
+    this.rootElement.html(this.html());
     this.rootElement.css("z-Index", this.zIndex);
     return this;
   }
 
-  template() {
+  html() {
     return this._template;
   }
 }
@@ -84,11 +84,11 @@ export class FormDialog extends Dialog {
   allFields: JQuery<any>;
   form: any;
   dialog: any;
-  template() {
+  html() {
     return (
       `<form>
         <fieldset class = "dialog_fields">` +
-      super.template() +
+      super.html() +
       `     <input type="submit" tabindex="-1" 
                    style="position:absolute; top:-1000px">
             <span class = "error_message_span"></span>

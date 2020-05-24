@@ -5,26 +5,40 @@ import { View } from "./Views";
 export class AuthDetailView extends View {
   activityIndicator: ActivityIndicator;
   allFields: JQuery<any>;
-  readonly authConfig: any;
+  readonly _authConfig: any;
 
   constructor(elem_or_id: any, authConfig: any = null) {
     super(elem_or_id);
-    this.authConfig = authConfig || {};
+    this._authConfig = authConfig || {};
   }
 
-  onSiteChanged() {}
+  get authConfig() {
+    this.updateAuthConfig();
+    return this._authConfig;
+  }
+
+  set authConfig(authConfig: any) {
+    this.updateViews(authConfig);
+  }
+
+  protected updateAuthConfig() {}
+
+  protected updateViews(_authConfig: any) {}
 
   setup(): this {
-    var template = Handlebars.compile(this.template());
-    var html = template({
-      site: this.authConfig,
-    });
-    this.rootElement.html(html);
+    this.rootElement.html(this.html());
     return this;
   }
 
   template() {
     return "";
+  }
+
+  html() {
+    var template = Handlebars.compile(this.template());
+    return template({
+      authConfig: this._authConfig,
+    });
   }
 }
 
@@ -43,6 +57,14 @@ export class TokenAuthDetailView extends AuthDetailView {
     return this;
   }
 
+  protected updateAuthConfig() {
+      this._authConfig["token"] = this.tokenElem.val() || "";
+  }
+
+  protected updateViews(_authConfig: any) {
+    this.tokenElem.val(_authConfig.token || "");
+  }
+
   template(): string {
     return `
         <label for="token">Token</label>
@@ -50,12 +72,6 @@ export class TokenAuthDetailView extends AuthDetailView {
         <label for="expiresAt">Expires At</label>
         <input type="date" name="expiresAt" id="expiresAt" value="" class="text ui-widget-content ui-corner-all">
       `;
-  }
-
-  onSiteChanged() {
-    var ac = this.authConfig;
-    this.tokenElem.val(ac.token || "");
-    this.expiresAtElem.val(ac.tokenExpiresAt || "");
   }
 }
 
@@ -77,11 +93,16 @@ export class JWTAuthDetailView extends TokenAuthDetailView {
     return this;
   }
 
-  onSiteChanged() {
-    var ac = this.authConfig;
-    super.onSiteChanged();
-    this.tokenUrlElem.val(ac.tokenUrl || "");
-    this.validateUrlElem.val(ac.validateUrl || "");
+  protected updateAuthConfig() {
+    super.updateAuthConfig();
+    this._authConfig["tokenUrl"] = this.tokenUrlElem.val() || "";
+    this._authConfig["validateUrl"] = this.validateUrlElem.val() || "";
+  }
+
+  protected updateViews(_authConfig: any) {
+    super.updateViews(_authConfig);
+    this.tokenUrlElem.val(_authConfig.tokenUrl || "");
+    this.validateUrlElem.val(_authConfig.validateUrl || "");
   }
 
   template(): string {

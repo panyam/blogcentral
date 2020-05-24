@@ -34,7 +34,7 @@ export class AddPostDialog extends FormDialog {
     return this;
   }
 
-  template() {
+  html() {
     return `
         <label for="post_title">Title</label>
         <input type="url" name="post_title" id="post_title" value="Awesome Title!" class="text ui-widget-content ui-corner-all"/>

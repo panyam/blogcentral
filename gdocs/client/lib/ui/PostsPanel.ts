@@ -68,7 +68,7 @@ export class PostsPanel extends View implements PostListViewDelegate {
   }
 
   setup(): this {
-    var self = super.setup();
+    var self = this;
     this.searchBarDiv = ensureElement("search_bar_div", this.rootElement);
     this.orderbyField = ensureElement("orderby", this.rootElement);
     this.orderField = ensureElement("order", this.rootElement);

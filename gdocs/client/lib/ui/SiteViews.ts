@@ -73,7 +73,7 @@ export class WPSiteView extends SiteView {
     this.siteTitleCellElem.html(this.site.title);
   }
 
-  template(): string {
+  html(): string {
     return `
       <div class = "activity_indicator" />
       <div class = "site_title_cell" style="border: solid 1px red">{{this.site.title }}</div>
@@ -103,7 +103,7 @@ export class WPSiteView extends SiteView {
 }
 
 export class MediumSiteView extends SiteView {
-  template(): string {
+  html(): string {
     return `
       <div class = "activity_indicator" />
       <table width="100%" class = "site_table"">
@@ -161,7 +161,7 @@ export class MediumSiteView extends SiteView {
 }
 
 export class LISiteView extends SiteView {
-  template(): string {
+  html(): string {
     return `
       <div class = "activity_indicator" />
       <table width="100%" class = "site_table"">

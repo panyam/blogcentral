@@ -27,8 +27,13 @@ export class SiteListView extends View {
     this.app = app;
   }
 
-  template(): string {
-    return `{{# each sites }}<div class = "site_div" id = "site_div_{{@index}}"> </div> {{/each}}`;
+  html(): string {
+    var template = Handlebars.compile(
+      `{{# each sites }}<div class = "site_div" id = "site_div_{{@index}}"> </div> {{/each}}`
+    );
+    return template({
+      sites: this.app.siteService.sites,
+    });
   }
 
   setup(): this {
@@ -40,11 +45,7 @@ export class SiteListView extends View {
   refresh() {
     var self = this;
     var siteService = this.app.siteService;
-    var siteServiceTemplate = Handlebars.compile(this.template());
-    var html = siteServiceTemplate({
-      sites: siteService.sites,
-    });
-    this.rootElement.html(html);
+    this.rootElement.html(this.html());
 
     this.siteViews = this.rootElement
       .find(".site_div")

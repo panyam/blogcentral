@@ -22,7 +22,7 @@ export class SitesPanel extends View implements SiteListViewDelegate {
   }
 
   setup(): this {
-    var self = super.setup();
+    var self = this;
     var aidiv = this.rootElement.find(".activity_indicator");
     this.activityIndicator = new ActivityIndicator(aidiv).setup();
 

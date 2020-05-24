@@ -25,8 +25,8 @@ export class PostListView extends View {
     this.refresh();
   }
 
-  template(): string {
-    return `
+  html(): string {
+    var template = Handlebars.compile(`
         {{# each posts }}
         <table class = "post_table" width="100%" id = "post_table_{{@index}}" >
         <tr>
@@ -57,15 +57,15 @@ export class PostListView extends View {
         </table>
         <hr/>
         {{/each}}
-        `;
+        `);
+    return template({
+      posts: this._posts,
+    });
   }
 
   refresh() {
     var self = this;
-    var postsListTemplate = Handlebars.compile(this.template());
-    var html = postsListTemplate({
-      posts: this._posts,
-    });
+    var html = this.html();
     this.rootElement.html(html);
     var select_post_buttons = this.rootElement.find(".select_post_button");
     select_post_buttons.on("click", function (event: any) {

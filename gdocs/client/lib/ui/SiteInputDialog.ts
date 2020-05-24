@@ -19,7 +19,17 @@ export class SiteInputDialog extends FormDialog {
   addingSiteMode: boolean = true;
 
   constructor(elem_or_id: any, app: App, addingSiteMode: boolean) {
-    super(elem_or_id);
+    super(elem_or_id, {
+      template: `
+        <label for="platform">Platform</label>
+        <select id = "platform">
+            <option value="WORDPRESS">WordPress Blog</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="LINKEDIN">LinkedIn</option>
+        </select>
+        <div class = "site_details_view"></div>
+    `,
+    });
     this.app = app;
     this.addingSiteMode = addingSiteMode;
   }
@@ -71,18 +81,6 @@ export class SiteInputDialog extends FormDialog {
       this.selectedSiteType = SiteType.WORDPRESS;
     }
     setEnabled(this.siteTypeElem, s == null);
-  }
-
-  template(): string {
-    return `
-        <label for="platform">Platform</label>
-        <select id = "platform">
-            <option value="WORDPRESS">WordPress Blog</option>
-            <option value="MEDIUM">Medium</option>
-            <option value="LINKEDIN">LinkedIn</option>
-        </select>
-        <div class = "site_details_view"></div>
-    `;
   }
 
   buttons(): any {
