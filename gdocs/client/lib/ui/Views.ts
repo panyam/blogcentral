@@ -140,13 +140,11 @@ export class Dialog<EntityType> extends View<EntityType> {
       autoOpen: false,
       position: { my: "center top", at: "center top", of: window },
       modal: true,
-      close: function () {
-          self.close();
-      },
+      close: function () { self.close(); },
     });
   }
 
-  async open() {
+  async open() : Promise<any> {
     var self = this;
     return new Promise((resolve, reject) => {
       self.resolveFunc = resolve;
