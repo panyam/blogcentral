@@ -28,9 +28,7 @@ export class SiteInputView extends View<Site> {
   authDetailView: AuthDetailView;
 
   constructor(elem_or_id: any, site: Nullable<Site> = null) {
-    super(elem_or_id, site || Site.defaultSite());
-    this.renderAsTemplate = true;
-    this.entityName = "site";
+    super(elem_or_id, "site", site || Site.defaultSite());
   }
 
   setupViews() {

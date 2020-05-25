@@ -13,7 +13,7 @@ export class SiteInputDialog extends FormDialog<Site> {
   addingSiteMode: boolean = true;
 
   constructor(elem_or_id: any, app: App, addingSiteMode: boolean) {
-    super(elem_or_id, null, {
+    super(elem_or_id, "site", null, {
       template: `
         <label for="platform">Platform</label>
         <select id = "platform">

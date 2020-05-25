@@ -18,7 +18,7 @@ export class SitesPanel extends View<null> implements SiteListViewDelegate {
   activityIndicator: ActivityIndicator;
 
   constructor(elem_or_id: string, app: App) {
-    super(elem_or_id, null);
+    super(elem_or_id, null, null);
     this.app = app;
   }
 

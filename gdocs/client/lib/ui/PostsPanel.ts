@@ -34,7 +34,7 @@ export class PostsPanel extends View<any> implements PostListViewDelegate {
   hasNextPage = false;
 
   constructor(elem_or_id: string, app: App) {
-    super(elem_or_id, null);
+    super(elem_or_id, null, null);
     this.app = app;
   }
 

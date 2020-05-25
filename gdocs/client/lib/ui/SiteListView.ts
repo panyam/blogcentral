@@ -22,10 +22,8 @@ export class SiteListView extends View<Site[]> {
   siteViews: SiteSummaryView[];
 
   constructor(elem_or_id: any, app: App) {
-    super(elem_or_id, app.siteService.sites);
+    super(elem_or_id, "sites", app.siteService.sites);
     this.app = app;
-    this.renderAsTemplate = true;
-    this.entityName = "sites";
   }
 
   template() {

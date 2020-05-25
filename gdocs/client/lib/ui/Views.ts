@@ -10,11 +10,12 @@ export class View<EntityType> {
   protected _entity: Nullable<EntityType>;
   private entityUpdated = true;
   private _viewsCreated = false;
-  protected renderAsTemplate = false;
+  protected renderAsTemplate = true;
   entityName = "entity";
 
   constructor(
     elem_or_id: any,
+    entityName: Nullable<string>,
     entity: Nullable<EntityType>,
     configs: any = null
   ) {
@@ -22,7 +23,8 @@ export class View<EntityType> {
     this._entity = entity;
     this.configs = configs;
     this.zIndex = configs.zIndex || 1000;
-    this.renderAsTemplate = configs.renderAsTemplate || false;
+    this.renderAsTemplate = configs.renderAsTemplate || true;
+    this.entityName = entityName || "entity";
     this.rootElement = ensureElement(elem_or_id);
     this._template = configs.template || "<div>Hello World</div>";
     var self = this;

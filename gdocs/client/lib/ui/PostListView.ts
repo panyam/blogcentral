@@ -13,10 +13,8 @@ export class PostListView extends View<Post[]> {
   delegate: Nullable<PostListViewDelegate> = null;
 
   constructor(elem_or_id: any, app: App) {
-    super(elem_or_id, []);
+    super(elem_or_id, "posts", []);
     this.app = app;
-    this.renderAsTemplate = true;
-    this.entityName = "posts";
   }
 
   template() {

@@ -8,9 +8,7 @@ export class AddPostDialog extends FormDialog<Post> {
   slugElem: JQuery<HTMLElement>;
 
   constructor(elem_or_id: any) {
-    super(elem_or_id, null);
-    this.renderAsTemplate = true;
-    this.entityName = "post";
+    super(elem_or_id, "post", null);
     var self = this;
     this._buttons = {
       "Create Post": function () {

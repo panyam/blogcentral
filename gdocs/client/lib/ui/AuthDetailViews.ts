@@ -7,9 +7,7 @@ export class AuthDetailView extends View<any> {
   allFields: JQuery<any>;
 
   constructor(elem_or_id: any, authConfig: any = null) {
-    super(elem_or_id, authConfig || {});
-    this.renderAsTemplate = true;
-    this.entityName = "authConfig";
+    super(elem_or_id, "authConfig", authConfig || {});
   }
 }
 

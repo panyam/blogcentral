@@ -23,9 +23,7 @@ export class SiteSummaryView extends View<Site> {
   progressbar: any;
 
   constructor(elem_or_id: any, site: Site) {
-    super(elem_or_id, site);
-    this.renderAsTemplate = true;
-    this.entityName = "site";
+    super(elem_or_id, "site", site);
   }
 
   setupViews() {

@@ -8,7 +8,7 @@ export class ActivityIndicator extends View<any> {
   modalId: string;
 
   constructor(modal_elem: any, config: any = null) {
-    super(modal_elem, null);
+    super(modal_elem, null, null);
     config = config || {};
     this.zIndex = config.zIndex || 500;
     this.bgColor = config.bgColor || "rgba(10, 10, 10, .6)";
