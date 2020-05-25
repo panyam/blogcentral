@@ -2,8 +2,34 @@ import { Nullable } from "./types";
 import { Request } from "./net";
 import { ensureParam } from "./utils";
 import { App } from "./app";
-import { AuthType, AuthResult, AuthClient } from "./interfaces";
 import { Site } from "./models";
+import { AuthType } from "./enums";
+
+export enum AuthResult {
+  SUCCESS,
+  FAILURE,
+  CANCELLED,
+}
+
+export interface AuthClient {
+  /**
+   * Creates a request decorated with all auth details.
+   */
+  decorateRequest(request: Request): Request;
+
+  /**
+   * Checks if a site's auth credentials are valid asynchronously.
+   * Returns true if site's auth credentials are valid and requests can
+   * be signed with respective credentials going forward.
+   */
+  validateAuth(site: Site): Promise<boolean>;
+
+  /**
+   * Begin's the auth flow for a particular site.
+   * Returns true if auth resulted in valid credentials false otherwise.
+   */
+  startAuthFlow(site: Site): Promise<AuthResult>;
+}
 
 export function createAuthClient(authType: AuthType, app: App, configs: any) {
   if (authType == AuthType.TOKEN) {

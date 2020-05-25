@@ -1,6 +1,7 @@
 import { Nullable } from "./types";
-import { Store, ContentExtractor, HttpClient } from "./interfaces";
-import { Request, Response } from "./net";
+import { Store } from "./stores";
+import { ContentExtractor } from "./extractors";
+import { Request, Response, HttpClient } from "./net";
 import { Site } from "./models";
 
 declare var google: any;

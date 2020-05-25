@@ -87,3 +87,6 @@ export class Response {
     }
 }
 
+export interface HttpClient {
+  send(_request: Request): Promise<Response>;
+}

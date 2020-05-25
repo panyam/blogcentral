@@ -1,9 +1,11 @@
 // import "webpack-jquery-ui/button";
 // import "webpack-jquery-ui/css";
 import { SitesPanel } from "./ui/SitesPanel";
-import { AuthResult, Store, HttpClient, ContentExtractor } from "./interfaces";
+import { HttpClient } from "./net";
+import { Store } from "./stores";
+import { ContentExtractor } from "./extractors";
 import { SiteService, Site, Post } from "./models";
-import { createAuthClient } from "./authclients";
+import { AuthResult, createAuthClient } from "./authclients";
 import { createSiteApi } from "./siteapis";
 
 export class App {

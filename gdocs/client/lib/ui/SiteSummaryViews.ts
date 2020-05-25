@@ -1,5 +1,5 @@
 import "../../styles/SiteSummaryView";
-import { SiteType } from "../interfaces";
+import { SiteType } from "../enums";
 import { Site } from "../models";
 import { ActivityIndicator } from "./ActivityIndicator";
 import { View } from "./Views";

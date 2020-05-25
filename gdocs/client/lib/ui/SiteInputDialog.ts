@@ -1,7 +1,7 @@
 import { setEnabled } from "./utils";
 import { FormDialog } from "./Views";
 import { SiteInputView, createSiteInputView } from "./SiteInputViews";
-import { SiteType } from "../interfaces";
+import { SiteType } from "../enums";
 import { Site } from "../models";
 import { App } from "../app";
 

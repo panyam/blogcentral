@@ -1,4 +1,4 @@
-import { AuthType, SiteType } from "../interfaces";
+import { AuthType, SiteType } from "../enums";
 import { Nullable } from "../types";
 import { View } from "./Views";
 import {

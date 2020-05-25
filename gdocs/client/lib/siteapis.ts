@@ -1,12 +1,21 @@
 import { Request, URLBuilder } from "./net";
-import { SiteType, SiteApi } from "./interfaces";
 import { ensureParam } from "./utils";
 import { Post } from "./models";
+import { SiteType } from "./enums";
 
-export function createSiteApi(
-  siteType: SiteType,
-  configs: any
-): SiteApi {
+export abstract class SiteApi {
+  config: any;
+  constructor(config: any) {
+    this.config = config || {};
+  }
+
+  abstract createPostRequest(post: Post, options: any): Request;
+  abstract updatePostRequest(postid: String, options: any): Request;
+  abstract getPostsRequest(options: any): Request;
+  abstract removePostRequest(id: any): Request;
+}
+
+export function createSiteApi(siteType: SiteType, configs: any): SiteApi {
   if (siteType == SiteType.WORDPRESS) {
     return new WPRestApi(configs);
   } else if (siteType == SiteType.MEDIUM) {

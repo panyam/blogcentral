@@ -1,6 +1,7 @@
 import { Int, Nullable } from "./types";
-import { Store, SiteType, AuthType } from "./interfaces";
+import { Store } from "./stores";
 import { ensureParam } from "./utils";
+import { AuthType, SiteType } from "./enums";
 
 export class Post {
   id: Nullable<string>;
