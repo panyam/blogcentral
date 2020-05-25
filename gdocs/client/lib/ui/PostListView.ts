@@ -54,7 +54,7 @@ export class PostListView extends View<Post[]> {
         `;
   }
 
-  updateViews(_posts: Post[]) {
+  updateViewsFromEntity(_posts: Post[]) {
     var self = this;
     this.rootElement.html(this.renderedTemplate());
     var select_post_buttons = this.rootElement.find(".select_post_button");

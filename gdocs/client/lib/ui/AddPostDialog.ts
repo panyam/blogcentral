@@ -49,7 +49,7 @@ export class AddPostDialog extends FormDialog<Post> {
         `;
   }
 
-  updateViews(post: Post) {
+  updateViewsFromEntity(post: Post) {
     this.titleElem.val(post.options.title);
     this.passwordElem.val(post.options.password);
     this.excerptElem.val(post.options.excerpt);

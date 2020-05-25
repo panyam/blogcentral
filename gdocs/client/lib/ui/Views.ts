@@ -36,14 +36,14 @@ export class View<EntityType> {
   setUpdated() {
     this.entityUpdated = true;
     if (this._entity != null) {
-      this.updateViews(this._entity);
+      this.updateViewsFromEntity(this._entity);
     } else {
       this.clearViews();
     }
   }
 
   get entity(): Nullable<EntityType> {
-    if (this.entityUpdated) {
+    if (this.entityUpdated && this._viewsCreated) {
       this._entity = this.extractEntity();
       this.entityUpdated = false;
     }
@@ -65,9 +65,18 @@ export class View<EntityType> {
     return this._entity;
   }
 
+  /**
+   * Called when the entity is null and all clears must be set to a "reset"
+   * state.
+   */
   protected clearViews() {}
 
-  protected updateViews(_entity: EntityType) {}
+  /**
+   * Called when the entity has been updated in order to update the views
+   * and/or their contents.
+   * In this method the underlying entity must *not* be changed.
+   */
+  protected updateViewsFromEntity(_entity: EntityType) {}
 
   /**
    * This method is called to create the view hierarchy of this view.
@@ -107,7 +116,8 @@ export class View<EntityType> {
 
   renderedTemplate(viewParams: any = null) {
     viewParams = this.enrichViewParams(viewParams || {});
-    viewParams[this.entityName] = this._entity;
+    if (!(this.entityName in viewParams))
+      viewParams[this.entityName] = this._entity;
     var template = Handlebars.compile(this.template());
     return template(viewParams);
   }

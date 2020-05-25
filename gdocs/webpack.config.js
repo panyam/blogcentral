@@ -260,9 +260,8 @@ module.exports = (env, options) => {
             extensions: ['.js', '.jsx', '.ts', '.tsx', '.scss']
         }
     };
-    if (options.debug || options.dev) {
+    if (isDevelopment) {
         webpack_configs.devtool = 'inline-source-map';
-        webpack_configs.resolve = { extensions: ['.js', '.jsx', '.ts', '.tsx', '.scss'] };
     }
     return webpack_configs;
 };

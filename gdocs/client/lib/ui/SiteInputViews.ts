@@ -87,7 +87,7 @@ export class WPSiteInputView extends SiteInputView {
     });
   }
 
-  protected updateViews(site: Site) {
+  protected updateViewsFromEntity(site: Site) {
     if (site.siteType != SiteType.WORDPRESS) {
       throw new Error("Only Wordpress Sites can be rendered with this view");
     }
@@ -152,7 +152,7 @@ export class LISiteInputView extends SiteInputView {
     });
   }
 
-  protected updateViews(site: Site) {
+  protected updateViewsFromEntity(site: Site) {
     if (site.siteType != SiteType.WORDPRESS) {
       throw new Error("Only Wordpress Sites can be rendered with this view");
     }
@@ -193,7 +193,7 @@ export class MediumSiteInputView extends SiteInputView {
     });
   }
 
-  protected updateViews(site: Site) {
+  protected updateViewsFromEntity(site: Site) {
     if (site.siteType != SiteType.WORDPRESS) {
       throw new Error("Only Wordpress Sites can be rendered with this view");
     }

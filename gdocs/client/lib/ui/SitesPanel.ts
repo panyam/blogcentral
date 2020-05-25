@@ -59,7 +59,7 @@ export class SitesPanel extends View<null> implements SiteListViewDelegate {
     });
 
     this.app.siteService.loadAll().then(() => {
-      self.siteListView.setUpdated();
+      self.siteListView.entity = self.app.siteService.sites;
     });
   }
 

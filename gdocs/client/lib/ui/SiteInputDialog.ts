@@ -79,7 +79,7 @@ export class SiteInputDialog extends FormDialog<Site> {
   extractEntity() {
     return this.siteInputView ? this.siteInputView.entity : null;
   }
-  updateViews(site: Site) {
+  updateViewsFromEntity(site: Site) {
     this.selectedSiteType = site.siteType;
     setEnabled(this.siteTypeElem, false);
   }

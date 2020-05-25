@@ -32,15 +32,17 @@ export class SiteListView extends View<Site[]> {
     return `{{# each sites }}<div class = "site_div" id = "site_div_{{@index}}"> </div> {{/each}}`;
   }
 
-  updateViews() {
+  updateViewsFromEntity() {
     var self = this;
-    var siteService = this.app.siteService;
     this.rootElement.html(this.renderedTemplate());
 
     this.siteViews = this.rootElement
       .find(".site_div")
       .map((i: Int, elem: any) => {
-        var siteView = createSiteSummaryView(elem, siteService.sites[i], i);
+        var siteView = createSiteSummaryView(
+          elem,
+          self.app.siteService.sites[i]
+        );
         siteView.showProgress(false);
         siteView.selectPostButton.button().on("click", (_event: any) => {
           self.onSelectPostClicked(siteView);

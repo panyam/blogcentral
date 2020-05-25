@@ -67,7 +67,7 @@ export class WPSiteSummaryView extends SiteSummaryView {
     this.siteApiUrlElem = this.rootElement.find(".site_apiUrl_cell");
   }
 
-  updateViews(entity: Site) {
+  updateViewsFromEntity(entity: Site) {
     this.siteTitleElem.html(entity.title);
     this.siteApiUrlElem.html(entity.siteConfig.apiUrl);
   }

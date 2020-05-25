@@ -1,6 +1,6 @@
 import { ActivityIndicator } from "./ActivityIndicator";
 import { View } from "./Views";
-import { valOrDefault } from "../utils"
+import { valOrDefault } from "../utils";
 
 export class AuthDetailView extends View<any> {
   activityIndicator: ActivityIndicator;
@@ -32,7 +32,7 @@ export class TokenAuthDetailView extends AuthDetailView {
     // this._entity["expiresAt"] = this.expiresAtElem.val();
   }
 
-  protected updateViews(entity: any) {
+  protected updateViewsFromEntity(entity: any) {
     this.tokenElem.val(entity.token || "");
     // this.expiresAtElem.val(_entity.expiresAt);
   }
@@ -69,15 +69,25 @@ export class JWTAuthDetailView extends TokenAuthDetailView {
 
   extractEntity() {
     var entity: any = super.extractEntity();
-    entity["tokenUrl"] = valOrDefault(this.tokenUrlElem.val(),"/wp-json/jwt-auth/v1/token");
-    entity["validateUrl"] = valOrDefault(this.validateUrlElem.val(), "/wp-json/jwt-auth/v1/token/validate");
+    entity["tokenUrl"] = valOrDefault(
+      this.tokenUrlElem.val(),
+      "/wp-json/jwt-auth/v1/token"
+    );
+    entity["validateUrl"] = valOrDefault(
+      this.validateUrlElem.val(),
+      "/wp-json/jwt-auth/v1/token/validate"
+    );
     return entity;
   }
 
-  protected updateViews(entity: any) {
-    super.updateViews(entity);
-    this.tokenUrlElem.val(valOrDefault(entity.tokenUrl, "/wp-json/jwt-auth/v1/token"));
-    this.validateUrlElem.val(valOrDefault(entity.validateUrl, "/wp-json/jwt-auth/v1/token/validate"));
+  protected updateViewsFromEntity(entity: any) {
+    super.updateViewsFromEntity(entity);
+    this.tokenUrlElem.val(
+      valOrDefault(entity.tokenUrl, "/wp-json/jwt-auth/v1/token")
+    );
+    this.validateUrlElem.val(
+      valOrDefault(entity.validateUrl, "/wp-json/jwt-auth/v1/token/validate")
+    );
   }
 
   template(): string {
