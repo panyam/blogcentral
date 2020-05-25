@@ -1,7 +1,7 @@
 // import "webpack-jquery-ui/button";
 // import "webpack-jquery-ui/css";
 import { SitesPanel } from "./ui/SitesPanel";
-import { Store, HttpClient, ContentExtractor  } from "./interfaces";
+import { Store, HttpClient, ContentExtractor } from "./interfaces";
 import { SiteService, Site, Post } from "./sites";
 
 export class App {
@@ -15,7 +15,7 @@ export class App {
     this.store = store;
     this.httpClient = httpClient;
     this.siteService = new SiteService(store);
-    this.sitesPanel = new SitesPanel("sites_panel_div", this).setup();
+    this.sitesPanel = new SitesPanel("sites_panel_div", this);
   }
 
   /**
@@ -24,8 +24,8 @@ export class App {
    * with a UI specific to the AuthType to kick off flows and obtaining
    * credentials and saving the results into the site.
    */
-  async ensureLoggedIn(site : Site) {
-      /*
+  async ensureLoggedIn(site: Site) {
+    /*
     while (true) {
       site.config.token = site.config.token || null;
       if (site.config.token == null) {
