@@ -14,6 +14,14 @@ export function ensureElement(elem_or_id : any, root : any = null) {
     }
 }
 
+export function ensureCreated(elem_or_id : any, root : any = null) {
+    var out = ensureElement(elem_or_id, root);
+    if (out == null) {
+        // creat it then
+    }
+    return out;
+}
+
 export function setEnabled(elem : any, enable : boolean) {
     elem.prop('disabled', !enable);
     return elem;

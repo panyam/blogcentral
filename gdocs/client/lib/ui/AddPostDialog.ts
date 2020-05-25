@@ -9,15 +9,7 @@ export class AddPostDialog extends FormDialog<Post> {
 
   constructor(elem_or_id: any) {
     super(elem_or_id, "post", null);
-    var self = this;
-    this._buttons = {
-      "Create Post": function () {
-        self.close(self.entity);
-      },
-      Cancel: function () {
-        self.close(null);
-      },
-    };
+    this.addButton("Create Post").addButton("Cancel");
   }
 
   setupViews() {

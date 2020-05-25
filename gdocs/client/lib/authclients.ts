@@ -4,6 +4,8 @@ import { ensureParam } from "./utils";
 import { App } from "./app";
 import { Site } from "./models";
 import { AuthType } from "./enums";
+import { ensureCreated } from "./ui/utils";
+import { FormDialog } from "./ui/Views";
 
 export enum AuthResult {
   SUCCESS,
@@ -82,7 +84,7 @@ export class OAuthClient implements AuthClient {
    */
   async startAuthFlow(_site: Site) {
     throw new Error("Not Implemented");
-    return false;
+    return AuthResult.CANCELLED;
   }
 }
 
@@ -101,25 +103,6 @@ export class TokenAuthClient implements AuthClient {
       request.headers["Authorization"] = "Bearer " + this.token;
     }
     return request;
-  }
-
-  /**
-   * Checks if a site's auth credentials are valid asynchronously.
-   * Returns true if site's auth credentials are valid and requests can
-   * be signed with respective credentials going forward.
-   */
-  async validateAuth(_site: Site) {
-    throw new Error("Not Implemented");
-    return false;
-  }
-
-  /**
-   * Begin's the auth flow for a particular site.
-   * Returns true if auth resulted in valid credentials false otherwise.
-   */
-  async startAuthFlow(_site: Site) {
-    throw new Error("Not Implemented");
-    return AuthResult.FAILURE;
   }
 
   a() {
@@ -169,6 +152,40 @@ export class TokenAuthClient implements AuthClient {
    */
   }
 
+  /**
+   * Checks if a site's auth credentials are valid asynchronously.
+   * Returns true if site's auth credentials are valid and requests can
+   * be signed with respective credentials going forward.
+   */
+  async validateAuth(site: Site) {
+    var token = ((site.authConfig.token as string) || "").trim();
+    if (token.length == 0) {
+      return false;
+    }
+    var expiresAt = site.authConfig.expiresAt || 0;
+    if (expiresAt >= 0 && expiresAt <= Date.now()) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Begin's the auth flow for a particular site.
+   * Returns true if auth resulted in valid credentials false otherwise.
+   */
+  async startAuthFlow(_site: Site) {
+    // Show a dialog asking for token
+    var elem = ensureCreated("start_token_auth_dialog");
+    var tokenDialog = new FormDialog<any>(elem, null, null);
+    tokenDialog.setTemplate(``);
+    tokenDialog.addButton("Login").addButton("Cancel");
+    var result = (await tokenDialog.open()) as any;
+    if (result.title == "Cancel") {
+      return AuthResult.CANCELLED;
+    }
+    return AuthResult.SUCCESS;
+  }
+
   static defaultConfig(): any {
     return {
       token: "",
@@ -215,24 +232,5 @@ export class JWTAuthClient extends TokenAuthClient {
     });
     request = this.decorateRequest(request);
     return await this.app.httpClient.send(request);
-  }
-
-  /**
-   * Checks if a site's auth credentials are valid asynchronously.
-   * Returns true if site's auth credentials are valid and requests can
-   * be signed with respective credentials going forward.
-   */
-  async validateAuth(_site: Site) {
-    throw new Error("Not Implemented");
-    return false;
-  }
-
-  /**
-   * Begin's the auth flow for a particular site.
-   * Returns true if auth resulted in valid credentials false otherwise.
-   */
-  async startAuthFlow(_site: Site) {
-    throw new Error("Not Implemented");
-    return AuthResult.FAILURE;
   }
 }

@@ -109,6 +109,10 @@ export class View<EntityType> {
     return this._template;
   }
 
+  setTemplate(t : string) {
+      this._template = t;
+  }
+
   enrichViewParams(viewParams: any): any {
     return viewParams;
   }
@@ -126,7 +130,8 @@ export class Dialog<EntityType> extends View<EntityType> {
   dialog: any;
   resolveFunc: any;
   rejectFunc: any;
-  protected _buttons: any;
+  shouldClose : Nullable<(data : any) => boolean> = null
+  protected _buttons: any[];
 
   setupViews() {
     var self = this;
@@ -136,12 +141,10 @@ export class Dialog<EntityType> extends View<EntityType> {
       position: { my: "center top", at: "center top", of: window },
       modal: true,
       close: function () {
-        self.onClosed();
+          self.close();
       },
     });
   }
-
-  onClosed() {}
 
   async open() {
     var self = this;
@@ -152,15 +155,41 @@ export class Dialog<EntityType> extends View<EntityType> {
     });
   }
 
-  close(data: Nullable<any> = null) {
+  close(data: Nullable<any> = null) : boolean {
+    if (this.shouldClose != null && !this.shouldClose(data)) 
+        return false;
     if (this.resolveFunc != null) {
       this.resolveFunc(data);
     }
     this.dialog.dialog("close");
+    return true;
   }
 
   buttons() {
     return this._buttons;
+  }
+
+  addButton(title : string, data : any = null) {
+      var self = this;
+      var b = {} as any
+      b["title"] = title;
+      b["data"] = data;
+      b["click"] = function() {
+          self.close(b);
+      }
+      this._buttons.push(b);
+      return this;
+  }
+  setButtons(b : any[]) {
+    var self = this;
+    this._buttons = [];
+    b.forEach((v : any, _index : number) => {
+        if (typeof v === "string")
+            self.addButton(v)
+        else
+            self.addButton(v.title, v.data);
+    });
+    return this;
   }
 }
 
@@ -199,8 +228,10 @@ export class FormDialog<EntityType> extends Dialog<EntityType> {
     });
   }
 
-  onClosed() {
+  close(data: Nullable<any> = null) : boolean {
+    if (!super.close(data)) return false;
     this.form[0].reset();
     this.allFields.removeClass("ui-state-error");
+    return true;
   }
 }
