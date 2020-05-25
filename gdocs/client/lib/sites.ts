@@ -2,7 +2,7 @@ import { Int, Nullable } from "./types";
 import { Request, URLBuilder } from "./net";
 import { Store, AuthClient, SiteType, AuthType, SiteApi } from "./interfaces";
 import { ensureParam } from "./utils";
-import { createAuthClient } from "./auth";
+import { createAuthClient, JWTAuthClient } from "./auth";
 
 export function createSiteApi(
   siteType: SiteType,
@@ -25,6 +25,12 @@ export class WPRestApi extends SiteApi {
   constructor(name: string, config: any) {
     super(name, config);
     this.apiUrl = ensureParam(config, "apiUrl");
+  }
+
+  static defaultConfig() {
+    return {
+      apiUrl: "https://example.com",
+    };
   }
 
   newRequest(path: string, params: any = null): Request {
@@ -188,7 +194,7 @@ export class Post {
 }
 
 export class Site {
-  title : string
+  title: string;
   siteType: SiteType;
   siteConfig: any;
   siteApi: SiteApi;
@@ -197,9 +203,9 @@ export class Site {
   authClient: AuthClient;
   selectedPost: any = null;
 
-  constructor(title : string, configs: any) {
-      this.title = title
-    configs = configs || {}
+  constructor(title: string, configs: any) {
+    this.title = title;
+    configs = configs || {};
     this.siteType = ensureParam(configs, "siteType");
     this.authType = ensureParam(configs, "authType");
     this.siteConfig = ensureParam(configs, "siteConfig");
@@ -208,18 +214,13 @@ export class Site {
     this.authClient = createAuthClient(this.authType, name, this.authConfig);
   }
 
-  static defaultSite() : Site {
-      return new Site("My Amazing Site", {
-          siteType: SiteType.WORDPRESS,
-          authType: AuthType.JWT,
-          siteConfig: {
-            apiUrl: ""
-          },
-          authConfig: {
-            "tokenUrl": "",
-            "validateUrl": "",
-          }
-      });
+  static defaultSite(): Site {
+    return new Site("My Amazing Site", {
+      siteType: SiteType.WORDPRESS,
+      siteConfig: WPRestApi.defaultConfig(),
+      authType: AuthType.JWT,
+      authConfig: JWTAuthClient.defaultConfig(),
+    });
   }
 
   equals(another: Site): boolean {
@@ -235,12 +236,12 @@ export class Site {
   get config(): any {
     return {
       title: this.title,
-      config : {
-      siteType: this.siteType,
-      authType: this.authType,
-      siteConfig: this.siteConfig,
-      authConfig: this.authConfig,
-      }
+      config: {
+        siteType: this.siteType,
+        authType: this.authType,
+        siteConfig: this.siteConfig,
+        authConfig: this.authConfig,
+      },
     };
   }
 }
@@ -285,7 +286,7 @@ export class SiteService {
   }
 
   async loadAll() {
-    var sites = await this.store.get("sites") || [];
+    var sites = (await this.store.get("sites")) || [];
     this.sites = sites.map(function (data: any, _index: Int) {
       return new Site(data.title, data.config);
     });

@@ -56,6 +56,13 @@ export class TokenAuthClient implements AuthClient {
     }
     return request;
   }
+
+  static defaultConfig() : any {
+    return {
+        "token": "",
+        "expiresAt": 0
+    }
+  }
 }
 
 export class JWTAuthClient extends TokenAuthClient {
@@ -66,6 +73,13 @@ export class JWTAuthClient extends TokenAuthClient {
     super(app, config);
     this.tokenUrl = ensureParam(config, "tokenUrl");
     this.validateUrl = ensureParam(config, "validateUrl");
+  }
+
+  static defaultConfig() : any {
+    var out = super.defaultConfig();
+    out["tokenUrl"] = "/wp-json/jwt-auth/v1/token";
+    out["validateUrl"] = "/wp-json/jwt-auth/v1/token/validate";
+    return out;
   }
 
   async login(username: string, password: string) {

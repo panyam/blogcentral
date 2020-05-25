@@ -89,12 +89,17 @@ export class WPSiteInputView extends SiteInputView {
     });
   }
 
-  html(): string {
+  template(): string {
     return `
         <label for="title">Title</label>
-        <input type="text" name="title" id="title" class="text ui-widget-content ui-corner-all" />
+        <input type="text" name="title" id="title" 
+               value = "{{this.site.title}}"
+               class="text ui-widget-content ui-corner-all" />
         <label for="apiUrl">API Endpoint</label>
-        <input type="text" name="apiUrl" id="apiUrl" class="text ui-widget-content ui-corner-all" />
+        <input type="text" name="apiUrl" 
+               id="apiUrl" class="text ui-widget-content ui-corner-all" 
+               value = "{{this.site.siteConfig.apiUrl}}"
+               />
         
         <label for="authType">Auth</label>
         <select id = "authType">
