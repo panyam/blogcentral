@@ -83,7 +83,7 @@ export class WPSiteInputView extends SiteInputView {
         apiUrl: this.apiUrlElem.val() || "",
       },
       authType: this.selectedAuthType,
-      authConfig: this.entity,
+      authConfig: this.authDetailView.entity,
     });
   }
 
