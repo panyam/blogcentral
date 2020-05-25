@@ -29,17 +29,47 @@ export class View<EntityType> {
     setTimeout(() => self.setup(), 0);
   }
 
-  get viewsCreated() {
-    return this._viewsCreated;
+  /**
+   * This method is called to create the view hierarchy of this view.
+   * When this method is called the binding to the model has not yet
+   * happened and should not expect any presence of data/models
+   * to populate the views with.
+   */
+  setup(): this {
+    if (!this._viewsCreated) {
+      this.refreshViews();
+    }
+    return this;
   }
 
-  setUpdated() {
+  refreshViews() {
     this.entityUpdated = true;
-    if (this._entity != null) {
-      this.updateViewsFromEntity(this._entity);
-    } else {
-      this.clearViews();
-    }
+    this._viewsCreated = false;
+    this.updateViewsFromEntity(this._entity);
+    this._viewsCreated = true;
+  }
+
+  /**
+   * This method recreates the complete view heieararchy.
+   */
+  protected setupViews() {
+    this.rootElement.html(this.html());
+    this.rootElement.css("z-Index", this.zIndex);
+  }
+
+  /**
+   * Called when the entity has been updated in order to update the views
+   * and/or their contents.
+   * In this method the underlying entity must *not* be changed.
+   * By default this method simply recreates the view hieararchy from scratch
+   * by calling setupViews.
+   */
+  protected updateViewsFromEntity(_entity: Nullable<EntityType>) {
+    this.setupViews();
+  }
+
+  get viewsCreated() {
+    return this._viewsCreated;
   }
 
   get entity(): Nullable<EntityType> {
@@ -53,7 +83,7 @@ export class View<EntityType> {
   set entity(entity: Nullable<EntityType>) {
     if (this.isEntityValid(entity)) {
       this._entity = entity;
-      this.setUpdated();
+      this.refreshViews();
     }
   }
 
@@ -63,39 +93,6 @@ export class View<EntityType> {
 
   protected extractEntity(): Nullable<EntityType> {
     return this._entity;
-  }
-
-  /**
-   * Called when the entity is null and all clears must be set to a "reset"
-   * state.
-   */
-  protected clearViews() {}
-
-  /**
-   * Called when the entity has been updated in order to update the views
-   * and/or their contents.
-   * In this method the underlying entity must *not* be changed.
-   */
-  protected updateViewsFromEntity(_entity: EntityType) {}
-
-  /**
-   * This method is called to create the view hierarchy of this view.
-   * When this method is called the binding to the model has not yet
-   * happened and should not expect any presence of data/models
-   * to populate the views with.
-   */
-  setup(): this {
-    if (!this._viewsCreated) {
-      this.setupViews();
-      this._viewsCreated = true;
-      this.setUpdated();
-    }
-    return this;
-  }
-
-  protected setupViews() {
-    this.rootElement.html(this.html());
-    this.rootElement.css("z-Index", this.zIndex);
   }
 
   html() {

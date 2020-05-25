@@ -71,6 +71,7 @@ export class SiteInputDialog extends FormDialog<Site> {
     var siteType = this.selectedSiteType;
     console.log("Selected Type: ", siteType);
 
+    setEnabled(this.siteTypeElem, this._entity == null);
     // show the different view based on the type
     this.siteDetailElem = this.rootElement.find(".site_details_view");
     this.siteInputView = createSiteInputView(siteType, this.siteDetailElem);
@@ -78,14 +79,6 @@ export class SiteInputDialog extends FormDialog<Site> {
 
   extractEntity() {
     return this.siteInputView ? this.siteInputView.entity : null;
-  }
-  updateViewsFromEntity(site: Site) {
-    this.selectedSiteType = site.siteType;
-    setEnabled(this.siteTypeElem, false);
-  }
-  clearViews() {
-    this.selectedSiteType = SiteType.WORDPRESS;
-    setEnabled(this.siteTypeElem, true);
   }
 
   buttons(): any {

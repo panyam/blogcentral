@@ -54,9 +54,8 @@ export class PostListView extends View<Post[]> {
         `;
   }
 
-  updateViewsFromEntity(_posts: Post[]) {
-    var self = this;
-    this.rootElement.html(this.renderedTemplate());
+  setupViews(self: this = this) {
+    super.setupViews();
     var select_post_buttons = this.rootElement.find(".select_post_button");
     select_post_buttons.on("click", function (event: any) {
       self.onSelectPostClicked(event);
@@ -78,7 +77,7 @@ export class PostListView extends View<Post[]> {
     console.log("Removing Post at: ", index);
     await app.removePost(this.site, post.id);
     posts.splice(index, 1);
-    this.setUpdated();
+    this.refreshViews();
   }
 
   async onSelectPostClicked(event: any) {

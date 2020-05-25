@@ -32,15 +32,11 @@ export class TokenAuthDetailView extends AuthDetailView {
     // this._entity["expiresAt"] = this.expiresAtElem.val();
   }
 
-  protected updateViewsFromEntity(entity: any) {
-    this.tokenElem.val(entity.token || "");
-    // this.expiresAtElem.val(_entity.expiresAt);
-  }
-
   template(): string {
     return `
         <label for="token">Token</label>
-        <input type="text" name="token" id="token" class="text ui-widget-content ui-corner-all" />
+        <input type="text" name="token" id="token" class="text ui-widget-content ui-corner-all" 
+               value = "{{authConfig.token}}"/>
     <!--
         <label for="expiresAt">Expires At</label>
         <input type="date" name="expiresAt" id="expiresAt" value="" class="text ui-widget-content ui-corner-all" />
@@ -80,23 +76,15 @@ export class JWTAuthDetailView extends TokenAuthDetailView {
     return entity;
   }
 
-  protected updateViewsFromEntity(entity: any) {
-    super.updateViewsFromEntity(entity);
-    this.tokenUrlElem.val(
-      valOrDefault(entity.tokenUrl, "/wp-json/jwt-auth/v1/token")
-    );
-    this.validateUrlElem.val(
-      valOrDefault(entity.validateUrl, "/wp-json/jwt-auth/v1/token/validate")
-    );
-  }
-
   template(): string {
     return (
       `
         <label for="tokenUrl">Token URL</label>
-        <input type="text" name="tokenUrl" id="tokenUrl" class="text ui-widget-content ui-corner-all" />
+        <input type="text" name="tokenUrl" id="tokenUrl" class="text ui-widget-content ui-corner-all" 
+               value = "{{authConfig.tokenUrl}}"/>
         <label for="validateUrl">Validate URL</label>
-        <input type="text" name="validateUrl" id="validateUrl" class="text ui-widget-content ui-corner-all" />
+        <input type="text" name="validateUrl" id="validateUrl" class="text ui-widget-content ui-corner-all" 
+               value = "{{authConfig.validateUrl}}"/>
     ` + super.template()
     );
   }

@@ -32,10 +32,8 @@ export class SiteListView extends View<Site[]> {
     return `{{# each sites }}<div class = "site_div" id = "site_div_{{@index}}"> </div> {{/each}}`;
   }
 
-  updateViewsFromEntity() {
-    var self = this;
-    this.rootElement.html(this.renderedTemplate());
-
+  setupViews(self: this = this) {
+    super.setupViews();
     this.siteViews = this.rootElement
       .find(".site_div")
       .map((i: Int, elem: any) => {
@@ -63,7 +61,7 @@ export class SiteListView extends View<Site[]> {
     var site = siteView.entity!!;
     if (this.delegate != null) {
       await this.delegate.selectPost(site);
-      this.setUpdated();
+      this.refreshViews();
     }
   }
 
@@ -72,7 +70,7 @@ export class SiteListView extends View<Site[]> {
     if (site.selectedPost == null) {
       if (this.delegate != null) {
         await this.delegate.selectPost(site);
-        this.setUpdated();
+        this.refreshViews();
       }
     }
     if (this.delegate == null) {
@@ -86,6 +84,6 @@ export class SiteListView extends View<Site[]> {
     var siteService = this.app.siteService;
     var site = siteView.entity!!;
     console.log("Removing Site: ", site);
-    siteService.remove(site).then(() => self.setUpdated());
+    siteService.remove(site).then(() => self.refreshViews());
   }
 }

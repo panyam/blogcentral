@@ -60,21 +60,21 @@ export class WPSiteSummaryView extends SiteSummaryView {
   siteApiUrlElem: JQuery<HTMLElement>;
   setupViews() {
     super.setupViews();
-    this.siteTitleElem = this.rootElement.find(".site_title_cell");
-    this.siteApiUrlElem = this.rootElement.find(".site_apiUrl_cell");
-  }
-
-  updateViewsFromEntity(entity: Site) {
-    this.siteTitleElem.html(entity.title);
-    this.siteApiUrlElem.html(entity.siteConfig.apiUrl);
+    this.siteTitleElem = this.rootElement.find(".site_summary_title");
+    this.siteApiUrlElem = this.rootElement.find(".site_summary_apiUrl");
   }
 
   template() {
     return `
       <div class = "activity_indicator" />
-      <div class = "site_summary_title_div">{{this.site.title }}</div>
-      <div class = "site_summary_apiUrl_div">{{this.site.apiUrl }}</div>
-      <div class = "site_summary_selected_post_div">
+      <h3 class = "site_summary_title">{{this.site.title }}</h3>
+      <div class = "site_summary_apiUrl">
+        API Url: <a href="{{this.site.apiUrl }}" target="_blank">
+        {{this.site.siteConfig.apiUrl }}
+        </a>
+      </div>
+      <div class = "auth_summary_details_div"></div>
+      <div class = "site_summary_selected_post">
         {{# if this.site.selectedPost }}
         <h3 style="margin-bottom: 0px">Post:</h3>
         <a target="_blank" href="{{ this.site.selectedPost.link }}">

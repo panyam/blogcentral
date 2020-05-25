@@ -9,6 +9,8 @@ export class AddPostDialog extends FormDialog<Post> {
 
   constructor(elem_or_id: any) {
     super(elem_or_id, null);
+    this.renderAsTemplate = true;
+    this.entityName = "post";
     var self = this;
     this._buttons = {
       "Create Post": function () {
@@ -36,24 +38,23 @@ export class AddPostDialog extends FormDialog<Post> {
   html() {
     return `
         <label for="post_title">Title</label>
-        <input type="url" name="post_title" id="post_title" value="Awesome Title!" class="text ui-widget-content ui-corner-all"/>
+        <input type="url" name="post_title" id="post_title" value="Awesome Title!" class="text ui-widget-content ui-corner-all" value = "{{post.options.title}}"/>
 
         <label for="post_excerpt">Excerpt</label>
-        <textarea name="post_excerpt" id="post_excerpt" value="New Post" class="text ui-widget-content ui-corner-all" rows="5">Enter your amazing excerpt here!!!</textarea>
+        <textarea name="post_excerpt" id="post_excerpt" 
+                  class="text ui-widget-content ui-corner-all" rows="5" 
+                  placeholder = "Enter your amazing excerpt here!!!">{{post.options.excerpt}}</textarea>
 
         <label for="post_slug">Slug</label>
-        <input type="url" name="post_slug" id="post_slug" value="" class="text ui-widget-content ui-corner-all"/>
+        <input type="url" name="post_slug" id="post_slug" value="{{post.options.slug}}" 
+               class="text ui-widget-content ui-corner-all"/>
 
         <label for="post_password">Password</label>
-        <input type="password" value = "password" name="post_password" id="post_password" value="New Post" class="text ui-widget-content ui-corner-all"/>
+        <input type="password" name="post_password" 
+               id="post_password" 
+               value="{{post.options.password}}" 
+               class="text ui-widget-content ui-corner-all"/>
         `;
-  }
-
-  updateViewsFromEntity(post: Post) {
-    this.titleElem.val(post.options.title);
-    this.passwordElem.val(post.options.password);
-    this.excerptElem.val(post.options.excerpt);
-    this.slugElem.val(post.options.slug);
   }
 
   extractEntity() {

@@ -29,6 +29,8 @@ export class SiteInputView extends View<Site> {
 
   constructor(elem_or_id: any, site: Nullable<Site> = null) {
     super(elem_or_id, site || Site.defaultSite());
+    this.renderAsTemplate = true;
+    this.entityName = "site";
   }
 
   setupViews() {
@@ -57,6 +59,8 @@ export class SiteInputView extends View<Site> {
     } else if (authType == AuthType.JWT) {
       this.authDetailView = new JWTAuthDetailView(this.authDetailElem).setup();
     }
+    var site = this._entity!!;
+    this.authDetailView.entity = site.authConfig;
   }
 }
 
@@ -85,14 +89,6 @@ export class WPSiteInputView extends SiteInputView {
       authType: this.selectedAuthType,
       authConfig: this.authDetailView.entity,
     });
-  }
-
-  protected updateViewsFromEntity(site: Site) {
-    if (site.siteType != SiteType.WORDPRESS) {
-      throw new Error("Only Wordpress Sites can be rendered with this view");
-    }
-    this.titleElem.val(site.title || "My Example Site");
-    this.apiUrlElem.val(site.siteConfig.apiUrl || "https://examplesite.com/");
   }
 
   html(): string {
@@ -139,6 +135,7 @@ export class LISiteInputView extends SiteInputView {
     super.setupViews();
     this.titleElem = this.rootElement.find("#title");
     this.usernameElem = this.rootElement.find("#username");
+    this.onAuthTypeChanged();
   }
 
   protected extractEntity() {
@@ -150,14 +147,6 @@ export class LISiteInputView extends SiteInputView {
         username: this.usernameElem.val() || "",
       },
     });
-  }
-
-  protected updateViewsFromEntity(site: Site) {
-    if (site.siteType != SiteType.WORDPRESS) {
-      throw new Error("Only Wordpress Sites can be rendered with this view");
-    }
-    this.titleElem.val(site.title || "");
-    this.usernameElem.val(site.authConfig.username || "");
   }
 
   html(): string {
@@ -180,6 +169,7 @@ export class MediumSiteInputView extends SiteInputView {
     this.usernameElem = this.rootElement.find("#username");
     var authDetailElem = this.rootElement.find("#auth_details_view");
     this.authDetailView = new TokenAuthDetailView(authDetailElem).setup();
+    this.onAuthTypeChanged();
   }
 
   protected extractEntity() {
@@ -191,15 +181,6 @@ export class MediumSiteInputView extends SiteInputView {
       authType: AuthType.TOKEN,
       authConfig: this.authDetailView.entity,
     });
-  }
-
-  protected updateViewsFromEntity(site: Site) {
-    if (site.siteType != SiteType.WORDPRESS) {
-      throw new Error("Only Wordpress Sites can be rendered with this view");
-    }
-    this.titleElem.val(site.title || "");
-    this.usernameElem.val(site.siteConfig.username || "");
-    this.authDetailView.entity = site.authConfig;
   }
 
   html(): string {

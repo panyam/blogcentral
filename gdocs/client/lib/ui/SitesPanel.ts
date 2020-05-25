@@ -53,7 +53,7 @@ export class SitesPanel extends View<null> implements SiteListViewDelegate {
       self.addSiteDialog.open().then((site: Site) => {
         if (site != null) {
           self.app.siteService.addSite(site as Site).then(() => {
-            self.siteListView.setUpdated();
+            self.siteListView.refreshViews();
           });
         }
       });
