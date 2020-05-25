@@ -28,6 +28,22 @@ export class SiteInputDialog extends FormDialog<Site> {
     this.addingSiteMode = addingSiteMode;
   }
 
+  setupViews() {
+    var self = this;
+    super.setupViews();
+    this.allFields.add(this.siteTypeElem);
+    this.siteTypeElem = this.rootElement.find("select");
+    if (this.entity != null) {
+      this.selectedSiteType = this.entity.siteType;
+    } else {
+      this.selectedSiteType = SiteType.WORDPRESS;
+    }
+    this.siteTypeElem.change(function (_evt: any) {
+      self.onSiteTypeChanged();
+    });
+    this.onSiteTypeChanged();
+  }
+
   set selectedSiteType(siteType: SiteType) {
     if (siteType == SiteType.WORDPRESS) {
       this.siteTypeElem.val("WORDPRESS");
@@ -92,21 +108,5 @@ export class SiteInputDialog extends FormDialog<Site> {
       };
     }
     return out;
-  }
-
-  setupViews() {
-    var self = this;
-    super.setupViews();
-    this.allFields.add(this.siteTypeElem);
-    this.siteTypeElem = this.rootElement.find("select");
-    if (this.entity != null) {
-      this.selectedSiteType = this.entity.siteType;
-    } else {
-      this.selectedSiteType = SiteType.WORDPRESS;
-    }
-    this.siteTypeElem.change(function (_evt: any) {
-      self.onSiteTypeChanged();
-    });
-    this.onSiteTypeChanged();
   }
 }

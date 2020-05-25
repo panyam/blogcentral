@@ -91,9 +91,9 @@ export class Dialog<EntityType> extends View<EntityType> {
   rejectFunc: any;
   protected _buttons: any;
 
-  setup(): this {
-    super.setup();
+  setupViews() {
     var self = this;
+    super.setupViews();
     this.dialog = this.rootElement.dialog({
       autoOpen: false,
       position: { my: "center top", at: "center top", of: window },
@@ -102,7 +102,6 @@ export class Dialog<EntityType> extends View<EntityType> {
         self.onClosed();
       },
     });
-    return this;
   }
 
   onClosed() {}
@@ -154,14 +153,13 @@ export class FormDialog<EntityType> extends Dialog<EntityType> {
     this.errorMessageElem.html(html);
   }
 
-  setup(): this {
-    super.setup();
+  setupViews() {
+    super.setupViews();
     this.errorMessageElem = this.rootElement.find(".error_message_span");
     this.allFields = $([]);
     this.form = this.dialog.find("form").on("submit", function (e: any) {
       e.preventDefault();
     });
-    return this;
   }
 
   onClosed() {
