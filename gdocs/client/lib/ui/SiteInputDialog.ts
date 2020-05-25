@@ -2,7 +2,7 @@ import { setEnabled } from "./utils";
 import { FormDialog } from "./Views";
 import { SiteInputView, createSiteInputView } from "./SiteInputViews";
 import { SiteType } from "../interfaces";
-import { Site } from "../sites";
+import { Site } from "../models";
 import { App } from "../app";
 
 export class SiteInputDialog extends FormDialog<Site> {

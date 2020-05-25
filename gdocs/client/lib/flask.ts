@@ -1,7 +1,7 @@
 import { Nullable } from "./types";
 import { Store, ContentExtractor, HttpClient } from "./interfaces";
 import { Request, Response } from "./net";
-import { Site } from "./sites";
+import { Site } from "./models";
 
 declare var Quill: any;
 export class LocalStore extends Store {

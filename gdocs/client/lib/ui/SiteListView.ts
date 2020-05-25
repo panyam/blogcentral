@@ -1,6 +1,6 @@
 import { View } from "./Views";
 import { Int, Nullable } from "../types";
-import { Site, Post } from "../sites";
+import { Site, Post } from "../models";
 import { App } from "../app";
 import { createSiteSummaryView, SiteSummaryView } from "./SiteSummaryViews";
 

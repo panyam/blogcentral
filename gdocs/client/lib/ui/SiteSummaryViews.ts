@@ -1,6 +1,6 @@
 import "../../styles/SiteSummaryView";
 import { SiteType } from "../interfaces";
-import { Site } from "../sites";
+import { Site } from "../models";
 import { ActivityIndicator } from "./ActivityIndicator";
 import { View } from "./Views";
 

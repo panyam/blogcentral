@@ -7,7 +7,8 @@ import {
   JWTAuthDetailView,
   OAuth2AuthDetailView,
 } from "./AuthDetailViews";
-import { Site } from "../sites";
+import { Site } from "../models";
+import { defaultSite } from "../defaults";
 import { ActivityIndicator } from "./ActivityIndicator";
 
 export function createSiteInputView(siteType: SiteType, elem_or_id: any) {
@@ -28,7 +29,7 @@ export class SiteInputView extends View<Site> {
   authDetailView: AuthDetailView;
 
   constructor(elem_or_id: any, site: Nullable<Site> = null) {
-    super(elem_or_id, "site", site || Site.defaultSite());
+    super(elem_or_id, "site", site || defaultSite());
   }
 
   setupViews() {
@@ -152,7 +153,7 @@ export class LISiteInputView extends SiteInputView {
     });
   }
 
-  html(): string {
+  template(): string {
     return `
         <label for="title">Title</label>
         <input type="text" name="title" id="title" class="text ui-widget-content ui-corner-all" value = "My Medium Site" />
@@ -186,7 +187,7 @@ export class MediumSiteInputView extends SiteInputView {
     });
   }
 
-  html(): string {
+  template(): string {
     return `
         <label for="title">Title</label>
         <input type="text" name="title" id="title" class="text ui-widget-content ui-corner-all" value = "My Medium Site" />
