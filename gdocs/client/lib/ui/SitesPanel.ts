@@ -1,3 +1,4 @@
+import "../../styles/SitesPanel";
 import { SiteInputDialog } from "./SiteInputDialog";
 import { ActivityIndicator } from "./ActivityIndicator";
 import { SiteListView, SiteListViewDelegate } from "./SiteListView";

@@ -1,3 +1,4 @@
+import "../../styles/SiteSummaryView";
 import { SiteType } from "../interfaces";
 import { Site } from "../sites";
 import { ActivityIndicator } from "./ActivityIndicator";
@@ -71,9 +72,9 @@ export class WPSiteSummaryView extends SiteSummaryView {
   template() {
     return `
       <div class = "activity_indicator" />
-      <div class = "site_title_div" style="border: solid 1px red">{{this.site.title }}</div>
-      <div class = "site_apiUrl_div" style="border: solid 1px red">{{this.site.apiUrl }}</div>
-      <div class = "site_selected_post_div">
+      <div class = "site_summary_title_div">{{this.site.title }}</div>
+      <div class = "site_summary_apiUrl_div">{{this.site.apiUrl }}</div>
+      <div class = "site_summary_selected_post_div">
         {{# if this.site.selectedPost }}
         <h3 style="margin-bottom: 0px">Post:</h3>
         <a target="_blank" href="{{ this.site.selectedPost.link }}">
@@ -81,7 +82,7 @@ export class WPSiteSummaryView extends SiteSummaryView {
         </a>
         {{/if}}
       </div>
-      <div class = "site_buttons_div" style="border: solid 1px red">
+      <div class = "site_buttons_div">
         <center>
             <button class="remove_site_button ui-button ui-widget ui-corner-all ui-button-icon-only" title="Remove Site">
                 <span class="ui-icon ui-icon-trash"></span> Remove Site
@@ -89,12 +90,8 @@ export class WPSiteSummaryView extends SiteSummaryView {
             <button class = "select_post_button ui-button ui-widget ui-corner-all" title="Select Post">Posts</button>
             <button class = "publish_post_button ui-button ui-widget ui-corner-all" >Publish</button>
         </center>
+        <center> <div class = "progressbar"></div> </center>
       </div>
-        <!--<tr>
-          <td colspan = 3>
-            <center> <div class = "progressbar"></div> </center>
-          </td>
-        </tr>-->
       `;
   }
 }

@@ -1,3 +1,4 @@
+import "../../styles/PostsPanel";
 import { View } from "./Views";
 import { AddPostDialog } from "./AddPostDialog";
 import { ActivityIndicator } from "./ActivityIndicator";

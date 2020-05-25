@@ -1,0 +1,76 @@
+
+@import "./global";
+
+$sites_panel_div_width: 320px;
+$sites_panel_header_height: 50px;
+$sites_panel_footer_height: 40px;
+$sites_panel_footer_padding: 10px;
+
+#sites_panel_div {
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  position: absolute;
+  overflow: scroll;
+  background: $default_bg;
+}
+
+#sites_panel_div > #site_list_div {
+  position: absolute;
+  overflow: scroll;
+  bottom: $sites_panel_footer_height + $sites_panel_footer_padding;
+  left: 0px;
+  right: 0px;
+  padding-left: 5px;
+}
+
+#sites_panel_div > #sites_panel_footer_div {
+  // border: solid 1px red;
+  position: absolute;
+  overflow: scroll;
+
+  height: $sites_panel_footer_height;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+
+  text-align: center;
+  padding-top: $sites_panel_footer_padding;
+}
+
+#add_site_dialog fieldset label {
+  font-weight: bold;
+  display: block;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+#add_site_dialog fieldset input,
+textarea,
+select {
+  display: block;
+  width: 100%;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+#site_login_dialog fieldset label {
+  font-weight: bold;
+  display: block;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+#site_login_dialog fieldset input,
+textarea,
+select {
+  display: block;
+  width: 100%;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.site_div {
+  position: relative;
+  border-bottom: solid 2px gray;
+}
