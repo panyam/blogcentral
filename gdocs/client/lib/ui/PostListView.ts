@@ -15,6 +15,8 @@ export class PostListView extends View<Post[]> {
   constructor(elem_or_id: any, app: App) {
     super(elem_or_id, []);
     this.app = app;
+    this.renderAsTemplate = true;
+    this.entityName = "posts";
   }
 
   template() {
@@ -54,7 +56,7 @@ export class PostListView extends View<Post[]> {
 
   updateViews(_posts: Post[]) {
     var self = this;
-    this.rootElement.html(this.renderedTemplate("posts"));
+    this.rootElement.html(this.renderedTemplate());
     var select_post_buttons = this.rootElement.find(".select_post_button");
     select_post_buttons.on("click", function (event: any) {
       self.onSelectPostClicked(event);

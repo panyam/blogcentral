@@ -10,6 +10,8 @@ export class View<EntityType> {
   protected _entity: Nullable<EntityType>;
   private entityUpdated = true;
   private _viewsCreated = false;
+  protected renderAsTemplate = false;
+  entityName = "entity";
 
   constructor(
     elem_or_id: any,
@@ -20,8 +22,11 @@ export class View<EntityType> {
     this._entity = entity;
     this.configs = configs;
     this.zIndex = configs.zIndex || 1000;
+    this.renderAsTemplate = configs.renderAsTemplate || false;
     this.rootElement = ensureElement(elem_or_id);
     this._template = configs.template || "<div>Hello World</div>";
+    var self = this;
+    setTimeout(() => self.setup(), 0);
   }
 
   get viewsCreated() {
@@ -71,9 +76,11 @@ export class View<EntityType> {
    * to populate the views with.
    */
   setup(): this {
-    this.setupViews();
-    this._viewsCreated = true;
-    this.setUpdated();
+    if (!this._viewsCreated) {
+      this.setupViews();
+      this._viewsCreated = true;
+      this.setUpdated();
+    }
     return this;
   }
 
@@ -83,18 +90,26 @@ export class View<EntityType> {
   }
 
   html() {
-    return this._template;
+    if (this.renderAsTemplate) {
+      return this.renderedTemplate();
+    } else {
+      return this.template();
+    }
   }
 
   template() {
     return this._template;
   }
 
-  renderedTemplate(entityAttribute : string) {
-    var params = {} as any
-    params[entityAttribute] = this._entity;
+  enrichViewParams(viewParams: any): any {
+    return viewParams;
+  }
+
+  renderedTemplate(viewParams: any = null) {
+    viewParams = this.enrichViewParams(viewParams || {});
+    viewParams[this.entityName] = this._entity;
     var template = Handlebars.compile(this.template());
-    return template(params);
+    return template(viewParams);
   }
 }
 

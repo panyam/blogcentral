@@ -24,6 +24,8 @@ export class SiteListView extends View<Site[]> {
   constructor(elem_or_id: any, app: App) {
     super(elem_or_id, app.siteService.sites);
     this.app = app;
+    this.renderAsTemplate = true;
+    this.entityName = "sites";
   }
 
   template() {
@@ -33,7 +35,7 @@ export class SiteListView extends View<Site[]> {
   updateViews() {
     var self = this;
     var siteService = this.app.siteService;
-    this.rootElement.html(this.renderedTemplate("sites"));
+    this.rootElement.html(this.renderedTemplate());
 
     this.siteViews = this.rootElement
       .find(".site_div")

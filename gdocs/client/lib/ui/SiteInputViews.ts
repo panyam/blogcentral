@@ -1,7 +1,12 @@
 import { AuthType, SiteType } from "../interfaces";
 import { Nullable } from "../types";
 import { View } from "./Views";
-import { TokenAuthDetailView } from "./AuthDetailViews";
+import {
+  AuthDetailView,
+  TokenAuthDetailView,
+  JWTAuthDetailView,
+  OAuth2AuthDetailView,
+} from "./AuthDetailViews";
 import { Site } from "../sites";
 import { ActivityIndicator } from "./ActivityIndicator";
 
@@ -19,20 +24,56 @@ export function createSiteInputView(siteType: SiteType, elem_or_id: any) {
 export class SiteInputView extends View<Site> {
   activityIndicator: ActivityIndicator;
   allFields: JQuery<any>;
+  authDetailElem: any;
+  authDetailView: AuthDetailView;
 
   constructor(elem_or_id: any, site: Nullable<Site> = null) {
     super(elem_or_id, site || Site.defaultSite());
+  }
+
+  setupViews() {
+    super.setupViews();
+    this.authDetailElem = this.rootElement.find(".auth_details_view");
+  }
+
+  get selectedAuthType(): AuthType {
+    return -1;
+  }
+
+  onAuthTypeChanged() {
+    var authType = this.selectedAuthType;
+    console.log("Selected Type: ", authType);
+
+    // show the different view based on the type
+    this.authDetailElem = this.rootElement.find(".auth_details_view");
+    if (authType == AuthType.OAUTH2) {
+      this.authDetailView = new OAuth2AuthDetailView(
+        this.authDetailElem
+      ).setup();
+    } else if (authType == AuthType.TOKEN) {
+      this.authDetailView = new TokenAuthDetailView(
+        this.authDetailElem
+      ).setup();
+    } else if (authType == AuthType.JWT) {
+      this.authDetailView = new JWTAuthDetailView(this.authDetailElem).setup();
+    }
   }
 }
 
 export class WPSiteInputView extends SiteInputView {
   titleElem: any;
   apiUrlElem: any;
+  authTypeElem: any;
 
-  setupViews() {
+  setupViews(self: this = this) {
     super.setupViews();
     this.titleElem = this.rootElement.find("#title");
     this.apiUrlElem = this.rootElement.find("#apiUrl");
+    this.authTypeElem = this.rootElement.find("#authType");
+    this.authTypeElem.change(function (_evt: any) {
+      self.onAuthTypeChanged();
+    });
+    this.onAuthTypeChanged();
   }
 
   protected extractEntity() {
@@ -41,6 +82,8 @@ export class WPSiteInputView extends SiteInputView {
       siteConfig: {
         apiUrl: this.apiUrlElem.val() || "",
       },
+      authType: this.selectedAuthType,
+      authConfig: this.entity,
     });
   }
 
@@ -49,7 +92,9 @@ export class WPSiteInputView extends SiteInputView {
       throw new Error("Only Wordpress Sites can be rendered with this view");
     }
     this.titleElem.val(site.title || "");
-    this.apiUrlElem.val(site.siteConfig.apiUrl || "https://examplesite.com/wp-json/");
+    this.apiUrlElem.val(
+      site.siteConfig.apiUrl || "https://examplesite.com/wp-json/"
+    );
   }
 
   html(): string {
@@ -58,7 +103,33 @@ export class WPSiteInputView extends SiteInputView {
         <input type="text" name="title" id="title" class="text ui-widget-content ui-corner-all" value = "My Amazing Site" />
         <label for="apiUrl">API Endpoint</label>
         <input type="text" name="apiUrl" id="apiUrl" class="text ui-widget-content ui-corner-all" value = "https://examplesite.com/wp-json/" />
+        
+        <label for="authType">Auth</label>
+        <select id = "authType">
+            <option value="OAUTH2">OAuth2</option>
+            <option value="JWT">JWT</option>
+        </select>
+        <div class = "auth_details_view"></div>
       `;
+  }
+
+  get selectedAuthType(): AuthType {
+    var authType = this.authTypeElem.val();
+    if (authType == "OAUTH2") {
+      return AuthType.OAUTH2;
+    } else if (authType == "JWT") {
+      return AuthType.JWT;
+    }
+    return -1;
+  }
+
+  set selectedAuthType(authType: AuthType) {
+    if (authType == AuthType.OAUTH2) {
+      this.authTypeElem.val("OAUTH2");
+    } else if (authType == AuthType.JWT) {
+      this.authTypeElem.val("JWT");
+    }
+    this.onAuthTypeChanged();
   }
 }
 
@@ -104,7 +175,6 @@ export class LISiteInputView extends SiteInputView {
 export class MediumSiteInputView extends SiteInputView {
   titleElem: any;
   usernameElem: any;
-  authDetailView: TokenAuthDetailView;
 
   setupViews() {
     super.setupViews();

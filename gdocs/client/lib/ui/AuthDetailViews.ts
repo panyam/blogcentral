@@ -7,10 +7,16 @@ export class AuthDetailView extends View<any> {
 
   constructor(elem_or_id: any, authConfig: any = null) {
     super(elem_or_id, authConfig);
+    this.renderAsTemplate = true;
+    this.entityName = "authConfig";
   }
+}
 
-  html() {
-    return this.renderedTemplate("authConfig");
+export class OAuth2AuthDetailView extends AuthDetailView {
+  template(): string {
+    return `
+    I Got nothing yet!!!
+      `;
   }
 }
 
@@ -65,6 +71,7 @@ export class JWTAuthDetailView extends TokenAuthDetailView {
     this.tokenUrlLabel = this.rootElement.find("label[for='tokenUrl']");
     this.validateUrlElem = this.rootElement.find("#validateUrl");
     this.validateUrlLabel = this.rootElement.find("label[for='validateUrl']");
+    this.tokenLabel.html("Current Token (optional)");
   }
 
   extractEntity() {
@@ -81,15 +88,13 @@ export class JWTAuthDetailView extends TokenAuthDetailView {
   }
 
   template(): string {
-    return `
+    return (
+      `
         <label for="tokenUrl">Token URL</label>
         <input type="text" name="tokenUrl" id="tokenUrl" class="text ui-widget-content ui-corner-all" />
         <label for="validateUrl">Validate URL</label>
         <input type="text" name="validateUrl" id="validateUrl" class="text ui-widget-content ui-corner-all" />
-        <label for="token">Current Token</label>
-        <input type="text" name="token" id="token" class="text ui-widget-content ui-corner-all" />
-        <label for="expiresAt">Expires At</label>
-        <input type="date" name="expiresAt" id="expiresAt" value="" class="text ui-widget-content ui-corner-all" />
-    `;
+    ` + super.template()
+    );
   }
 }
