@@ -91,23 +91,21 @@ export class WPSiteInputView extends SiteInputView {
     if (site.siteType != SiteType.WORDPRESS) {
       throw new Error("Only Wordpress Sites can be rendered with this view");
     }
-    this.titleElem.val(site.title || "");
-    this.apiUrlElem.val(
-      site.siteConfig.apiUrl || "https://examplesite.com/wp-json/"
-    );
+    this.titleElem.val(site.title || "My Example Site");
+    this.apiUrlElem.val(site.siteConfig.apiUrl || "https://examplesite.com/");
   }
 
   html(): string {
     return `
         <label for="title">Title</label>
-        <input type="text" name="title" id="title" class="text ui-widget-content ui-corner-all" value = "My Amazing Site" />
+        <input type="text" name="title" id="title" class="text ui-widget-content ui-corner-all" />
         <label for="apiUrl">API Endpoint</label>
-        <input type="text" name="apiUrl" id="apiUrl" class="text ui-widget-content ui-corner-all" value = "https://examplesite.com/wp-json/" />
+        <input type="text" name="apiUrl" id="apiUrl" class="text ui-widget-content ui-corner-all" />
         
         <label for="authType">Auth</label>
         <select id = "authType">
-            <option value="OAUTH2">OAuth2</option>
             <option value="JWT">JWT</option>
+            <option value="OAUTH2">OAuth2</option>
         </select>
         <div class = "auth_details_view"></div>
       `;
