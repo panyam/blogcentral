@@ -72,6 +72,7 @@ export class OAuthClient implements AuthClient {
    * be signed with respective credentials going forward.
    */
   async validateAuth(_site: Site) {
+    throw new Error("Not Implemented");
     return false;
   }
 
@@ -80,7 +81,8 @@ export class OAuthClient implements AuthClient {
    * Returns true if auth resulted in valid credentials false otherwise.
    */
   async startAuthFlow(_site: Site) {
-    return AuthResult.FAILURE;
+    throw new Error("Not Implemented");
+    return false;
   }
 }
 
@@ -107,6 +109,7 @@ export class TokenAuthClient implements AuthClient {
    * be signed with respective credentials going forward.
    */
   async validateAuth(_site: Site) {
+    throw new Error("Not Implemented");
     return false;
   }
 
@@ -115,6 +118,7 @@ export class TokenAuthClient implements AuthClient {
    * Returns true if auth resulted in valid credentials false otherwise.
    */
   async startAuthFlow(_site: Site) {
+    throw new Error("Not Implemented");
     return AuthResult.FAILURE;
   }
 
@@ -219,6 +223,7 @@ export class JWTAuthClient extends TokenAuthClient {
    * be signed with respective credentials going forward.
    */
   async validateAuth(_site: Site) {
+    throw new Error("Not Implemented");
     return false;
   }
 
@@ -227,6 +232,7 @@ export class JWTAuthClient extends TokenAuthClient {
    * Returns true if auth resulted in valid credentials false otherwise.
    */
   async startAuthFlow(_site: Site) {
+    throw new Error("Not Implemented");
     return AuthResult.FAILURE;
   }
 }
