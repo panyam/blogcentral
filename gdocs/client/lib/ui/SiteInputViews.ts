@@ -2,47 +2,42 @@ declare var Handlebars: any;
 import { AuthType, SiteType } from "../interfaces";
 import { Nullable } from "../types";
 import { View } from "./Views";
-import { TokenAuthDetailView } from "./AuthDetailViews"
+import { TokenAuthDetailView } from "./AuthDetailViews";
 import { Site } from "../sites";
 import { ActivityIndicator } from "./ActivityIndicator";
 
-export class SiteInputView extends View {
+export function createSiteInputView(siteType: SiteType, elem_or_id: any) {
+  if (siteType == SiteType.WORDPRESS) {
+    return new WPSiteInputView(elem_or_id).setup();
+  } else if (siteType == SiteType.MEDIUM) {
+    return new MediumSiteInputView(elem_or_id).setup();
+  } else if (siteType == SiteType.LINKEDIN) {
+    return new LISiteInputView(elem_or_id).setup();
+  }
+  throw new Error("Unsupported Site Type: " + siteType);
+}
+
+export class SiteInputView extends View<Site> {
   activityIndicator: ActivityIndicator;
   allFields: JQuery<any>;
-  _site: Site;
 
   constructor(elem_or_id: any, site: Nullable<Site> = null) {
-    super(elem_or_id);
-    this._site = site || Site.defaultSite();
+    super(elem_or_id, site || Site.defaultSite());
   }
-
-  get site() {
-    this.updateSite();
-    return this._site;
-  }
-
-  set site(site: Site) {
-    this.updateViews(site);
-  }
-
-  protected updateSite() {}
-
-  protected updateViews(_site: Site) {}
 }
 
 export class WPSiteInputView extends SiteInputView {
   titleElem: any;
   apiUrlElem: any;
 
-  setup(): this {
-    super.setup();
+  setupViews() {
+    super.setupViews();
     this.titleElem = this.rootElement.find("#title");
     this.apiUrlElem = this.rootElement.find("#apiUrl");
-    return this;
   }
 
-  protected updateSite() {
-    this._site = new Site(this.titleElem.val() || "", {
+  protected updateEntity() {
+    this._entity = new Site(this.titleElem.val() || "", {
       siteType: SiteType.WORDPRESS,
       siteConfig: {
         apiUrl: this.apiUrlElem.val() || "",
@@ -72,15 +67,14 @@ export class LISiteInputView extends SiteInputView {
   titleElem: any;
   usernameElem: any;
 
-  setup(): this {
-    super.setup();
+  setupViews() {
+    super.setupViews();
     this.titleElem = this.rootElement.find("#title");
     this.usernameElem = this.rootElement.find("#username");
-    return this;
   }
 
-  protected updateSite() {
-    this._site = new Site(this.titleElem.val() || "", {
+  protected updateEntity() {
+    this._entity = new Site(this.titleElem.val() || "", {
       siteType: SiteType.LINKEDIN,
       siteConfig: {},
       authType: AuthType.TOKEN,
@@ -111,25 +105,24 @@ export class LISiteInputView extends SiteInputView {
 export class MediumSiteInputView extends SiteInputView {
   titleElem: any;
   usernameElem: any;
-  authDetailView : TokenAuthDetailView
+  authDetailView: TokenAuthDetailView;
 
-  setup(): this {
-    super.setup();
+  setupViews() {
+    super.setupViews();
     this.titleElem = this.rootElement.find("#title");
     this.usernameElem = this.rootElement.find("#username");
     var authDetailElem = this.rootElement.find("#auth_details_view");
     this.authDetailView = new TokenAuthDetailView(authDetailElem).setup();
-    return this;
   }
 
-  protected updateSite() {
-    this._site = new Site(this.titleElem.val() || "", {
+  protected updateEntity() {
+    this._entity = new Site(this.titleElem.val() || "", {
       siteType: SiteType.MEDIUM,
       siteConfig: {
         username: this.usernameElem.val() || "",
       },
       authType: AuthType.TOKEN,
-      authConfig: this.authDetailView.authConfig
+      authConfig: this.authDetailView.entity,
     });
   }
 
@@ -139,7 +132,7 @@ export class MediumSiteInputView extends SiteInputView {
     }
     this.titleElem.val(site.title || "");
     this.usernameElem.val(site.siteConfig.username || "");
-    this.authDetailView.authConfig = site.authConfig;
+    this.authDetailView.entity = site.authConfig;
   }
 
   html(): string {

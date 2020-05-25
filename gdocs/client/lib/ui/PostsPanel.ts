@@ -9,7 +9,7 @@ import { App } from "../app";
 
 const PAGE_LENGTH = 5;
 
-export class PostsPanel extends View implements PostListViewDelegate {
+export class PostsPanel extends View<any> implements PostListViewDelegate {
   addPostDialog: AddPostDialog;
   addButton: any;
   searchBarDiv: any;
@@ -33,7 +33,7 @@ export class PostsPanel extends View implements PostListViewDelegate {
   hasNextPage = false;
 
   constructor(elem_or_id: string, app: App) {
-    super(elem_or_id);
+    super(elem_or_id, null);
     this.app = app;
   }
 
@@ -48,7 +48,7 @@ export class PostsPanel extends View implements PostListViewDelegate {
     var self = this;
     self.site = site;
     self.postListView.site = site;
-    self.postListView.posts = [];
+    self.postListView.entity = [];
     self.selectedPost = null;
     setVisible(this.prevButton, false);
     setVisible(this.nextButton, false);
@@ -67,7 +67,7 @@ export class PostsPanel extends View implements PostListViewDelegate {
     });
   }
 
-  setup(): this {
+  setupViews() {
     var self = this;
     this.searchBarDiv = ensureElement("search_bar_div", this.rootElement);
     this.orderbyField = ensureElement("orderby", this.rootElement);
@@ -132,7 +132,6 @@ export class PostsPanel extends View implements PostListViewDelegate {
 
     var aidiv = this.rootElement.find(".activity_indicator");
     this.activityIndicator = new ActivityIndicator(aidiv).setup();
-    return this;
   }
 
   async searchPosts(page: Int) {
@@ -160,7 +159,7 @@ export class PostsPanel extends View implements PostListViewDelegate {
           this.currentPage = page;
           setVisible(this.prevButton, page > 1);
           setVisible(this.nextButton, this.hasNextPage);
-          this.postListView.posts = posts;
+          this.postListView.entity = posts;
         }
       }
     }

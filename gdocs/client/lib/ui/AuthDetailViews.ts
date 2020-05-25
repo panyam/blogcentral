@@ -2,32 +2,12 @@ declare var Handlebars: any;
 import { ActivityIndicator } from "./ActivityIndicator";
 import { View } from "./Views";
 
-export class AuthDetailView extends View {
+export class AuthDetailView extends View<any> {
   activityIndicator: ActivityIndicator;
   allFields: JQuery<any>;
-  readonly _authConfig: any;
 
   constructor(elem_or_id: any, authConfig: any = null) {
-    super(elem_or_id);
-    this._authConfig = authConfig || {};
-  }
-
-  get authConfig() {
-    this.updateAuthConfig();
-    return this._authConfig;
-  }
-
-  set authConfig(authConfig: any) {
-    this.updateViews(authConfig);
-  }
-
-  protected updateAuthConfig() {}
-
-  protected updateViews(_authConfig: any) {}
-
-  setup(): this {
-    this.rootElement.html(this.html());
-    return this;
+    super(elem_or_id, authConfig);
   }
 
   template() {
@@ -37,7 +17,7 @@ export class AuthDetailView extends View {
   html() {
     var template = Handlebars.compile(this.template());
     return template({
-      authConfig: this._authConfig,
+      authConfig: this.entity,
     });
   }
 }
@@ -48,23 +28,22 @@ export class TokenAuthDetailView extends AuthDetailView {
   expiresAtLabel: JQuery<HTMLElement>;
   expiresAtElem: JQuery<HTMLElement>;
 
-  setup(): this {
-    super.setup();
+  setupViews() {
+    super.setupViews();
     this.tokenElem = this.rootElement.find("#token");
     this.tokenLabel = this.rootElement.find("label[for='token']");
     this.expiresAtElem = this.rootElement.find("#expiresAt");
     this.expiresAtLabel = this.rootElement.find("label[for='expiresAt']");
-    return this;
   }
 
-  protected updateAuthConfig() {
-      this._authConfig["token"] = this.tokenElem.val() || "";
-      // this._authConfig["expiresAt"] = this.expiresAtElem.val();
+  extractEntity() {
+    return { token: this.tokenElem.val() || "" } as any;
+    // this._entity["expiresAt"] = this.expiresAtElem.val();
   }
 
-  protected updateViews(_authConfig: any) {
-    this.tokenElem.val(_authConfig.token || "");
-    // this.expiresAtElem.val(_authConfig.expiresAt);
+  protected updateViews(entity: any) {
+    this.tokenElem.val(entity.token || "");
+    // this.expiresAtElem.val(_entity.expiresAt);
   }
 
   template(): string {
@@ -88,25 +67,25 @@ export class JWTAuthDetailView extends TokenAuthDetailView {
   validateUrlLabel: JQuery<HTMLElement>;
   validateUrlElem: JQuery<HTMLElement>;
 
-  setup(): this {
-    super.setup();
+  setupViews() {
+    super.setupViews();
     this.tokenUrlElem = this.rootElement.find("#tokenUrl");
     this.tokenUrlLabel = this.rootElement.find("label[for='tokenUrl']");
     this.validateUrlElem = this.rootElement.find("#validateUrl");
     this.validateUrlLabel = this.rootElement.find("label[for='validateUrl']");
-    return this;
   }
 
-  protected updateAuthConfig() {
-    super.updateAuthConfig();
-    this._authConfig["tokenUrl"] = this.tokenUrlElem.val() || "";
-    this._authConfig["validateUrl"] = this.validateUrlElem.val() || "";
+  extractEntity() {
+    var entity: any = super.extractEntity();
+    entity["tokenUrl"] = this.tokenUrlElem.val() || "";
+    entity["validateUrl"] = this.validateUrlElem.val() || "";
+    return entity;
   }
 
-  protected updateViews(_authConfig: any) {
-    super.updateViews(_authConfig);
-    this.tokenUrlElem.val(_authConfig.tokenUrl || "");
-    this.validateUrlElem.val(_authConfig.validateUrl || "");
+  protected updateViews(entity: any) {
+    super.updateViews(entity);
+    this.tokenUrlElem.val(entity.tokenUrl || "");
+    this.validateUrlElem.val(entity.validateUrl || "");
   }
 
   template(): string {

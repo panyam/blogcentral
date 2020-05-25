@@ -1,19 +1,67 @@
 import { ensureElement } from "./utils";
 import { Nullable } from "../types";
 
-export class View {
+export class View<EntityType> {
   rootElement: any;
   protected _template: any;
   readonly configs: any;
   readonly zIndex: number;
+  protected _entity: Nullable<EntityType>;
+  private entityUpdated = true;
+  private _viewsCreated = false;
 
-  constructor(elem_or_id: any, configs: any = null) {
+  constructor(
+    elem_or_id: any,
+    entity: Nullable<EntityType>,
+    configs: any = null
+  ) {
     configs = configs || {};
+    this._entity = entity;
     this.configs = configs;
     this.zIndex = configs.zIndex || 1000;
     this.rootElement = ensureElement(elem_or_id);
     this._template = configs.template || "<div>Hello World</div>";
   }
+
+  get viewsCreated() {
+    return this._viewsCreated;
+  }
+
+  setUpdated() {
+    this.entityUpdated = true;
+    if (this._entity != null) {
+      this.updateViews(this._entity);
+    } else {
+      this.clearViews();
+    }
+  }
+
+  get entity(): Nullable<EntityType> {
+    if (this.entityUpdated) {
+      this._entity = this.extractEntity();
+      this.entityUpdated = false;
+    }
+    return this._entity;
+  }
+
+  set entity(entity: Nullable<EntityType>) {
+    if (this.isEntityValid(entity)) {
+      this._entity = entity;
+      this.setUpdated();
+    }
+  }
+
+  protected isEntityValid(_entity: Nullable<EntityType>) {
+    return true;
+  }
+
+  protected extractEntity(): Nullable<EntityType> {
+    return this._entity;
+  }
+
+  protected clearViews() {}
+
+  protected updateViews(_entity: EntityType) {}
 
   /**
    * This method is called to create the view hierarchy of this view.
@@ -22,9 +70,14 @@ export class View {
    * to populate the views with.
    */
   setup(): this {
+    this.setupViews();
+    this._viewsCreated = true;
+    return this;
+  }
+
+  protected setupViews() {
     this.rootElement.html(this.html());
     this.rootElement.css("z-Index", this.zIndex);
-    return this;
   }
 
   html() {
@@ -32,15 +85,11 @@ export class View {
   }
 }
 
-export class Dialog extends View {
+export class Dialog<EntityType> extends View<EntityType> {
   dialog: any;
   resolveFunc: any;
   rejectFunc: any;
   protected _buttons: any;
-
-  constructor(elem_or_id: any, configs: any = null) {
-    super(elem_or_id, configs);
-  }
 
   setup(): this {
     super.setup();
@@ -79,7 +128,7 @@ export class Dialog extends View {
   }
 }
 
-export class FormDialog extends Dialog {
+export class FormDialog<EntityType> extends Dialog<EntityType> {
   errorMessageElem: JQuery<HTMLElement>;
   allFields: JQuery<any>;
   form: any;

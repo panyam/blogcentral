@@ -1,14 +1,14 @@
 import { View } from "./Views";
 import { Int } from "../types";
 
-export class ActivityIndicator extends View {
+export class ActivityIndicator extends View<any> {
   bgColor: any;
   imageUrl: string;
   zIndex: Int;
   modalId: string;
 
   constructor(modal_elem: any, config: any = null) {
-    super(modal_elem);
+    super(modal_elem, null);
     config = config || {};
     this.zIndex = config.zIndex || 500;
     this.bgColor = config.bgColor || "rgba(10, 10, 10, .6)";
@@ -16,8 +16,8 @@ export class ActivityIndicator extends View {
     this.modalId = config.modalId || "modal";
   }
 
-  setup(): this {
-    super.setup();
+  setupViews() {
+    super.setupViews();
     this.rootElement.css("position", "absolute");
     this.rootElement.css("z-index", this.zIndex);
     this.rootElement.css("left", "0px");
@@ -35,7 +35,6 @@ export class ActivityIndicator extends View {
         "no-repeat"
     );
     this.rootElement.hide();
-    return this;
   }
 
   show() {

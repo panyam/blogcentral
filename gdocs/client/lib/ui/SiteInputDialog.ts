@@ -1,17 +1,11 @@
 import { setEnabled } from "./utils";
 import { FormDialog } from "./Views";
-import {
-  SiteInputView,
-  WPSiteInputView,
-  MediumSiteInputView,
-  LISiteInputView,
-} from "./SiteInputViews";
-import { Nullable } from "../types";
+import { SiteInputView, createSiteInputView } from "./SiteInputViews";
 import { SiteType } from "../interfaces";
 import { Site } from "../sites";
 import { App } from "../app";
 
-export class SiteInputDialog extends FormDialog {
+export class SiteInputDialog extends FormDialog<Site> {
   siteTypeElem: JQuery<HTMLElement>;
   siteDetailElem: JQuery<HTMLElement>;
   siteInputView: SiteInputView;
@@ -19,7 +13,7 @@ export class SiteInputDialog extends FormDialog {
   addingSiteMode: boolean = true;
 
   constructor(elem_or_id: any, app: App, addingSiteMode: boolean) {
-    super(elem_or_id, {
+    super(elem_or_id, null, {
       template: `
         <label for="platform">Platform</label>
         <select id = "platform">
@@ -63,24 +57,19 @@ export class SiteInputDialog extends FormDialog {
 
     // show the different view based on the type
     this.siteDetailElem = this.rootElement.find(".site_details_view");
-    if (siteType == SiteType.WORDPRESS)
-      this.siteInputView = new WPSiteInputView(this.siteDetailElem).setup();
-    else if (siteType == SiteType.MEDIUM)
-      this.siteInputView = new MediumSiteInputView(this.siteDetailElem).setup();
-    else if (siteType == SiteType.LINKEDIN)
-      this.siteInputView = new LISiteInputView(this.siteDetailElem).setup();
+    this.siteInputView = createSiteInputView(siteType, this.siteDetailElem);
   }
 
-  get site() {
-    return this.siteInputView ? this.siteInputView.site : null;
+  updateEntity() {
+    return this.siteInputView ? this.siteInputView.entity : null;
   }
-  set site(s: Nullable<Site>) {
-    if (s != null) {
-      this.selectedSiteType = s.siteType;
-    } else {
-      this.selectedSiteType = SiteType.WORDPRESS;
-    }
-    setEnabled(this.siteTypeElem, s == null);
+  updateViews(site: Site) {
+    this.selectedSiteType = site.siteType;
+    setEnabled(this.siteTypeElem, false);
+  }
+  clearViews() {
+    this.selectedSiteType = SiteType.WORDPRESS;
+    setEnabled(this.siteTypeElem, true);
   }
 
   buttons(): any {
@@ -92,7 +81,7 @@ export class SiteInputDialog extends FormDialog {
     };
     if (this.addingSiteMode) {
       out["Add Site"] = function () {
-        self.close(self.site);
+        self.close(self.entity);
       };
     } else {
       out["Login"] = function () {
@@ -105,12 +94,13 @@ export class SiteInputDialog extends FormDialog {
     return out;
   }
 
-  setup(): this {
-    var self = super.setup();
+  setupViews() {
+    var self = this;
+    super.setupViews();
     this.allFields.add(this.siteTypeElem);
     this.siteTypeElem = this.rootElement.find("select");
-    if (this.site != null) {
-      this.selectedSiteType = this.site.siteType;
+    if (this.entity != null) {
+      this.selectedSiteType = this.entity.siteType;
     } else {
       this.selectedSiteType = SiteType.WORDPRESS;
     }
@@ -118,6 +108,5 @@ export class SiteInputDialog extends FormDialog {
       self.onSiteTypeChanged();
     });
     this.onSiteTypeChanged();
-    return this;
   }
 }

@@ -8,25 +8,25 @@ export interface PostListViewDelegate {
   postSelected(plv: PostListView, post: Post): void;
 }
 
-export class PostListView extends View {
+export class PostListView extends View<Post[]> {
   app: App;
-  _posts: Post[] = [];
   site: Site;
   delegate: Nullable<PostListViewDelegate> = null;
 
   constructor(elem_or_id: any, app: App) {
-    super(elem_or_id);
+    super(elem_or_id, []);
     this.app = app;
-    this.posts = [];
-  }
-
-  set posts(posts: Post[]) {
-    this._posts = posts;
-    this.refresh();
   }
 
   html(): string {
-    var template = Handlebars.compile(`
+    var template = Handlebars.compile(this.template());
+    return template({
+      posts: this.entity,
+    });
+  }
+
+  template() {
+    return `
         {{# each posts }}
         <table class = "post_table" width="100%" id = "post_table_{{@index}}" >
         <tr>
@@ -57,13 +57,10 @@ export class PostListView extends View {
         </table>
         <hr/>
         {{/each}}
-        `);
-    return template({
-      posts: this._posts,
-    });
+        `;
   }
 
-  refresh() {
+  updateViews(_posts: Post[]) {
     var self = this;
     var html = this.html();
     this.rootElement.html(html);
@@ -83,18 +80,20 @@ export class PostListView extends View {
     var index = parseInt(
       event.currentTarget.id.substring("remove_post_".length)
     );
-    var post = this._posts[index];
+    var posts = this.entity!!;
+    var post = posts[index];
     console.log("Removing Post at: ", index);
     await app.removePost(this.site, post.id);
-    this._posts.splice(index, 1);
-    this.refresh();
+    posts.splice(index, 1);
+    this.setUpdated();
   }
 
   async onSelectPostClicked(event: any) {
     var index = parseInt(
       event.currentTarget.id.substring("remove_post_".length)
     );
-    var post = this._posts[index];
+    var posts = this.entity!!;
+    var post = posts[index];
     console.log("Post Selected: ", index, post);
     if (this.delegate != null) this.delegate.postSelected(this, post);
   }

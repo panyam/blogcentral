@@ -4,19 +4,22 @@ import { Site } from "../sites";
 import { ActivityIndicator } from "./ActivityIndicator";
 import { View } from "./Views";
 
-export function createSiteView(elem_or_id: any, site: Site, tag: any = null) {
+export function createSiteSummaryView(
+  elem_or_id: any,
+  site: Site,
+  tag: any = null
+) {
   if (site.siteType == SiteType.WORDPRESS) {
-    return new WPSiteView(elem_or_id, site, tag).setup();
+    return new WPSiteSummaryView(elem_or_id, site, tag).setup();
   } else if (site.siteType == SiteType.MEDIUM) {
-    return new MediumSiteView(elem_or_id, site, tag).setup();
+    return new MediumSiteSummaryView(elem_or_id, site, tag).setup();
   } else if (site.siteType == SiteType.LINKEDIN) {
-    return new LISiteView(elem_or_id, site, tag).setup();
+    return new LISiteSummaryView(elem_or_id, site, tag).setup();
   }
   throw new Error("Unsupported Site Type: " + site.siteType);
 }
 
-export class SiteView extends View {
-  readonly site: Site;
+export class SiteSummaryView extends View<Site> {
   publishPostButton: any;
   selectPostButton: any;
   removeButton: any;
@@ -25,23 +28,29 @@ export class SiteView extends View {
   progressbar: any;
 
   constructor(elem_or_id: any, site: Site, tag: any = null) {
-    super(elem_or_id);
-    this.site = site;
+    super(elem_or_id, site);
     this.tag = tag;
-    this.refresh();
   }
 
-  refresh() {}
-
-  setup(): this {
-    super.setup();
+  setupViews() {
+    super.setupViews();
     this.progressbar = this.rootElement.find(".progressbar");
     var aidiv = this.rootElement.find(".activity_indicator");
     this.activityIndicator = new ActivityIndicator(aidiv).setup();
     this.publishPostButton = this.rootElement.find(".publish_post_button");
     this.selectPostButton = this.rootElement.find(".select_post_button");
     this.removeButton = this.rootElement.find(".remove_site_button");
-    return this;
+  }
+
+  template() {
+    return "";
+  }
+
+  html(): string {
+    var template = Handlebars.compile(this.template());
+    return template({
+      site: this.entity,
+    });
   }
 
   showBusy(busy: boolean) {
@@ -61,28 +70,32 @@ export class SiteView extends View {
   }
 }
 
-export class WPSiteView extends SiteView {
-  siteTitleCellElem: JQuery<HTMLElement>;
-  setup(): this {
-    super.setup();
-    this.siteTitleCellElem = this.rootElement.find(".site_title_cell");
-    return this;
+export class WPSiteSummaryView extends SiteSummaryView {
+  siteTitleElem: JQuery<HTMLElement>;
+  siteApiUrlElem: JQuery<HTMLElement>;
+  setupViews() {
+    super.setupViews();
+    this.siteTitleElem = this.rootElement.find(".site_title_cell");
+    this.siteApiUrlElem = this.rootElement.find(".site_apiUrl_cell");
   }
 
-  refresh() {
-    this.siteTitleCellElem.html(this.site.title);
+  updateViews(entity: Site) {
+    this.siteTitleElem.html(entity.title);
+    this.siteApiUrlElem.html(entity.siteConfig.apiUrl);
   }
 
-  html(): string {
+  template() {
     return `
       <div class = "activity_indicator" />
-      <div class = "site_title_cell" style="border: solid 1px red">{{this.site.title }}</div>
-      <div class = "site_title_cell" style="border: solid 1px red">{{this.site.apiUrl }}</div>
+      <div class = "site_title_div" style="border: solid 1px red">{{this.site.title }}</div>
+      <div class = "site_apiUrl_div" style="border: solid 1px red">{{this.site.apiUrl }}</div>
       <div class = "site_selected_post_div">
+        {{# if this.site.selectedPost }}
         <h3 style="margin-bottom: 0px">Post:</h3>
         <a target="_blank" href="{{ this.site.selectedPost.link }}">
             {{this.site.selectedPost.id}} : {{{ this.site.selectedPost.title.rendered }}} 
         </a>
+        {{/if}}
       </div>
       <div class = "site_buttons_div" style="border: solid 1px red">
         <center>
@@ -102,8 +115,8 @@ export class WPSiteView extends SiteView {
   }
 }
 
-export class MediumSiteView extends SiteView {
-  html(): string {
+export class MediumSiteSummaryView extends SiteSummaryView {
+  template(): string {
     return `
       <div class = "activity_indicator" />
       <table width="100%" class = "site_table"">
@@ -160,8 +173,8 @@ export class MediumSiteView extends SiteView {
   }
 }
 
-export class LISiteView extends SiteView {
-  html(): string {
+export class LISiteSummaryView extends SiteSummaryView {
+  template(): string {
     return `
       <div class = "activity_indicator" />
       <table width="100%" class = "site_table"">

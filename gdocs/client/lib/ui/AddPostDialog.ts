@@ -1,18 +1,18 @@
 import { FormDialog } from "./Views";
 import { Post } from "../sites";
 
-export class AddPostDialog extends FormDialog {
+export class AddPostDialog extends FormDialog<Post> {
   titleElem: JQuery<HTMLElement>;
   passwordElem: JQuery<HTMLElement>;
   excerptElem: JQuery<HTMLElement>;
   slugElem: JQuery<HTMLElement>;
 
   constructor(elem_or_id: any) {
-    super(elem_or_id);
+    super(elem_or_id, null);
     var self = this;
     this._buttons = {
       "Create Post": function () {
-        self.close(self.post);
+        self.close(self.entity);
       },
       Cancel: function () {
         self.close(null);
@@ -20,8 +20,8 @@ export class AddPostDialog extends FormDialog {
     };
   }
 
-  setup(): this {
-    super.setup();
+  setupViews() {
+    super.setupViews();
     this.titleElem = this.rootElement.find("#post_title");
     this.passwordElem = this.rootElement.find("#post_password");
     this.excerptElem = this.rootElement.find("#post_excerpt");
@@ -31,7 +31,6 @@ export class AddPostDialog extends FormDialog {
       .add(this.passwordElem)
       .add(this.excerptElem)
       .add(this.slugElem);
-    return this;
   }
 
   html() {
@@ -50,7 +49,14 @@ export class AddPostDialog extends FormDialog {
         `;
   }
 
-  get post(): Post {
+  updateViews(post: Post) {
+    this.titleElem.val(post.options.title);
+    this.passwordElem.val(post.options.password);
+    this.excerptElem.val(post.options.excerpt);
+    this.slugElem.val(post.options.slug);
+  }
+
+  extractEntity() {
     var title = this.titleElem.val() as string;
     var password = this.passwordElem.val() as string;
     var excerpt = this.excerptElem.val() as string;

@@ -8,7 +8,7 @@ import { PostsPanel } from "./PostsPanel";
 import { Site, Post } from "../sites";
 import { App } from "../app";
 
-export class SitesPanel extends View implements SiteListViewDelegate {
+export class SitesPanel extends View<null> implements SiteListViewDelegate {
   postsPanel: PostsPanel;
   addSiteDialog: SiteInputDialog;
   addButton: any;
@@ -17,11 +17,11 @@ export class SitesPanel extends View implements SiteListViewDelegate {
   activityIndicator: ActivityIndicator;
 
   constructor(elem_or_id: string, app: App) {
-    super(elem_or_id);
+    super(elem_or_id, null);
     this.app = app;
   }
 
-  setup(): this {
+  setupViews() {
     var self = this;
     var aidiv = this.rootElement.find(".activity_indicator");
     this.activityIndicator = new ActivityIndicator(aidiv).setup();
@@ -61,7 +61,6 @@ export class SitesPanel extends View implements SiteListViewDelegate {
     this.app.siteService.loadAll().then(() => {
       self.siteListView.refresh();
     });
-    return this;
   }
 
   /**
