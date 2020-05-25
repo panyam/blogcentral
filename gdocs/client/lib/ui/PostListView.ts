@@ -1,4 +1,3 @@
-declare var Handlebars: any;
 import { View } from "./Views";
 import { Nullable } from "../types";
 import { Site, Post } from "../sites";
@@ -16,13 +15,6 @@ export class PostListView extends View<Post[]> {
   constructor(elem_or_id: any, app: App) {
     super(elem_or_id, []);
     this.app = app;
-  }
-
-  html(): string {
-    var template = Handlebars.compile(this.template());
-    return template({
-      posts: this.entity,
-    });
   }
 
   template() {
@@ -62,8 +54,7 @@ export class PostListView extends View<Post[]> {
 
   updateViews(_posts: Post[]) {
     var self = this;
-    var html = this.html();
-    this.rootElement.html(html);
+    this.rootElement.html(this.renderedTemplate("posts"));
     var select_post_buttons = this.rootElement.find(".select_post_button");
     select_post_buttons.on("click", function (event: any) {
       self.onSelectPostClicked(event);

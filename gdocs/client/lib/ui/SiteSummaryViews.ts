@@ -1,4 +1,3 @@
-declare var Handlebars: any;
 import { SiteType } from "../interfaces";
 import { Site } from "../sites";
 import { ActivityIndicator } from "./ActivityIndicator";
@@ -40,17 +39,6 @@ export class SiteSummaryView extends View<Site> {
     this.publishPostButton = this.rootElement.find(".publish_post_button");
     this.selectPostButton = this.rootElement.find(".select_post_button");
     this.removeButton = this.rootElement.find(".remove_site_button");
-  }
-
-  template() {
-    return "";
-  }
-
-  html(): string {
-    var template = Handlebars.compile(this.template());
-    return template({
-      site: this.entity,
-    });
   }
 
   showBusy(busy: boolean) {

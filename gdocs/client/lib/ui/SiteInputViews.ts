@@ -1,4 +1,3 @@
-declare var Handlebars: any;
 import { AuthType, SiteType } from "../interfaces";
 import { Nullable } from "../types";
 import { View } from "./Views";
@@ -36,8 +35,8 @@ export class WPSiteInputView extends SiteInputView {
     this.apiUrlElem = this.rootElement.find("#apiUrl");
   }
 
-  protected updateEntity() {
-    this._entity = new Site(this.titleElem.val() || "", {
+  protected extractEntity() {
+    return new Site(this.titleElem.val() || "", {
       siteType: SiteType.WORDPRESS,
       siteConfig: {
         apiUrl: this.apiUrlElem.val() || "",
@@ -50,7 +49,7 @@ export class WPSiteInputView extends SiteInputView {
       throw new Error("Only Wordpress Sites can be rendered with this view");
     }
     this.titleElem.val(site.title || "");
-    this.apiUrlElem.val(site.siteConfig.apiUrl || "");
+    this.apiUrlElem.val(site.siteConfig.apiUrl || "https://examplesite.com/wp-json/");
   }
 
   html(): string {
@@ -73,8 +72,8 @@ export class LISiteInputView extends SiteInputView {
     this.usernameElem = this.rootElement.find("#username");
   }
 
-  protected updateEntity() {
-    this._entity = new Site(this.titleElem.val() || "", {
+  protected extractEntity() {
+    return new Site(this.titleElem.val() || "", {
       siteType: SiteType.LINKEDIN,
       siteConfig: {},
       authType: AuthType.TOKEN,
@@ -115,8 +114,8 @@ export class MediumSiteInputView extends SiteInputView {
     this.authDetailView = new TokenAuthDetailView(authDetailElem).setup();
   }
 
-  protected updateEntity() {
-    this._entity = new Site(this.titleElem.val() || "", {
+  protected extractEntity() {
+    return new Site(this.titleElem.val() || "", {
       siteType: SiteType.MEDIUM,
       siteConfig: {
         username: this.usernameElem.val() || "",

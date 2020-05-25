@@ -1,3 +1,4 @@
+declare var Handlebars: any;
 import { ensureElement } from "./utils";
 import { Nullable } from "../types";
 
@@ -72,6 +73,7 @@ export class View<EntityType> {
   setup(): this {
     this.setupViews();
     this._viewsCreated = true;
+    this.setUpdated();
     return this;
   }
 
@@ -82,6 +84,17 @@ export class View<EntityType> {
 
   html() {
     return this._template;
+  }
+
+  template() {
+    return this._template;
+  }
+
+  renderedTemplate(entityAttribute : string) {
+    var params = {} as any
+    params[entityAttribute] = this._entity;
+    var template = Handlebars.compile(this.template());
+    return template(params);
   }
 }
 

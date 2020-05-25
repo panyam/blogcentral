@@ -1,4 +1,3 @@
-declare var Handlebars: any;
 import { ActivityIndicator } from "./ActivityIndicator";
 import { View } from "./Views";
 
@@ -10,15 +9,8 @@ export class AuthDetailView extends View<any> {
     super(elem_or_id, authConfig);
   }
 
-  template() {
-    return "";
-  }
-
   html() {
-    var template = Handlebars.compile(this.template());
-    return template({
-      authConfig: this.entity,
-    });
+    return this.renderedTemplate("authConfig");
   }
 }
 
@@ -49,10 +41,10 @@ export class TokenAuthDetailView extends AuthDetailView {
   template(): string {
     return `
         <label for="token">Token</label>
-        <input type="text" name="token" id="token" class="text ui-widget-content ui-corner-all">
+        <input type="text" name="token" id="token" class="text ui-widget-content ui-corner-all" />
     <!--
         <label for="expiresAt">Expires At</label>
-        <input type="date" name="expiresAt" id="expiresAt" value="" class="text ui-widget-content ui-corner-all">
+        <input type="date" name="expiresAt" id="expiresAt" value="" class="text ui-widget-content ui-corner-all" />
         -->
       `;
   }
@@ -91,13 +83,13 @@ export class JWTAuthDetailView extends TokenAuthDetailView {
   template(): string {
     return `
         <label for="tokenUrl">Token URL</label>
-        <input type="text" name="tokenUrl" id="tokenUrl" class="text ui-widget-content ui-corner-all">
+        <input type="text" name="tokenUrl" id="tokenUrl" class="text ui-widget-content ui-corner-all" />
         <label for="validateUrl">Validate URL</label>
-        <input type="text" name="validateUrl" id="validateUrl" class="text ui-widget-content ui-corner-all">
+        <input type="text" name="validateUrl" id="validateUrl" class="text ui-widget-content ui-corner-all" />
         <label for="token">Current Token</label>
-        <input type="text" name="token" id="token" class="text ui-widget-content ui-corner-all">
+        <input type="text" name="token" id="token" class="text ui-widget-content ui-corner-all" />
         <label for="expiresAt">Expires At</label>
-        <input type="date" name="expiresAt" id="expiresAt" value="" class="text ui-widget-content ui-corner-all">
-        `;
+        <input type="date" name="expiresAt" id="expiresAt" value="" class="text ui-widget-content ui-corner-all" />
+    `;
   }
 }

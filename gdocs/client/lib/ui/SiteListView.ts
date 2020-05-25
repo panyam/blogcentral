@@ -1,4 +1,3 @@
-declare var Handlebars: any;
 import { View } from "./Views";
 import { Int, Nullable } from "../types";
 import { Site, Post } from "../sites";
@@ -17,34 +16,24 @@ export interface SiteListViewDelegate {
   publishPost(site: Site): Promise<Nullable<boolean>>;
 }
 
-export class SiteListView extends View<any> {
+export class SiteListView extends View<Site[]> {
   app: App;
   delegate: Nullable<SiteListViewDelegate> = null;
   siteViews: SiteSummaryView[];
 
   constructor(elem_or_id: any, app: App) {
-    super(elem_or_id, []);
+    super(elem_or_id, app.siteService.sites);
     this.app = app;
   }
 
-  html(): string {
-    var template = Handlebars.compile(
-      `{{# each sites }}<div class = "site_div" id = "site_div_{{@index}}"> </div> {{/each}}`
-    );
-    return template({
-      sites: this.app.siteService.sites,
-    });
+  template() {
+    return `{{# each sites }}<div class = "site_div" id = "site_div_{{@index}}"> </div> {{/each}}`;
   }
 
-  setupViews() {
-    super.setupViews();
-    this.refresh();
-  }
-
-  refresh() {
+  updateViews() {
     var self = this;
     var siteService = this.app.siteService;
-    this.rootElement.html(this.html());
+    this.rootElement.html(this.renderedTemplate("sites"));
 
     this.siteViews = this.rootElement
       .find(".site_div")
@@ -70,7 +59,7 @@ export class SiteListView extends View<any> {
     var site = siteView.entity!!;
     if (this.delegate != null) {
       await this.delegate.selectPost(site);
-      this.refresh();
+      this.setUpdated();
     }
   }
 
@@ -79,7 +68,7 @@ export class SiteListView extends View<any> {
     if (site.selectedPost == null) {
       if (this.delegate != null) {
         await this.delegate.selectPost(site);
-        this.refresh();
+        this.setUpdated();
       }
     }
     if (this.delegate == null) {
@@ -93,6 +82,6 @@ export class SiteListView extends View<any> {
     var siteService = this.app.siteService;
     var site = siteView.entity!!;
     console.log("Removing Site: ", site);
-    siteService.remove(site).then(() => self.refresh());
+    siteService.remove(site).then(() => self.setUpdated());
   }
 }
