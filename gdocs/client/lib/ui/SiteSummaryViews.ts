@@ -3,17 +3,13 @@ import { Site } from "../sites";
 import { ActivityIndicator } from "./ActivityIndicator";
 import { View } from "./Views";
 
-export function createSiteSummaryView(
-  elem_or_id: any,
-  site: Site,
-  tag: any = null
-) {
+export function createSiteSummaryView(elem_or_id: any, site: Site) {
   if (site.siteType == SiteType.WORDPRESS) {
-    return new WPSiteSummaryView(elem_or_id, site, tag).setup();
+    return new WPSiteSummaryView(elem_or_id, site).setup();
   } else if (site.siteType == SiteType.MEDIUM) {
-    return new MediumSiteSummaryView(elem_or_id, site, tag).setup();
+    return new MediumSiteSummaryView(elem_or_id, site).setup();
   } else if (site.siteType == SiteType.LINKEDIN) {
-    return new LISiteSummaryView(elem_or_id, site, tag).setup();
+    return new LISiteSummaryView(elem_or_id, site).setup();
   }
   throw new Error("Unsupported Site Type: " + site.siteType);
 }
@@ -23,12 +19,12 @@ export class SiteSummaryView extends View<Site> {
   selectPostButton: any;
   removeButton: any;
   activityIndicator: ActivityIndicator;
-  tag: any = null;
   progressbar: any;
 
-  constructor(elem_or_id: any, site: Site, tag: any = null) {
+  constructor(elem_or_id: any, site: Site) {
     super(elem_or_id, site);
-    this.tag = tag;
+    this.renderAsTemplate = true;
+    this.entityName = "site";
   }
 
   setupViews() {
