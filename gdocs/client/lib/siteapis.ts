@@ -2,7 +2,9 @@ import { Request, URLBuilder } from "./net";
 import { ensureParam } from "./utils";
 import { Post } from "./models";
 import { SiteType } from "./enums";
-import { Defaults } from "../../defvals";
+import { loadDefaults } from "./defaults";
+
+const Defaults = loadDefaults();
 
 export abstract class SiteApi {
   config: any;
@@ -37,7 +39,7 @@ export class WPRestApi extends SiteApi {
 
   static defaultConfig() {
     return {
-      apiUrl: Defaults.WPRestApi.ApiUrl
+      apiUrl: Defaults.WPRestApi.ApiUrl,
     };
   }
 

@@ -1,7 +1,9 @@
 declare var Handlebars: any;
 import { ensureElement } from "./utils";
 import { Nullable } from "../types";
-import { Defaults } from "../../../defvals"
+import { loadDefaults } from "../defaults";
+
+const Defaults = loadDefaults();
 
 export class View<EntityType> {
   rootElement: any;
