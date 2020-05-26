@@ -7,6 +7,8 @@ import { AuthType } from "./enums";
 import { ensureCreated } from "./ui/utils";
 import { FormDialog } from "./ui/Views";
 
+declare var BCDefaults: any
+
 export enum AuthResult {
   SUCCESS,
   FAILURE,
@@ -205,10 +207,13 @@ export class TokenAuthClient implements AuthClient {
   }
 
   static defaultConfig(): any {
-    return {
-      token: "",
-      expiresAt: 0,
-    };
+      var out = {} as any
+      out["authBaseUrl"] = BCDefaults.TokenAuthClient.AuthBaseUrl
+      out["tokenUrl"] = BCDefaults.TokenAuthClient.TokenUrl
+      out["validateUrl"] = BCDefaults.TokenAuthClient.ValidateUrl
+      out["token"] = "";
+      out["expiresAt"] = 0;
+      return out;
   }
 }
 
@@ -224,8 +229,8 @@ export class JWTAuthClient extends TokenAuthClient {
 
   static defaultConfig(): any {
     var out = super.defaultConfig();
-    out["tokenUrl"] = "/wp-json/jwt-auth/v1/token";
-    out["validateUrl"] = "/wp-json/jwt-auth/v1/token/validate";
+    out["tokenUrl"] = BCDefaults.JWTAuthClient.TokenUrl
+    out["validateUrl"] = BCDefaults.JWTAuthClient.ValidateUrl
     return out;
   }
 

@@ -1,6 +1,7 @@
 import { AuthType, SiteType } from "../enums";
 import { Nullable } from "../types";
 import { View } from "./Views";
+import { setEnabled } from "./utils";
 import {
   AuthDetailView,
   TokenAuthDetailView,
@@ -47,6 +48,11 @@ export class SiteInputView extends View<Site> {
 
     // show the different view based on the type
     this.authDetailElem = this.rootElement.find(".auth_details_view");
+    if (this.authDetailElem.length == 0) {
+      throw new Error(
+        "Could not find div with class 'auth_details_view' to create auth view in."
+      );
+    }
     if (authType == AuthType.OAUTH2) {
       this.authDetailView = new OAuth2AuthDetailView(
         this.authDetailElem
@@ -171,9 +177,18 @@ export class MediumSiteInputView extends SiteInputView {
     super.setupViews();
     this.titleElem = this.rootElement.find("#title");
     this.usernameElem = this.rootElement.find("#username");
-    var authDetailElem = this.rootElement.find("#auth_details_view");
-    this.authDetailView = new TokenAuthDetailView(authDetailElem).setup();
     this.onAuthTypeChanged();
+  }
+
+  onAuthTypeChanged() {
+    super.onAuthTypeChanged();
+    var tadv = this.authDetailView as TokenAuthDetailView;
+    tadv.authBaseUrlElem.val("https://api.medium.com/v1");
+    setEnabled(tadv.authBaseUrlElem, false);
+  }
+
+  get selectedAuthType(): AuthType {
+    return AuthType.TOKEN;
   }
 
   protected extractEntity() {
@@ -194,7 +209,7 @@ export class MediumSiteInputView extends SiteInputView {
         <label for="username">Username</label>
         <input type="text" name="title" id="username" class="text ui-widget-content ui-corner-all" value = "mediumuser" />
 
-        <div id = "auth_details_view"> </div>
+        <div class = "auth_details_view"></div>
         `;
   }
 }

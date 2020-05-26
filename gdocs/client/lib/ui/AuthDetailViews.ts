@@ -2,6 +2,8 @@ import { ActivityIndicator } from "./ActivityIndicator";
 import { View } from "./Views";
 import { valOrDefault } from "../utils";
 
+declare var BCDefaults: any;
+
 export class AuthDetailView extends View<any> {
   activityIndicator: ActivityIndicator;
   allFields: JQuery<any>;
@@ -12,6 +14,8 @@ export class AuthDetailView extends View<any> {
 }
 
 export class TokenAuthDetailView extends AuthDetailView {
+  authBaseUrlLabel: JQuery<HTMLElement>;
+  authBaseUrlElem: JQuery<HTMLElement>;
   tokenLabel: JQuery<HTMLElement>;
   tokenElem: JQuery<HTMLElement>;
   expiresAtLabel: JQuery<HTMLElement>;
@@ -23,18 +27,27 @@ export class TokenAuthDetailView extends AuthDetailView {
     this.tokenLabel = this.rootElement.find("label[for='token']");
     this.expiresAtElem = this.rootElement.find("#expiresAt");
     this.expiresAtLabel = this.rootElement.find("label[for='expiresAt']");
+    this.authBaseUrlElem = this.rootElement.find("#authBaseUrl");
+    this.authBaseUrlLabel = this.rootElement.find("label[for='authBaseUrl']");
   }
 
   extractEntity() {
-    return { token: this.tokenElem.val() || "" } as any;
+    var out = { token: this.tokenElem.val() || "" } as any;
+    out["authBaseUrl"] = this.authBaseUrlElem.val();
     // this._entity["expiresAt"] = this.expiresAtElem.val();
+    return out;
   }
 
   template(): string {
     return `
+        <label for="authBaseUrl">Auth Base Url</label>
+        <input type="text" name="authBaseUrl" id="authBaseUrl" 
+               class="text ui-widget-content ui-corner-all" 
+               value = "{{eitherVal authConfig.authBaseUrl Defaults.TokenAuthClient.AuthBaseUrl }}"/>
+
         <label for="token">Token</label>
         <input type="text" name="token" id="token" class="text ui-widget-content ui-corner-all" 
-               value = "{{authConfig.token}}"/>
+               value = "{{eitherVal authConfig.token Defaults.TokenAuthClient.Token }}"/>
     <!--
         <label for="expiresAt">Expires At</label>
         <input type="date" name="expiresAt" id="expiresAt" value="" class="text ui-widget-content ui-corner-all" />
@@ -63,28 +76,31 @@ export class JWTAuthDetailView extends TokenAuthDetailView {
 
   extractEntity() {
     var entity: any = super.extractEntity();
-    entity["tokenUrl"] = valOrDefault(
-      this.tokenUrlElem.val(),
-      "/wp-json/jwt-auth/v1/token"
-    );
-    entity["validateUrl"] = valOrDefault(
-      this.validateUrlElem.val(),
-      "/wp-json/jwt-auth/v1/token/validate"
-    );
+    entity["tokenUrl"] = this.tokenUrlElem.val();
+    entity["validateUrl"] = this.validateUrlElem.val();
     return entity;
   }
 
   template(): string {
-    return (
-      `
+    return `
+        <label for="authBaseUrl">Auth Base Url</label>
+        <input type="text" name="authBaseUrl" id="authBaseUrl" 
+               class="text ui-widget-content ui-corner-all" 
+               value = "{{eitherVal authConfig.authBaseUrl Defaults.TokenAuthClient.AuthBaseUrl }}"/>
+
         <label for="tokenUrl">Token URL</label>
         <input type="text" name="tokenUrl" id="tokenUrl" class="text ui-widget-content ui-corner-all" 
                value = "{{ eitherVal authConfig.tokenUrl Defaults.JWTAuthClient.TokenUrl }}"/>
+
         <label for="validateUrl">Validate URL</label>
         <input type="text" name="validateUrl" id="validateUrl" class="text ui-widget-content ui-corner-all" 
                value = "{{ eitherVal authConfig.validateUrl Defaults.JWTAuthClient.ValidateUrl }}"/>
-    ` + super.template()
-    );
+
+        <label for="token">Token</label>
+        <input type="text" name="token" id="token" 
+               class="text ui-widget-content ui-corner-all" 
+               value = "{{authConfig.token}}"/>
+    `;
   }
 }
 

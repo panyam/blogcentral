@@ -2,7 +2,7 @@ import "../../styles/SitesPanel";
 import { SiteInputDialog } from "./SiteInputDialog";
 import { ActivityIndicator } from "./ActivityIndicator";
 import { SiteListView, SiteListViewDelegate } from "./SiteListView";
-import { ensureElement } from "./utils";
+import { ensureElement, ensureCreated } from "./utils";
 import { View } from "./Views";
 import { Nullable } from "../types";
 import { PostsPanel } from "./PostsPanel";
@@ -27,20 +27,6 @@ export class SitesPanel extends View<null> implements SiteListViewDelegate {
     var aidiv = this.rootElement.find(".activity_indicator");
     this.activityIndicator = new ActivityIndicator(aidiv).setup();
 
-    var addSiteDialogElem: any = ensureElement(
-      "add_site_dialog",
-      this.rootElement
-    );
-    if (addSiteDialogElem.length == 0) {
-      addSiteDialogElem = $("<div id='add_site_dialog'></div>");
-      this.rootElement.append(addSiteDialogElem);
-    }
-    this.addSiteDialog = new SiteInputDialog(
-      addSiteDialogElem,
-      this.app,
-      true
-    ).setup();
-
     var postsPanelElem = ensureElement("posts_panel_div", this.rootElement);
     this.postsPanel = new PostsPanel(postsPanelElem, this.app).setup();
 
@@ -50,7 +36,7 @@ export class SitesPanel extends View<null> implements SiteListViewDelegate {
 
     this.addButton = this.rootElement.find("#add_button");
     this.addButton.button().on("click", function () {
-      self.addSiteDialog.open().then((site: Site) => {
+      self.showAddSiteDialog().then((site: Site) => {
         if (site != null) {
           self.app.siteService.addSite(site as Site).then(() => {
             self.siteListView.refreshViews();
@@ -62,6 +48,19 @@ export class SitesPanel extends View<null> implements SiteListViewDelegate {
     this.app.siteService.loadAll().then(() => {
       self.siteListView.entity = self.app.siteService.sites;
     });
+  }
+
+  async showAddSiteDialog() {
+    var addSiteDialogElem: any = ensureCreated(
+      "add_site_dialog",
+      this.rootElement
+    );
+    this.addSiteDialog = new SiteInputDialog(
+      addSiteDialogElem,
+      this.app,
+      true
+    ).setup();
+    return this.addSiteDialog.open();
   }
 
   /**
