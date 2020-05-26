@@ -62,7 +62,7 @@ export class SitesPanel extends View<null> implements SiteListViewDelegate {
         true
       ).setup();
     }
-    this.addSiteDialog.entity = null;
+    this.addSiteDialog.refreshViews();
     return this.addSiteDialog.open();
   }
 

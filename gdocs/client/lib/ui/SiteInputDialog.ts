@@ -71,7 +71,7 @@ export class SiteInputDialog extends FormDialog<Site> {
     var siteType = this.selectedSiteType;
     console.log("Selected Type: ", siteType);
 
-    setEnabled(this.siteTypeElem, this._entity == null);
+    setEnabled(this.siteTypeElem, this.addingSiteMode);
     // show the different view based on the type
     this.siteDetailElem = this.rootElement.find(".site_details_view");
     this.siteInputView = createSiteInputView(siteType, this.siteDetailElem);

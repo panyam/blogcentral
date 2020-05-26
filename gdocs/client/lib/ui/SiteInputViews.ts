@@ -165,6 +165,7 @@ export class LISiteInputView extends SiteInputView {
         <input type="text" name="title" id="title" class="text ui-widget-content ui-corner-all" value = "My Medium Site" />
         <label for="username">Username</label>
         @<input type="text" name="title" id="username" class="text ui-widget-content ui-corner-all" value = "mediumuser" />
+        <div class = "auth_details_view"></div>
         `;
   }
 }
