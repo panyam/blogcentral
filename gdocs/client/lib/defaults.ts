@@ -2,11 +2,8 @@ import { Site } from "./models";
 import { JWTAuthClient } from "./authclients";
 import { WPRestApi } from "./siteapis";
 import { SiteType, AuthType } from "./enums";
-import { Defaults } from "../../defvals";
 
-export function loadDefaults() {
-  return Defaults;
-}
+declare var Defaults: any;
 
 export function defaultSite(): Site {
   return new Site(Defaults.WPRestApi.Title, {

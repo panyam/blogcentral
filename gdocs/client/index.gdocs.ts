@@ -3,6 +3,7 @@ import "./styles/global";
 import { App } from "./lib/app";
 import { PropertiesStore, GAppsHttpClient } from "./lib/gapps";
 import { GAppsExtractor } from "./lib/gapps";
+import { Defaults } from "../defvals"
 // import { JQHttpClient } from "./lib/flask";
 
 $(function () {

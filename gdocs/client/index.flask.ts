@@ -7,6 +7,9 @@ import "./styles/editor";
 import { App } from "./lib/app";
 import { LocalStore, JQHttpClient } from "./lib/flask";
 import { LocalExtractor } from "./lib/flask";
+import { Defaults } from "../defvals";
+
+(window as any).Defaults = Defaults;
 
 $(function () {
   var store = new LocalStore("BC");

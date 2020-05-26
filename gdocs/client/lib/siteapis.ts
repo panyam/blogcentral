@@ -2,9 +2,8 @@ import { Request, URLBuilder } from "./net";
 import { ensureParam } from "./utils";
 import { Post } from "./models";
 import { SiteType } from "./enums";
-import { loadDefaults } from "./defaults";
 
-const Defaults = loadDefaults();
+declare var Defaults: any;
 
 export abstract class SiteApi {
   config: any;
