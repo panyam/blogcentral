@@ -1,6 +1,7 @@
 declare var Handlebars: any;
 import { ensureElement } from "./utils";
 import { Nullable } from "../types";
+import { Defaults } from "../../../defvals"
 
 export class View<EntityType> {
   rootElement: any;
@@ -109,11 +110,13 @@ export class View<EntityType> {
     return this._template;
   }
 
-  setTemplate(t : string) {
-      this._template = t;
+  setTemplate(t: string) {
+    this._template = t;
+    return this;
   }
 
   enrichViewParams(viewParams: any): any {
+    viewParams["Defaults"] = Defaults;
     return viewParams;
   }
 
@@ -130,32 +133,41 @@ export class Dialog<EntityType> extends View<EntityType> {
   dialog: any;
   resolveFunc: any;
   rejectFunc: any;
-  shouldClose : Nullable<(data : any) => boolean> = null
+  shouldClose: Nullable<(data: any) => boolean> = null;
   protected _buttons: any[];
 
   setupViews() {
-    var self = this;
     super.setupViews();
     this.dialog = this.rootElement.dialog({
       autoOpen: false,
       position: { my: "center top", at: "center top", of: window },
       modal: true,
-      close: function () { self.close(); },
+      // close: function () { self.close(); },
     });
   }
 
-  async open() : Promise<any> {
+  get title(): string {
+    return this.dialog.dialog("option", "title");
+  }
+
+  set title(t: string) {
+    this.dialog.dialog("option", "title", t);
+  }
+
+  async open(): Promise<any> {
+    if (!this.viewsCreated) {
+      this.setup();
+    }
     var self = this;
     return new Promise((resolve, reject) => {
       self.resolveFunc = resolve;
       self.rejectFunc = reject;
-      this.dialog.dialog("option", "buttons", self.buttons()).dialog("open");
+      self.dialog.dialog("option", "buttons", self.buttons()).dialog("open");
     });
   }
 
-  close(data: Nullable<any> = null) : boolean {
-    if (this.shouldClose != null && !this.shouldClose(data)) 
-        return false;
+  close(data: Nullable<any> = null): boolean {
+    if (this.shouldClose != null && !this.shouldClose(data)) return false;
     if (this.resolveFunc != null) {
       this.resolveFunc(data);
     }
@@ -167,25 +179,24 @@ export class Dialog<EntityType> extends View<EntityType> {
     return this._buttons;
   }
 
-  addButton(title : string, data : any = null) {
-      var self = this;
-      var b = {} as any
-      b["title"] = title;
-      b["data"] = data;
-      b["click"] = function() {
-          self.close(b);
-      }
-      this._buttons.push(b);
-      return this;
+  addButton(title: string, data: any = null) {
+    this._buttons = this._buttons || [];
+    var self = this;
+    var b = {} as any;
+    b["title"] = b["text"] = title;
+    b["data"] = data;
+    b["click"] = function () {
+      self.close(b);
+    };
+    this._buttons.push(b);
+    return this;
   }
-  setButtons(b : any[]) {
+  setButtons(b: any[]) {
     var self = this;
     this._buttons = [];
-    b.forEach((v : any, _index : number) => {
-        if (typeof v === "string")
-            self.addButton(v)
-        else
-            self.addButton(v.title, v.data);
+    b.forEach((v: any, _index: number) => {
+      if (typeof v === "string") self.addButton(v);
+      else self.addButton(v.title, v.data);
     });
     return this;
   }
@@ -226,7 +237,7 @@ export class FormDialog<EntityType> extends Dialog<EntityType> {
     });
   }
 
-  close(data: Nullable<any> = null) : boolean {
+  close(data: Nullable<any> = null): boolean {
     if (!super.close(data)) return false;
     this.form[0].reset();
     this.allFields.removeClass("ui-state-error");

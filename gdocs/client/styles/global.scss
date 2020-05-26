@@ -19,3 +19,19 @@ fieldset {
   font-weight: bold;
   width: 80px;
 }
+
+.form_dialog fieldset label {
+  font-weight: bold;
+  display: block;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.form_dialog fieldset input,
+textarea,
+select {
+  display: block;
+  width: 100%;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}

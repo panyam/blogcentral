@@ -8,6 +8,12 @@ import { SiteService, Site, Post } from "./models";
 import { AuthResult, createAuthClient } from "./authclients";
 import { createSiteApi } from "./siteapis";
 
+declare var Handlebars: any;
+Handlebars.registerHelper('eitherVal', function (value : any, defaultValue : any) {
+    var out = value || defaultValue;
+    return new Handlebars.SafeString(out);
+});
+
 export class App {
   store: Store;
   siteService: SiteService;
@@ -35,7 +41,10 @@ export class App {
         // if we are not logged in then start the auth flow - This could involve
         // showing responding UIs to gather credentials etc.
         var result = await authClient.startAuthFlow(site);
-        if (result == AuthResult.CANCELLED) return false;
+        if (result == AuthResult.CANCELLED) {
+          console.log("Login Cancelled");
+          return false;
+        }
         else if (result == AuthResult.SUCCESS) {
           await this.siteService.saveSite(site);
           return true;

@@ -1,6 +1,6 @@
 import { Nullable } from "./types";
 import { Request } from "./net";
-import { ensureParam } from "./utils";
+import { dateDelta, ensureParam } from "./utils";
 import { App } from "./app";
 import { Site } from "./models";
 import { AuthType } from "./enums";
@@ -173,16 +173,34 @@ export class TokenAuthClient implements AuthClient {
    * Begin's the auth flow for a particular site.
    * Returns true if auth resulted in valid credentials false otherwise.
    */
-  async startAuthFlow(_site: Site) {
+  async startAuthFlow(site: Site) {
     // Show a dialog asking for token
     var elem = ensureCreated("start_token_auth_dialog");
-    var tokenDialog = new FormDialog<any>(elem, null, null);
-    tokenDialog.setTemplate(``);
-    tokenDialog.addButton("Login").addButton("Cancel");
+    elem.addClass("form_dialog");
+    var tokenDialog = new FormDialog<any>(elem, null, null)
+      .addButton("Login")
+      .addButton("Cancel")
+      .setTemplate(
+        `
+        <label for="token">Token</label>
+        <input type="text" name="token" id="token" 
+               class="text ui-widget-content ui-corner-all" 
+               value = ""/>
+        `
+      )
+      .setup();
+    tokenDialog.title = "Enter Token";
+    var tokenElem = elem.find("#token");
+    tokenDialog.shouldClose = (button: any) => {
+      if (button.title == "Cancel") return true;
+      var token = tokenElem.val().trim();
+      return token.length > 0;
+    };
     var result = (await tokenDialog.open()) as any;
     if (result.title == "Cancel") {
       return AuthResult.CANCELLED;
     }
+    site.authConfig.token = tokenElem.val().trim();
     return AuthResult.SUCCESS;
   }
 
@@ -231,6 +249,72 @@ export class JWTAuthClient extends TokenAuthClient {
       contentType: "application/json",
     });
     request = this.decorateRequest(request);
-    return await this.app.httpClient.send(request);
+    return this.app.httpClient.send(request);
+  }
+
+  /**
+   * Checks if a site's auth credentials are valid asynchronously.
+   * Returns true if site's auth credentials are valid and requests can
+   * be signed with respective credentials going forward.
+   */
+  async validateAuth(site: Site) {
+    var token = ((site.authConfig.token as string) || "").trim();
+    if (token.length == 0) {
+      return false;
+    }
+    var expiresAt = site.authConfig.expiresAt || 0;
+    if (expiresAt >= 0 && expiresAt <= Date.now()) {
+      var response = await this.validateToken();
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Begin's the auth flow for a particular site.
+   * Returns true if auth resulted in valid credentials false otherwise.
+   */
+  async startAuthFlow(site: Site) {
+    // Show a dialog asking for token
+    var elem = ensureCreated("start_jwt_auth_dialog");
+    elem.addClass("form_dialog");
+    var tokenDialog = new FormDialog<any>(elem, null, site.authConfig)
+      .addButton("Login")
+      .addButton("Cancel")
+      .setTemplate(
+        `
+        <label for="username">Username</label>
+        <input type="text" name="username" id="username" 
+               class="text ui-widget-content ui-corner-all" 
+               value = "{{ eitherVal entity.username Defaults.JWTAuthClient.Username }}"/>
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" 
+               class="text ui-widget-content ui-corner-all" 
+               value = "{{Defaults.JWTAuthClient.Password}}"/>
+        `
+      )
+      .setup();
+    tokenDialog.title = "Enter Username/Password";
+    var usernameElem = elem.find("#username");
+    var passwordElem = elem.find("#password");
+    tokenDialog.shouldClose = (button: any) => {
+      if (button == null || button.text == "Cancel") return true;
+      var username = usernameElem.val().trim();
+      var password = passwordElem.val().trim();
+      return username.length > 0 && password.length > 0;
+    };
+    var result = (await tokenDialog.open()) as any;
+    if (result.text == "Cancel") {
+      return AuthResult.CANCELLED;
+    }
+    var username = usernameElem.val().trim();
+    var password = passwordElem.val().trim();
+
+    // use this to get token
+    site.authConfig.username = username;
+    site.authConfig.token = await this.login(username, password);
+    site.authConfig.tokenCreatedAt = Date.now();
+    site.authConfig.tokenExpiresAt = dateDelta(Date.now(), 3600);
+    return AuthResult.SUCCESS;
   }
 }

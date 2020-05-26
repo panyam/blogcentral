@@ -79,10 +79,10 @@ export class JWTAuthDetailView extends TokenAuthDetailView {
       `
         <label for="tokenUrl">Token URL</label>
         <input type="text" name="tokenUrl" id="tokenUrl" class="text ui-widget-content ui-corner-all" 
-               value = "{{authConfig.tokenUrl}}"/>
+               value = "{{ eitherVal authConfig.tokenUrl Defaults.JWTAuthClient.TokenUrl }}"/>
         <label for="validateUrl">Validate URL</label>
         <input type="text" name="validateUrl" id="validateUrl" class="text ui-widget-content ui-corner-all" 
-               value = "{{authConfig.validateUrl}}"/>
+               value = "{{ eitherVal authConfig.validateUrl Defaults.JWTAuthClient.ValidateUrl }}"/>
     ` + super.template()
     );
   }

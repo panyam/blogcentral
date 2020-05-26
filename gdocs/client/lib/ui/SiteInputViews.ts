@@ -94,12 +94,12 @@ export class WPSiteInputView extends SiteInputView {
     return `
         <label for="title">Title</label>
         <input type="text" name="title" id="title" 
-               value = "{{this.site.title}}"
+               value = "{{eitherVal this.site.title Defaults.WPRestApi.Title }}"
                class="text ui-widget-content ui-corner-all" />
         <label for="apiUrl">API Endpoint</label>
         <input type="text" name="apiUrl" 
                id="apiUrl" class="text ui-widget-content ui-corner-all" 
-               value = "{{this.site.siteConfig.apiUrl}}"
+               value = "{{eitherVal this.site.siteConfig.apiUrl Defaults.WPRestApi.ApiUrl }}"
                />
         
         <label for="authType">Auth</label>
