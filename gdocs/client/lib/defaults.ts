@@ -3,10 +3,10 @@ import { JWTAuthClient } from "./authclients";
 import { WPRestApi } from "./siteapis";
 import { SiteType, AuthType } from "./enums";
 
-declare var Defaults: any;
+declare var BCDefaults: any;
 
 export function defaultSite(): Site {
-  return new Site(Defaults.WPRestApi.Title, {
+  return new Site(BCDefaults.WPRestApi.Title, {
     siteType: SiteType.WORDPRESS,
     siteConfig: WPRestApi.defaultConfig(),
     authType: AuthType.JWT,

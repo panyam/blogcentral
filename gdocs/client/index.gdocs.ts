@@ -6,6 +6,8 @@ import { GAppsExtractor } from "./lib/gapps";
 import { Defaults } from "../defvals"
 // import { JQHttpClient } from "./lib/flask";
 
+(window as any).BCDefaults = Defaults;
+
 $(function () {
   var store = new PropertiesStore("BC");
   var httpClient = new GAppsHttpClient();

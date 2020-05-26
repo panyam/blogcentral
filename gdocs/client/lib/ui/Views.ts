@@ -2,7 +2,7 @@ declare var Handlebars: any;
 import { ensureElement } from "./utils";
 import { Nullable } from "../types";
 
-declare const Defaults: any;
+declare const BCDefaults: any;
 
 export class View<EntityType> {
   rootElement: any;
@@ -117,7 +117,7 @@ export class View<EntityType> {
   }
 
   enrichViewParams(viewParams: any): any {
-    viewParams["Defaults"] = Defaults;
+    viewParams["Defaults"] = BCDefaults;
     return viewParams;
   }
 

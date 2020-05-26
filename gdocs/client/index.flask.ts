@@ -9,7 +9,7 @@ import { LocalStore, JQHttpClient } from "./lib/flask";
 import { LocalExtractor } from "./lib/flask";
 import { Defaults } from "../defvals";
 
-(window as any).Defaults = Defaults;
+(window as any).BCDefaults = Defaults;
 
 $(function () {
   var store = new LocalStore("BC");

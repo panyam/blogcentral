@@ -3,7 +3,7 @@ import { ensureParam } from "./utils";
 import { Post } from "./models";
 import { SiteType } from "./enums";
 
-declare var Defaults: any;
+declare var BCDefaults: any;
 
 export abstract class SiteApi {
   config: any;
@@ -38,7 +38,7 @@ export class WPRestApi extends SiteApi {
 
   static defaultConfig() {
     return {
-      apiUrl: Defaults.WPRestApi.ApiUrl,
+      apiUrl: BCDefaults.WPRestApi.ApiUrl,
     };
   }
 
