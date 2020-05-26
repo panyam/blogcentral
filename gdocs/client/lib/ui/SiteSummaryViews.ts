@@ -95,59 +95,34 @@ export class WPSiteSummaryView extends SiteSummaryView {
 }
 
 export class MediumSiteSummaryView extends SiteSummaryView {
-  template(): string {
+  template() {
     return `
       <div class = "activity_indicator" />
-      <table width="100%" class = "site_table"">
-        <tr>
-          <td class = "td_param_name">Site Title: </td>
-          <td> {{this.site.site_host}} td>
-          <td rowspan = 2>
-            <center>
-            <button class="remove_site_button ui-button ui-widget ui-corner-all ui-button-icon-only" title="Remove Site">
-                <span class="ui-icon ui-icon-trash"></span> Remove Site
-            </button><br/>
-            <button class = "select_post_button ui-button ui-widget ui-corner-all" title="Select Post">Posts</button>
-            </center>
-          </td>
-        </tr>
-        <tr>
-          <td class = "td_param_name"> Site Host: </td>
-          <td> {{this.site.site_host}} </td>
-          <td rowspan = 2>
-            <center>
-            <button class="remove_site_button ui-button ui-widget ui-corner-all ui-button-icon-only" title="Remove Site">
-                <span class="ui-icon ui-icon-trash"></span> Remove Site
-            </button><br/>
-            <button class = "select_post_button ui-button ui-widget ui-corner-all" title="Select Post">Posts</button>
-            </center>
-          </td>
-        </tr>
-        <tr>
-          <td class = "td_param_name"> Username: </td>
-          <td> {{this.site.username}} </td>
-        </tr>
+      <h3 class = "site_summary_title">{{this.site.title }}</h3>
+      <div class = "site_summary_apiUrl">
+        API Url: <a href="{{this.site.apiUrl }}" target="_blank">
+        {{this.site.siteConfig.apiUrl }}
+        </a>
+      </div>
+      <div class = "auth_summary_details_div"></div>
+      <div class = "site_summary_selected_post">
         {{# if this.site.selectedPost }}
-        <tr>
-          <td colspan = 2>
-            <h3 style="margin-bottom: 0px">Post:</h3>
-              <a target="_blank" href="{{ this.site.selectedPost.link }}">
-                {{this.site.selectedPost.id}} : {{{ this.site.selectedPost.title.rendered }}} 
-              </a>
-          </td>
-          <td>
-            <center>
-              <button class = "publish_post_button ui-button ui-widget ui-corner-all" >Publish</button>
-            </center>
-          </td>
-        </tr>
+        <h3 style="margin-bottom: 0px">Post:</h3>
+        <a target="_blank" href="{{ this.site.selectedPost.link }}">
+            {{this.site.selectedPost.id}} : {{{ this.site.selectedPost.title.rendered }}} 
+        </a>
         {{/if}}
-        <!--<tr>
-          <td colspan = 3>
-            <center> <div class = "progressbar"></div> </center>
-          </td>
-        </tr>-->
-      </table>
+      </div>
+      <div class = "site_buttons_div">
+        <center>
+            <button class="remove_site_button ui-button ui-widget ui-corner-all ui-button-icon-only" title="Remove Site">
+                <span class="ui-icon ui-icon-trash"></span> Remove Site
+            </button>
+            <button class = "select_post_button ui-button ui-widget ui-corner-all" title="Select Post">Posts</button>
+            <button class = "publish_post_button ui-button ui-widget ui-corner-all" >Publish</button>
+        </center>
+        <center> <div class = "progressbar"></div> </center>
+      </div>
       `;
   }
 }

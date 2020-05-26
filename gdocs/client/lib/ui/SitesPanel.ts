@@ -11,7 +11,7 @@ import { App } from "../app";
 
 export class SitesPanel extends View<null> implements SiteListViewDelegate {
   postsPanel: PostsPanel;
-  addSiteDialog: SiteInputDialog;
+  addSiteDialog: Nullable<SiteInputDialog> = null;
   addButton: any;
   siteListView: SiteListView;
   app: App;
@@ -51,15 +51,18 @@ export class SitesPanel extends View<null> implements SiteListViewDelegate {
   }
 
   async showAddSiteDialog() {
-    var addSiteDialogElem: any = ensureCreated(
-      "add_site_dialog",
-      this.rootElement
-    );
-    this.addSiteDialog = new SiteInputDialog(
-      addSiteDialogElem,
-      this.app,
-      true
-    ).setup();
+    if (this.addSiteDialog == null) {
+      var addSiteDialogElem: any = ensureCreated(
+        "add_site_dialog",
+        this.rootElement
+      );
+      this.addSiteDialog = new SiteInputDialog(
+        addSiteDialogElem,
+        this.app,
+        true
+      ).setup();
+    }
+    this.addSiteDialog.entity = null;
     return this.addSiteDialog.open();
   }
 

@@ -3,7 +3,7 @@ import { View } from "./Views";
 import { AddPostDialog } from "./AddPostDialog";
 import { ActivityIndicator } from "./ActivityIndicator";
 import { PostListView, PostListViewDelegate } from "./PostListView";
-import { setVisible, setEnabled, ensureElement } from "./utils";
+import { setVisible, setEnabled, ensureElement, ensureCreated } from "./utils";
 import { Int, Nullable } from "../types";
 import { Site, Post } from "../models";
 import { App } from "../app";
@@ -87,17 +87,6 @@ export class PostsPanel extends View<any> implements PostListViewDelegate {
       self.searchButton.html(v.length == 0 ? "Refresh" : "Search");
     });
 
-    var addPostDialogElem: any = ensureElement(
-      "add_post_dialog",
-      this.rootElement
-    );
-    if (addPostDialogElem.length == 0) {
-      addPostDialogElem = $("<div id='add_post_dialog'></div>");
-      this.rootElement.append(addPostDialogElem);
-    }
-
-    this.addPostDialog = new AddPostDialog(addPostDialogElem).setup();
-
     var postListDiv = this.rootElement.find("#post_list_div");
     this.postListView = new PostListView(postListDiv, this.app).setup();
     this.postListView.delegate = this;
@@ -173,7 +162,7 @@ export class PostsPanel extends View<any> implements PostListViewDelegate {
     if (site == null) return;
 
     var app = this.app;
-    var button = await this.addPostDialog.open();
+    var button = await this.showAddPostDialog();
     if (button.title == "Cancel") return;
     var newPost = this.addPostDialog.entity!!;
     try {
@@ -184,6 +173,17 @@ export class PostsPanel extends View<any> implements PostListViewDelegate {
       console.log("Create Post Exception: ", e);
     }
     this.activityIndicator.hide();
+  }
+
+  async showAddPostDialog() {
+    if (this.addPostDialog == null) {
+      var addPostDialogElem: any = ensureCreated(
+        "add_post_dialog",
+        this.rootElement
+      );
+      this.addPostDialog = new AddPostDialog(addPostDialogElem).setup();
+    }
+    return this.addPostDialog.open();
   }
 
   enableButtons(enable: boolean = true) {

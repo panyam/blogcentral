@@ -34,7 +34,6 @@ export class TokenAuthDetailView extends AuthDetailView {
   extractEntity() {
     var out = { token: this.tokenElem.val() || "" } as any;
     out["authBaseUrl"] = this.authBaseUrlElem.val();
-    // this._entity["expiresAt"] = this.expiresAtElem.val();
     return out;
   }
 
