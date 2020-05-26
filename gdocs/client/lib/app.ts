@@ -58,16 +58,22 @@ export class App {
   async createPost(site: Site, post: Post, options: any) {
     var siteApi = createSiteApi(site.siteType, site.siteConfig);
     var request = siteApi.createPostRequest(post, options);
+    var authClient = createAuthClient(site.authType, this, site.authConfig);
+    request = authClient.decorateRequest(request);
     return this.httpClient.send(request);
   }
   async updatePost(site: Site, postid: String, options: any) {
     var siteApi = createSiteApi(site.siteType, site.siteConfig);
     var request = siteApi.updatePostRequest(postid, options);
+    var authClient = createAuthClient(site.authType, this, site.authConfig);
+    request = authClient.decorateRequest(request);
     return this.httpClient.send(request);
   }
   async getPosts(site: Site, options: any): Promise<Post[]> {
     var siteApi = createSiteApi(site.siteType, site.siteConfig);
     var request = siteApi.getPostsRequest(options);
+    var authClient = createAuthClient(site.authType, this, site.authConfig);
+    request = authClient.decorateRequest(request);
     try {
       var response = await this.httpClient.send(request);
       return response.data.map((p: any) => {
@@ -81,6 +87,8 @@ export class App {
   async removePost(site: Site, id: any) {
     var siteApi = createSiteApi(site.siteType, site.siteConfig);
     var request = siteApi.removePostRequest(id);
+    var authClient = createAuthClient(site.authType, this, site.authConfig);
+    request = authClient.decorateRequest(request);
     return this.httpClient.send(request);
   }
 }
