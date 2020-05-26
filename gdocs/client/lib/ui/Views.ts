@@ -176,6 +176,10 @@ export class Dialog<EntityType> extends View<EntityType> {
     return true;
   }
 
+  destroy() {
+      this.dialog.dialog("destroy").remove();
+  }
+
   buttons() {
     return this._buttons;
   }

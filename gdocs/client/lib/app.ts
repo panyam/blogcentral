@@ -9,9 +9,12 @@ import { AuthResult, createAuthClient } from "./authclients";
 import { createSiteApi } from "./siteapis";
 
 declare var Handlebars: any;
-Handlebars.registerHelper('eitherVal', function (value : any, defaultValue : any) {
-    var out = value || defaultValue;
-    return new Handlebars.SafeString(out);
+Handlebars.registerHelper("eitherVal", function (
+  value: any,
+  defaultValue: any
+) {
+  var out = value || defaultValue;
+  return new Handlebars.SafeString(out);
 });
 
 export class App {
@@ -37,18 +40,17 @@ export class App {
   async ensureLoggedIn(site: Site) {
     while (true) {
       var authClient = createAuthClient(site.authType, this, site.authConfig);
-      if (!(await authClient.validateAuth(site))) {
-        // if we are not logged in then start the auth flow - This could involve
-        // showing responding UIs to gather credentials etc.
-        var result = await authClient.startAuthFlow(site);
-        if (result == AuthResult.CANCELLED) {
-          console.log("Login Cancelled");
-          return false;
-        }
-        else if (result == AuthResult.SUCCESS) {
-          await this.siteService.saveSite(site);
-          return true;
-        }
+      if (await authClient.validateAuth(site)) return true;
+
+      // if we are not logged in then start the auth flow - This could involve
+      // showing responding UIs to gather credentials etc.
+      var result = await authClient.startAuthFlow(site);
+      if (result == AuthResult.CANCELLED) {
+        console.log("Login Cancelled");
+        return false;
+      } else if (result == AuthResult.SUCCESS) {
+        await this.siteService.saveSite(site);
+        return true;
       }
     }
   }

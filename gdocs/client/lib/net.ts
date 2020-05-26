@@ -33,7 +33,11 @@ export class URLBuilder {
         return encodeURIComponent(key) + "=" + encodeURIComponent(value);
       })
       .join("&");
-    return url + (url.indexOf("?") >= 0 ? "&" : "?") + paramString;
+    if (paramString.length > 0) {
+      return url + (url.indexOf("?") >= 0 ? "&" : "?") + paramString;
+    } else {
+      return url
+    }
   }
 }
 

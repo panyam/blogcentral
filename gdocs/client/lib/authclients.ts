@@ -1,5 +1,5 @@
 import { Nullable } from "./types";
-import { Request } from "./net";
+import { Request, URLBuilder } from "./net";
 import { dateDelta, ensureParam } from "./utils";
 import { App } from "./app";
 import { Site } from "./models";
@@ -7,7 +7,7 @@ import { AuthType } from "./enums";
 import { ensureCreated } from "./ui/utils";
 import { FormDialog } from "./ui/Views";
 
-declare var BCDefaults: any
+declare var BCDefaults: any;
 
 export enum AuthResult {
   SUCCESS,
@@ -92,12 +92,16 @@ export class OAuthClient implements AuthClient {
 
 export class TokenAuthClient implements AuthClient {
   app: App;
+  authBaseUrl: string;
   token: Nullable<string> = null;
-  expiresAt: number = 0;
+  tokenCreatedAt: number = 0;
+  tokenExpiresAt: number = 0;
   constructor(app: App, config: any) {
     this.app = app;
+    this.authBaseUrl = ensureParam(config, "authBaseUrl");
     this.token = config.token || null;
-    this.expiresAt = config.expiresAt || Date.now();
+    this.tokenExpiresAt = config.tokenExpiresAt || Date.now();
+    this.tokenCreatedAt = config.tokenCreatedAt || 0;
   }
 
   decorateRequest(request: Request): Request {
@@ -107,51 +111,14 @@ export class TokenAuthClient implements AuthClient {
     return request;
   }
 
-  a() {
-    /*
-    while (true) {
-      site.config.token = site.config.token || null;
-      if (site.config.token == null) {
-        this.site = site;
-        var credentials: any = await this.open();
-        if (credentials == null) return false;
-        try {
-          site.config.token = await gateway.loginToWordpress(site, credentials);
-          this.close();
-          if (site.config.token == null) {
-            // cancelled
-            return false;
-          } else {
-            site.config.tokenTimestamp = Date.now();
-            // Save what we have so far
-            await this.services.siteService.saveSite(site);
-          }
-        } catch (e) {
-          console.log("Received Exception: ", e);
-          var resjson = e.responseJSON || {};
-          var message = resjson.message || e.statusText;
-          this.errorMessage = message;
-        }
-      }
+  async isTokenValid(site: Site) {
+    var token = ((site.authConfig.token as string) || "").trim();
+    return token.length != 0;
+  }
 
-      if (site.config.token != null) {
-        // validate token if too old needed
-        var validatedDelta = Date.now() - (site.config.tokenValidatedAt || 0);
-        if (validatedDelta > TOKEN_VALIDATION_FREQUENCY) {
-          var validated = await gateway.validateToken(site);
-          if (validated) {
-            await this.services.siteService.saveSite(site);
-            return true;
-          } else {
-            // validation failed - may be token is invalid
-            site.config.token = null;
-          }
-        } else {
-          return true;
-        }
-      }
-    }
-   */
+  async hasTokenExpired(site: Site) {
+    var tokenExpiresAt = site.authConfig.tokenExpiresAt || 0;
+    return tokenExpiresAt >= 0 && tokenExpiresAt <= Date.now();
   }
 
   /**
@@ -160,14 +127,8 @@ export class TokenAuthClient implements AuthClient {
    * be signed with respective credentials going forward.
    */
   async validateAuth(site: Site) {
-    var token = ((site.authConfig.token as string) || "").trim();
-    if (token.length == 0) {
-      return false;
-    }
-    var expiresAt = site.authConfig.expiresAt || 0;
-    if (expiresAt >= 0 && expiresAt <= Date.now()) {
-      return false;
-    }
+    if (!(await this.isTokenValid(site))) return false;
+    if (await this.hasTokenExpired(site)) return false;
     return true;
   }
 
@@ -200,20 +161,22 @@ export class TokenAuthClient implements AuthClient {
     };
     var result = (await tokenDialog.open()) as any;
     if (result.title == "Cancel") {
+      tokenDialog.destroy();
       return AuthResult.CANCELLED;
     }
     site.authConfig.token = tokenElem.val().trim();
+    tokenDialog.destroy();
     return AuthResult.SUCCESS;
   }
 
   static defaultConfig(): any {
-      var out = {} as any
-      out["authBaseUrl"] = BCDefaults.TokenAuthClient.AuthBaseUrl
-      out["tokenUrl"] = BCDefaults.TokenAuthClient.TokenUrl
-      out["validateUrl"] = BCDefaults.TokenAuthClient.ValidateUrl
-      out["token"] = "";
-      out["expiresAt"] = 0;
-      return out;
+    var out = {} as any;
+    out["authBaseUrl"] = BCDefaults.TokenAuthClient.AuthBaseUrl;
+    out["tokenUrl"] = BCDefaults.TokenAuthClient.TokenUrl;
+    out["validateUrl"] = BCDefaults.TokenAuthClient.ValidateUrl;
+    out["token"] = "";
+    out["tokenExpiresAt"] = 0;
+    return out;
   }
 }
 
@@ -229,8 +192,8 @@ export class JWTAuthClient extends TokenAuthClient {
 
   static defaultConfig(): any {
     var out = super.defaultConfig();
-    out["tokenUrl"] = BCDefaults.JWTAuthClient.TokenUrl
-    out["validateUrl"] = BCDefaults.JWTAuthClient.ValidateUrl
+    out["tokenUrl"] = BCDefaults.JWTAuthClient.TokenUrl;
+    out["validateUrl"] = BCDefaults.JWTAuthClient.ValidateUrl;
     return out;
   }
 
@@ -239,7 +202,10 @@ export class JWTAuthClient extends TokenAuthClient {
       username: username,
       password: password,
     };
-    var request = new Request(this.tokenUrl, {
+    var url = new URLBuilder(this.authBaseUrl)
+      .appendPath(this.tokenUrl)
+      .build();
+    var request = new Request(url, {
       method: "post",
       contentType: "application/json",
       body: payload,
@@ -249,7 +215,10 @@ export class JWTAuthClient extends TokenAuthClient {
   }
 
   async validateToken() {
-    var request = new Request(this.validateUrl, {
+    var url = new URLBuilder(this.authBaseUrl)
+      .appendPath(this.validateUrl)
+      .build();
+    var request = new Request(url, {
       method: "post",
       contentType: "application/json",
     });
@@ -257,22 +226,10 @@ export class JWTAuthClient extends TokenAuthClient {
     return this.app.httpClient.send(request);
   }
 
-  /**
-   * Checks if a site's auth credentials are valid asynchronously.
-   * Returns true if site's auth credentials are valid and requests can
-   * be signed with respective credentials going forward.
-   */
-  async validateAuth(site: Site) {
-    var token = ((site.authConfig.token as string) || "").trim();
-    if (token.length == 0) {
-      return false;
-    }
-    var expiresAt = site.authConfig.expiresAt || 0;
-    if (expiresAt >= 0 && expiresAt <= Date.now()) {
-      var response = await this.validateToken();
-      return false;
-    }
-    return true;
+  async hasTokenExpired(site: Site) {
+    if (!(await super.hasTokenExpired(site))) return false;
+    var response = await this.validateToken();
+    return false;
   }
 
   /**
