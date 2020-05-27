@@ -1,6 +1,8 @@
 !lib/README.md
 node_modules
 .clasp.json
+testdefvals.ts
+testconfigs.py
 *.egg-info
 *.iml
 *.ipr
