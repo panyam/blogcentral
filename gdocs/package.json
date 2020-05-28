@@ -65,10 +65,12 @@
   "scripts": {
     "pull": "cd dist ; clasp pull",
     "clean": "rm -rf dist/*",
+    "push": "cd dist ; clasp push",
     "build": "webpack",
     "devbuild": "webpack --mode=development",
-    "pushOnly": "cd dist ; clasp push",
-    "push": "npm run build && npm run pushOnly",
-    "devpush": "npm run devbuild && npm run pushOnly"
+    "prodpush": "npm run secure && npm run build && npm run push",
+    "devpush": "npm run secure && npm run devbuild && npm run push",
+    "secure": "rm -f defvals.ts ; ln -s safedefvals.ts defvals.ts",
+    "allowtest": "rm -f defvals.ts ; ln -s testdefvals.ts defvals.ts"
   }
 }
