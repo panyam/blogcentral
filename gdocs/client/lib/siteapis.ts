@@ -36,7 +36,7 @@ export abstract class WPRestApi extends SiteApi {
     super(config);
   }
 
-  abstract get apiUrl() : string
+  abstract get apiUrl(): string;
 
   newRequest(path: string, params: any = null): Request {
     params = params || {};
@@ -134,9 +134,8 @@ export class PublicWPRestApi extends WPRestApi {
     this.siteUrl = ensureParam(config, "siteUrl");
   }
 
-  get apiUrl() : string {
-      return "https://public-api.wordpress.com/wp/v2/sites/" + 
-      this.siteUrl
+  get apiUrl(): string {
+    return "https://public-api.wordpress.com/wp/v2/sites/" + this.siteUrl;
   }
 
   static defaultConfig() {
