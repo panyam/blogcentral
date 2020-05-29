@@ -1,3 +1,4 @@
+import "../../styles/SiteInputView";
 import { AuthType, SiteType } from "../enums";
 import { Nullable } from "../types";
 import { View } from "./Views";
@@ -28,18 +29,42 @@ export class SiteInputView extends View<Site> {
   allFields: JQuery<any>;
   authDetailElem: any;
   authDetailView: AuthDetailView;
+  authTypeElem: any;
 
   constructor(elem_or_id: any, site: Nullable<Site> = null) {
     super(elem_or_id, "site", site || defaultSite());
   }
 
-  setupViews() {
+  setupViews(self: this = this) {
     super.setupViews();
     this.authDetailElem = this.rootElement.find(".auth_details_view");
+    this.authTypeElem = this.rootElement.find("#authType");
+    this.authTypeElem.change(function (_evt: any) {
+      self.onAuthTypeChanged();
+    });
   }
 
   get selectedAuthType(): AuthType {
+    var authType = this.authTypeElem.val();
+    if (authType == "OAUTH2") {
+      return AuthType.OAUTH2;
+    } else if (authType == "TOKEN") {
+      return AuthType.TOKEN;
+    } else if (authType == "JWT") {
+      return AuthType.JWT;
+    }
     return -1;
+  }
+
+  set selectedAuthType(authType: AuthType) {
+    if (authType == AuthType.OAUTH2) {
+      this.authTypeElem.val("OAUTH2");
+    } else if (authType == AuthType.TOKEN) {
+      this.authTypeElem.val("TOKEN");
+    } else if (authType == AuthType.JWT) {
+      this.authTypeElem.val("JWT");
+    }
+    this.onAuthTypeChanged();
   }
 
   onAuthTypeChanged() {
@@ -65,23 +90,20 @@ export class SiteInputView extends View<Site> {
       this.authDetailView = new JWTAuthDetailView(this.authDetailElem).setup();
     }
     var site = this._entity!!;
-    this.authDetailView.entity = site.authConfig;
+    if (site.authType == authType) {
+      this.authDetailView.entity = site.authConfig;
+    }
   }
 }
 
 export class WPSiteInputView extends SiteInputView {
   titleElem: any;
   apiUrlElem: any;
-  authTypeElem: any;
 
-  setupViews(self: this = this) {
+  setupViews() {
     super.setupViews();
     this.titleElem = this.rootElement.find("#title");
     this.apiUrlElem = this.rootElement.find("#apiUrl");
-    this.authTypeElem = this.rootElement.find("#authType");
-    this.authTypeElem.change(function (_evt: any) {
-      self.onAuthTypeChanged();
-    });
     this.onAuthTypeChanged();
   }
 
@@ -108,32 +130,14 @@ export class WPSiteInputView extends SiteInputView {
                value = "{{eitherVal this.site.siteConfig.apiUrl Defaults.WPRestApi.ApiUrl }}"
                />
         
-        <label for="authType">Auth</label>
+        <hr/>
+        <label class = "auth_type_label" for="authType">Auth</label>
         <select id = "authType">
-            <option value="JWT">JWT</option>
+            <option value="JWT">Username/Password</option>
             <option value="OAUTH2">OAuth2</option>
         </select>
         <div class = "auth_details_view"></div>
       `;
-  }
-
-  get selectedAuthType(): AuthType {
-    var authType = this.authTypeElem.val();
-    if (authType == "OAUTH2") {
-      return AuthType.OAUTH2;
-    } else if (authType == "JWT") {
-      return AuthType.JWT;
-    }
-    return -1;
-  }
-
-  set selectedAuthType(authType: AuthType) {
-    if (authType == AuthType.OAUTH2) {
-      this.authTypeElem.val("OAUTH2");
-    } else if (authType == AuthType.JWT) {
-      this.authTypeElem.val("JWT");
-    }
-    this.onAuthTypeChanged();
   }
 }
 
@@ -165,6 +169,7 @@ export class LISiteInputView extends SiteInputView {
         <input type="text" name="title" id="title" class="text ui-widget-content ui-corner-all" value = "My Medium Site" />
         <label for="username">Username</label>
         @<input type="text" name="title" id="username" class="text ui-widget-content ui-corner-all" value = "mediumuser" />
+
         <div class = "auth_details_view"></div>
         `;
   }
@@ -188,10 +193,6 @@ export class MediumSiteInputView extends SiteInputView {
     setEnabled(tadv.authBaseUrlElem, false);
   }
 
-  get selectedAuthType(): AuthType {
-    return AuthType.TOKEN;
-  }
-
   protected extractEntity() {
     return new Site(this.titleElem.val() || "", {
       siteType: SiteType.MEDIUM,
@@ -210,6 +211,12 @@ export class MediumSiteInputView extends SiteInputView {
         <label for="username">Username</label>
         <input type="text" name="title" id="username" class="text ui-widget-content ui-corner-all" value = "mediumuser" />
 
+        <hr/>
+        <label class = "auth_type_label" for="authType">Auth</label>
+        <select id = "authType">
+            <option value="TOKEN">Integration Tokens</option>
+            <option value="OAUTH2">OAuth2</option>
+        </select>
         <div class = "auth_details_view"></div>
         `;
   }

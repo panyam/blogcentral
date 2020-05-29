@@ -140,7 +140,7 @@ export class TokenAuthClient implements AuthClient {
     // Show a dialog asking for token
     var elem = ensureCreated("start_token_auth_dialog");
     elem.addClass("form_dialog");
-    var tokenDialog = new FormDialog<any>(elem, null, null)
+    var tokenDialog = new FormDialog<any>(elem, null, site.authConfig)
       .addButton("Login")
       .addButton("Cancel")
       .setTemplate(
@@ -148,7 +148,7 @@ export class TokenAuthClient implements AuthClient {
         <label for="token">Token</label>
         <input type="text" name="token" id="token" 
                class="text ui-widget-content ui-corner-all" 
-               value = ""/>
+               value = "{{eitherVal entity.token Defaults.TokenAuthClient.Token }}"/>
         `
       )
       .setup();

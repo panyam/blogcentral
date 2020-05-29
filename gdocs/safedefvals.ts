@@ -7,7 +7,7 @@ export const Defaults = {
     AuthBaseUrl: "https://example.com/wp-json/jwt-auth",
     TokenUrl: "/v1/token",
     ValidateUrl: "/v1/token/validate",
-    Token: "000000111111222222333333444444555566667778888999AABBBCCCDDDEEEFFF",
+    Token: "ENTER_TOKEN_HERE",
   },
   JWTAuthClient: {
     Username: "testuser",
@@ -15,5 +15,29 @@ export const Defaults = {
     AuthBaseUrl: "https://example.com/wp-json/jwt-auth",
     TokenUrl: "/v1/token",
     ValidateUrl: "/v1/token/validate",
+  },
+  HostedWPOAuth2Api: {
+    ClientId: 0,
+    ClientSecret: "ENTER_SECRET_HERE",
+    AuthBaseUrl: "https://example.com/oauth2",
+    TokenUrl: "/token",
+    AuthorizeUrl: "/authorize",
+    AuthenticateUrl: "/authenticate",
+  },
+  PublicWPOAuth2Api: {
+    ClientId: 0,
+    ClientSecret: "ENTER_SECRET_HERE",
+    AuthBaseUrl: "https://example.com/oauth2",
+    TokenUrl: "/token",
+    AuthorizeUrl: "/authorize",
+    AuthenticateUrl: "/authenticate",
+  },
+  MediumOAuth2Api: {
+    ClientId: 0,
+    ClientSecret: "ENTER_SECRET_HERE",
+    AuthBaseUrl: "https://medium.com/m/oauth",
+    TokenUrl: "/token",
+    AuthorizeUrl: "/authorize",
+    AuthenticateUrl: "/authenticate",
   },
 };
