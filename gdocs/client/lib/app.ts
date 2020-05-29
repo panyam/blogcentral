@@ -17,12 +17,14 @@ import {
 import { Nullable } from "./types";
 
 declare var Handlebars: any;
-Handlebars.registerHelper( 'eachInMap', function ( map : any, block : any ) {
-   var out = '';
-   Object.keys( map ).map(function( prop ) {
-      out += block.fn( {key: prop, value: map[ prop ]} );
-   });
-   return out;
+Handlebars.registerHelper("eachInMap", function (map: any, block: any) {
+  var out = "";
+  if (map) {
+    Object.keys(map).map(function (prop) {
+      out += block.fn({ key: prop, value: map[prop] });
+    });
+  }
+  return out;
 });
 Handlebars.registerHelper("eitherVal", function (
   value: any,

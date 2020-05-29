@@ -49,10 +49,10 @@ export class HostedWPSiteInputView extends SiteInputView {
   }
 
   get siteConfig() {
-      return {
-        siteType: HOSTED_WP,
-        apiUrl: this.apiUrlElem.val() || "",
-      } as SiteConfig
+    return {
+      siteType: HOSTED_WP,
+      apiUrl: this.apiUrlElem.val() || "",
+    } as SiteConfig;
   }
 
   template(): string {
@@ -71,8 +71,8 @@ export class HostedWPSiteInputView extends SiteInputView {
 
         <label class = "auth_type_label" for="authType">Auth</label>
         <select id = "authType">
-            <option value="JWT">Username/Password</option>
-            <option value="OAUTH2">OAuth2</option>
+            <option value="AUTH_TYPE_LOGIN">Username/Password</option>
+            <option value="AUTH_TYPE_OAUTH2">OAuth2</option>
         </select>
         <div class = "auth_details_view"></div>
       `;

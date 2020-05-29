@@ -9,6 +9,8 @@ import { LocalStore, JQHttpClient } from "./lib/flask";
 import { LocalExtractor } from "./lib/flask";
 import { Defaults } from "../defvals";
 
+import { registerApp as wordpress } from "./lib/wordpress/index";
+
 (window as any).BCDefaults = Defaults;
 
 $(function () {
@@ -16,6 +18,8 @@ $(function () {
   var httpClient = new JQHttpClient();
   var theApp = new App(store, httpClient);
   theApp.contentExtractor = new LocalExtractor("editor_container");
+
+  wordpress(theApp);
   (window as any).bcApp = theApp;
 });
 
