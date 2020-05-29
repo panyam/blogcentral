@@ -1,7 +1,7 @@
 import { Request, URLBuilder } from "../net";
 import { ensureParam } from "../utils";
 import { Post, SiteConfig, SiteApi } from "../siteapis";
-import { PUBLIC_WP, HOSTED_WP } from "./core";
+import { SITE_TYPE_WP_PUBLIC, SITE_TYPE_WP_HOSTED } from "./core";
 
 declare var BCDefaults: any;
 
@@ -96,7 +96,7 @@ export class HostedWPRestApi extends WPRestApi {
 
   static defaultConfig(): HostedWPSiteConfig {
     return {
-      siteType: HOSTED_WP,
+      siteType: SITE_TYPE_WP_HOSTED,
       apiUrl: BCDefaults.HostedWPRestApi.ApiUrl,
     };
   }
@@ -119,7 +119,7 @@ export class PublicWPRestApi extends WPRestApi {
 
   static defaultConfig(): PublicWPSiteConfig {
     return {
-      siteType: PUBLIC_WP,
+      siteType: SITE_TYPE_WP_PUBLIC,
       siteUrl: BCDefaults.PublicWPRestApi.SiteUrl,
     };
   }

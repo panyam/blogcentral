@@ -1,7 +1,7 @@
 import { SiteInputView } from "../ui/SiteInputViews";
 import { SiteSummaryView } from "../ui/SiteSummaryViews";
 import { Site, SiteConfig } from "../siteapis";
-import { MEDIUM } from "./core";
+import { SITE_TYPE_MEDIUM } from "./core";
 
 export class MediumSiteInputView extends SiteInputView {
   usernameElem: any;
@@ -23,7 +23,7 @@ export class MediumSiteInputView extends SiteInputView {
 
   get siteConfig() {
     return {
-      siteType: MEDIUM,
+      siteType: SITE_TYPE_MEDIUM,
       username: this.usernameElem.val() || "",
     } as SiteConfig;
   }

@@ -1,7 +1,7 @@
 import { SiteInputView } from "../ui/SiteInputViews";
 import { SiteSummaryView } from "../ui/SiteSummaryViews";
 import { SiteConfig } from "../siteapis";
-import { LINKEDIN } from "./core";
+import { SITE_TYPE_LINKEDIN } from "./core";
 
 export class LISiteInputView extends SiteInputView {
   usernameElem: any;
@@ -14,7 +14,7 @@ export class LISiteInputView extends SiteInputView {
 
   get siteConfig() {
     return {
-      siteType: LINKEDIN
+      siteType: SITE_TYPE_LINKEDIN
     } as SiteConfig;
   }
 

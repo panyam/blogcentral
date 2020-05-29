@@ -1,1 +1,1 @@
-export const LINKEDIN = "LINKEDIN"
+export const SITE_TYPE_LINKEDIN = "SITE_TYPE_LINKEDIN"

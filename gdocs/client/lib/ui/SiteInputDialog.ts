@@ -15,7 +15,7 @@ export class SiteInputDialog extends FormDialog<Site> {
       template: `
         <label for="platform">Platform</label>
         <select id = "platform">
-            {{#eachInMap App.siteApiFactoreis}}
+            {{#eachInMap App.siteApiFactories}}
             <option value="{{key}}">{{key}}</option>
             {{/eachInMap}}
         </select>

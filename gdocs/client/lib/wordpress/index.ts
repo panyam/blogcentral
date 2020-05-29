@@ -4,16 +4,16 @@ import { Site, SiteConfig } from "../siteapis";
 import { PublicWPRestApi, HostedWPRestApi } from "./api";
 import { PublicWPSiteInputView, HostedWPSiteInputView } from "./ui";
 import { PublicWPSiteSummaryView, HostedWPSiteSummaryView } from "./ui";
-import { PUBLIC_WP, HOSTED_WP } from "./core";
+import { SITE_TYPE_WP_PUBLIC, SITE_TYPE_WP_HOSTED } from "./core";
 
 export function registerApp(app: App) {
-  app.siteApiFactories[PUBLIC_WP] = (config: SiteConfig) => {
+  app.siteApiFactories[SITE_TYPE_WP_PUBLIC] = (config: SiteConfig) => {
     return new PublicWPRestApi(config);
   };
-  app.siteApiFactories[HOSTED_WP] = (config: SiteConfig) => {
+  app.siteApiFactories[SITE_TYPE_WP_HOSTED] = (config: SiteConfig) => {
     return new HostedWPRestApi(config);
   };
-  app.siteViewFactories[PUBLIC_WP] = (
+  app.siteViewFactories[SITE_TYPE_WP_PUBLIC] = (
     purpose: string,
     elem_or_id: any,
     site: Nullable<Site>
@@ -24,7 +24,7 @@ export function registerApp(app: App) {
       return new PublicWPSiteSummaryView(elem_or_id, site!!).setup();
     }
   };
-  app.siteViewFactories[HOSTED_WP] = (
+  app.siteViewFactories[SITE_TYPE_WP_HOSTED] = (
     purpose: string,
     elem_or_id: any,
     site: Nullable<Site>

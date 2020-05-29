@@ -2,7 +2,7 @@ import { SiteInputView } from "../ui/SiteInputViews";
 import { SiteSummaryView } from "../ui/SiteSummaryViews";
 import { AuthType } from "../authclients";
 import { Site, SiteConfig } from "../siteapis";
-import { PUBLIC_WP, HOSTED_WP } from "./core";
+import { SITE_TYPE_WP_PUBLIC, SITE_TYPE_WP_HOSTED } from "./core";
 
 export class PublicWPSiteInputView extends SiteInputView {
   siteUrlElem: any;
@@ -19,7 +19,7 @@ export class PublicWPSiteInputView extends SiteInputView {
 
   get siteConfig() {
     return {
-      siteType: PUBLIC_WP,
+      siteType: SITE_TYPE_WP_PUBLIC,
       siteUrl: this.siteUrlElem.val() || "",
     } as SiteConfig;
   }
@@ -50,7 +50,7 @@ export class HostedWPSiteInputView extends SiteInputView {
 
   get siteConfig() {
     return {
-      siteType: HOSTED_WP,
+      siteType: SITE_TYPE_WP_HOSTED,
       apiUrl: this.apiUrlElem.val() || "",
     } as SiteConfig;
   }

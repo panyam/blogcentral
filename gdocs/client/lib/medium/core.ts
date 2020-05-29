@@ -1,1 +1,1 @@
-export const MEDIUM = "MEDIUM"
+export const SITE_TYPE_MEDIUM = "SITE_TYPE_MEDIUM"
