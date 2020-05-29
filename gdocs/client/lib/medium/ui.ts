@@ -1,0 +1,84 @@
+import { SiteInputView } from "../ui/SiteInputViews";
+import { SiteSummaryView } from "../ui/SiteSummaryViews";
+import { Site } from "../models";
+import { setEnabled } from "../ui/utils";
+
+export class MediumSiteInputView extends SiteInputView {
+  titleElem: any;
+  usernameElem: any;
+
+  setupViews() {
+    super.setupViews();
+    this.titleElem = this.rootElement.find("#title");
+    this.usernameElem = this.rootElement.find("#username");
+    this.onAuthTypeChanged();
+  }
+
+  onAuthTypeChanged() {
+    super.onAuthTypeChanged();
+    var tadv = this.authDetailView as TokenAuthDetailView;
+    tadv.authBaseUrlElem.val("https://api.medium.com/v1");
+    setEnabled(tadv.authBaseUrlElem, false);
+  }
+
+  protected extractEntity() {
+    return new Site(this.titleElem.val() || "", {
+      siteType: SiteType.MEDIUM,
+      siteConfig: {
+        username: this.usernameElem.val() || "",
+      },
+      authType: AuthType.TOKEN,
+      authConfig: this.authDetailView.entity,
+    });
+  }
+
+  template(): string {
+    return `
+        <label for="title">Title</label>
+        <input type="text" name="title" id="title" class="text ui-widget-content ui-corner-all" value = "My Medium Site" />
+        <label for="username">Username</label>
+        <input type="text" name="title" id="username" class="text ui-widget-content ui-corner-all" value = "mediumuser" />
+
+        <hr/>
+        <label class = "auth_type_label" for="authType">Auth</label>
+        <select id = "authType">
+            <option value="TOKEN">Integration Tokens</option>
+            <option value="OAUTH2">OAuth2</option>
+        </select>
+        <div class = "auth_details_view"></div>
+        `;
+  }
+}
+
+export class MediumSiteSummaryView extends SiteSummaryView {
+  template() {
+    return `
+      <div class = "activity_indicator" />
+      <h3 class = "site_summary_title">{{this.site.title }}</h3>
+      <div class = "site_summary_apiUrl">
+        API Url: <a href="{{this.site.apiUrl }}" target="_blank">
+        {{this.site.siteConfig.apiUrl }}
+        </a>
+      </div>
+      <div class = "auth_summary_details_div"></div>
+      <div class = "site_summary_selected_post">
+        {{# if this.site.selectedPost }}
+        <h3 style="margin-bottom: 0px">Post:</h3>
+        <a target="_blank" href="{{ this.site.selectedPost.link }}">
+            {{this.site.selectedPost.id}} : {{{ this.site.selectedPost.title.rendered }}} 
+        </a>
+        {{/if}}
+      </div>
+      <div class = "site_buttons_div">
+        <center>
+            <button class="remove_site_button ui-button ui-widget ui-corner-all ui-button-icon-only" title="Remove Site">
+                <span class="ui-icon ui-icon-trash"></span> Remove Site
+            </button>
+            <button class = "select_post_button ui-button ui-widget ui-corner-all" title="Select Post">Posts</button>
+            <button class = "publish_post_button ui-button ui-widget ui-corner-all" >Publish</button>
+        </center>
+        <center> <div class = "progressbar"></div> </center>
+      </div>
+      `;
+  }
+}

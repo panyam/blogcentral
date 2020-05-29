@@ -164,7 +164,7 @@ export class PostsPanel extends View<any> implements PostListViewDelegate {
     var app = this.app;
     var button = await this.showAddPostDialog();
     if (button.title == "Cancel") return;
-    var newPost = this.addPostDialog.entity!!;
+    var newPost = this.addPostDialog.entity;
     try {
       console.log("Creating New Post: ", newPost);
       this.activityIndicator.show();

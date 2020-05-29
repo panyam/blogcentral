@@ -1,3 +1,4 @@
+/*
 export enum SiteType {
   PUBLIC_WORDPRESS,
   HOSTED_WORDPRESS,
@@ -10,3 +11,6 @@ export enum AuthType {
   JWT,
   OAUTH2,
 }
+*/
+
+import { Nullable } from "./types";

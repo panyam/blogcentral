@@ -56,7 +56,7 @@ export class SiteListView extends View<Site[]> {
   }
 
   async onSelectPostClicked(siteView: SiteSummaryView) {
-    var site = siteView.entity!!;
+    var site = siteView.entity;
     if (this.delegate != null) {
       await this.delegate.selectPost(site);
       this.refreshViews();
@@ -64,7 +64,7 @@ export class SiteListView extends View<Site[]> {
   }
 
   async onPublishPostClicked(siteView: SiteSummaryView) {
-    var site = siteView.entity!!;
+    var site = siteView.entity;
     if (site.selectedPost == null) {
       if (this.delegate != null) {
         await this.delegate.selectPost(site);
@@ -72,15 +72,16 @@ export class SiteListView extends View<Site[]> {
       }
     }
     if (this.delegate == null) {
-      throw new Error("Delegate for SiteListView not found");
+      console.log("Delegate for SiteListView not found");
+    } else {
+      return this.delegate.publishPost(site);
     }
-    return this.delegate.publishPost(site);
   }
 
   onRemoveSiteClicked(siteView: SiteSummaryView) {
     var self = this;
     var siteService = this.app.siteService;
-    var site = siteView.entity!!;
+    var site = siteView.entity;
     console.log("Removing Site: ", site);
     siteService.remove(site).then(() => self.refreshViews());
   }
