@@ -18,8 +18,10 @@ export abstract class SiteApi {
 }
 
 export function createSiteApi(siteType: SiteType, configs: any): SiteApi {
-  if (siteType == SiteType.WORDPRESS) {
-    return new WPRestApi(configs);
+  if (siteType == SiteType.PUBLIC_WORDPRESS) {
+    return new PublicWPRestApi(configs);
+  } else if (siteType == SiteType.HOSTED_WORDPRESS) {
+    return new HostedWPRestApi(configs);
   } else if (siteType == SiteType.MEDIUM) {
     return new MediumApi(configs);
   } else if (siteType == SiteType.LINKEDIN) {
@@ -29,18 +31,12 @@ export function createSiteApi(siteType: SiteType, configs: any): SiteApi {
   }
 }
 
-export class WPRestApi extends SiteApi {
-  apiUrl: string;
+export abstract class WPRestApi extends SiteApi {
   constructor(config: any) {
     super(config);
-    this.apiUrl = ensureParam(config, "apiUrl");
   }
 
-  static defaultConfig() {
-    return {
-      apiUrl: BCDefaults.WPRestApi.ApiUrl,
-    };
-  }
+  abstract get apiUrl() : string
 
   newRequest(path: string, params: any = null): Request {
     params = params || {};
@@ -53,7 +49,7 @@ export class WPRestApi extends SiteApi {
 
   createPostRequest(post: Post, options: any = null) {
     options = options || {};
-    var path = "/wp/v2/posts/";
+    var path = "/posts/";
     var request = this.newRequest(path);
     request.options.method = "post";
     request.body = {};
@@ -68,7 +64,7 @@ export class WPRestApi extends SiteApi {
   }
 
   updatePostRequest(postid: String, options: any = null) {
-    var path = "/wp/v2/posts/" + postid;
+    var path = "/posts/" + postid;
     options = options || {};
     var request = this.newRequest(path);
     request.options.method = "post";
@@ -85,7 +81,7 @@ export class WPRestApi extends SiteApi {
   }
 
   getPostsRequest(options: any) {
-    var path = "/wp/v2/posts/";
+    var path = "/posts/";
     var params = ["status=publish,future,draft,pending,private"];
     if (options.query) {
       params.push("search=" + options.query);
@@ -110,10 +106,43 @@ export class WPRestApi extends SiteApi {
   }
 
   removePostRequest(id: any) {
-    var path = "/wp/v2/posts/" + id;
+    var path = "/posts/" + id;
     var request = this.newRequest(path);
     request.options.method = "DELETE";
     return request;
+  }
+}
+
+export class HostedWPRestApi extends WPRestApi {
+  apiUrl: string;
+  constructor(config: any) {
+    super(config);
+    this.apiUrl = ensureParam(config, "apiUrl");
+  }
+
+  static defaultConfig() {
+    return {
+      apiUrl: BCDefaults.HostedWPRestApi.ApiUrl,
+    };
+  }
+}
+
+export class PublicWPRestApi extends WPRestApi {
+  siteUrl: string;
+  constructor(config: any) {
+    super(config);
+    this.siteUrl = ensureParam(config, "siteUrl");
+  }
+
+  get apiUrl() : string {
+      return "https://public-api.wordpress.com/wp/v2/sites/" + 
+      this.siteUrl
+  }
+
+  static defaultConfig() {
+    return {
+      siteUrl: BCDefaults.PublicWPRestApi.SiteUrl,
+    };
   }
 }
 

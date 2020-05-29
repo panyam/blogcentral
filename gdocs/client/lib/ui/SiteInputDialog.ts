@@ -17,7 +17,8 @@ export class SiteInputDialog extends FormDialog<Site> {
       template: `
         <label for="platform">Platform</label>
         <select id = "platform">
-            <option value="WORDPRESS">WordPress Blog</option>
+            <option value="PUBLIC_WORDPRESS">Public WordPress Blog</option>
+            <option value="HOSTED_WORDPRESS">Hosted WordPress Blog</option>
             <option value="MEDIUM">Medium</option>
             <option value="LINKEDIN">LinkedIn</option>
         </select>
@@ -36,7 +37,7 @@ export class SiteInputDialog extends FormDialog<Site> {
     if (this.entity != null) {
       this.selectedSiteType = this.entity.siteType;
     } else {
-      this.selectedSiteType = SiteType.WORDPRESS;
+      this.selectedSiteType = SiteType.HOSTED_WORDPRESS;
     }
     this.siteTypeElem.change(function (_evt: any) {
       self.onSiteTypeChanged();
@@ -45,8 +46,10 @@ export class SiteInputDialog extends FormDialog<Site> {
   }
 
   set selectedSiteType(siteType: SiteType) {
-    if (siteType == SiteType.WORDPRESS) {
-      this.siteTypeElem.val("WORDPRESS");
+    if (siteType == SiteType.HOSTED_WORDPRESS) {
+      this.siteTypeElem.val("HOSTED_WORDPRESS");
+    } else if (siteType == SiteType.PUBLIC_WORDPRESS) {
+      this.siteTypeElem.val("PUBLIC_WORDPRESS");
     } else if (siteType == SiteType.LINKEDIN) {
       this.siteTypeElem.val("LINKEDIN");
     } else if (siteType == SiteType.MEDIUM) {
@@ -57,8 +60,10 @@ export class SiteInputDialog extends FormDialog<Site> {
 
   get selectedSiteType(): SiteType {
     var siteType = this.siteTypeElem.val();
-    if (siteType == "WORDPRESS") {
-      return SiteType.WORDPRESS;
+    if (siteType == "HOSTED_WORDPRESS") {
+      return SiteType.HOSTED_WORDPRESS;
+    } else if (siteType == "PUBLIC_WORDPRESS") {
+      return SiteType.PUBLIC_WORDPRESS;
     } else if (siteType == "MEDIUM") {
       return SiteType.MEDIUM;
     } else if (siteType == "LINKEDIN") {

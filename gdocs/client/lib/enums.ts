@@ -1,5 +1,6 @@
 export enum SiteType {
-  WORDPRESS,
+  PUBLIC_WORDPRESS,
+  HOSTED_WORDPRESS,
   MEDIUM,
   LINKEDIN,
 }

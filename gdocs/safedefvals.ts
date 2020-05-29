@@ -1,7 +1,11 @@
 export const Defaults = {
-  WPRestApi: {
+  HostedWPRestApi: {
     Title: "My Awesome Blog",
-    ApiUrl: "https://example.com/wp-json",
+    ApiUrl: "https://example.com/wp-json/wp/v2",
+  },
+  PublicWPRestApi: {
+    Title: "WordPress.com",
+    SiteUrl: "example.wordpress.com",
   },
   TokenAuthClient: {
     AuthBaseUrl: "https://example.com/wp-json/jwt-auth",

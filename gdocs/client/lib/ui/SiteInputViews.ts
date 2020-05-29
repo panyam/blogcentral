@@ -14,8 +14,10 @@ import { defaultSite } from "../defaults";
 import { ActivityIndicator } from "./ActivityIndicator";
 
 export function createSiteInputView(siteType: SiteType, elem_or_id: any) {
-  if (siteType == SiteType.WORDPRESS) {
-    return new WPSiteInputView(elem_or_id).setup();
+  if (siteType == SiteType.PUBLIC_WORDPRESS) {
+    return new PublicWPSiteInputView(elem_or_id).setup();
+  } else if (siteType == SiteType.HOSTED_WORDPRESS) {
+    return new HostedWPSiteInputView(elem_or_id).setup();
   } else if (siteType == SiteType.MEDIUM) {
     return new MediumSiteInputView(elem_or_id).setup();
   } else if (siteType == SiteType.LINKEDIN) {
@@ -74,9 +76,11 @@ export class SiteInputView extends View<Site> {
     // show the different view based on the type
     this.authDetailElem = this.rootElement.find(".auth_details_view");
     if (this.authDetailElem.length == 0) {
-      throw new Error(
-        "Could not find div with class 'auth_details_view' to create auth view in."
-      );
+      var mesg =
+        "Could not find div with class 'auth_details_view' to create auth view in.";
+      console.log(mesg);
+      // throw new Error(mesg);
+      return;
     }
     if (authType == AuthType.OAUTH2) {
       this.authDetailView = new OAuth2AuthDetailView(
@@ -96,7 +100,48 @@ export class SiteInputView extends View<Site> {
   }
 }
 
-export class WPSiteInputView extends SiteInputView {
+export class PublicWPSiteInputView extends SiteInputView {
+  titleElem: any;
+  siteUrlElem: any;
+
+  setupViews() {
+    super.setupViews();
+    this.titleElem = this.rootElement.find("#title");
+    this.siteUrlElem = this.rootElement.find("#siteUrl");
+    this.onAuthTypeChanged();
+  }
+
+  get selectedAuthType(): AuthType {
+    return AuthType.OAUTH2;
+  }
+
+  protected extractEntity() {
+    return new Site(this.titleElem.val() || "", {
+      siteType: SiteType.PUBLIC_WORDPRESS,
+      siteConfig: {
+        siteUrl: this.siteUrlElem.val() || "",
+      },
+      authType: this.selectedAuthType,
+      authConfig: {},
+    });
+  }
+
+  template(): string {
+    return `
+        <label for="title">Title</label>
+        <input type="text" name="title" id="title" 
+               value = "{{eitherVal this.site.title Defaults.PublicWPRestApi.Title }}"
+               class="text ui-widget-content ui-corner-all" />
+        <label for="siteUrl">Site URL</label>
+        <input type="text" name="siteUrl" 
+               id="siteUrl" class="text ui-widget-content ui-corner-all" 
+               value = "{{eitherVal this.site.siteConfig.siteUrl Defaults.PublicWPRestApi.SiteUrl }}"
+               />
+      `;
+  }
+}
+
+export class HostedWPSiteInputView extends SiteInputView {
   titleElem: any;
   apiUrlElem: any;
 
@@ -109,7 +154,7 @@ export class WPSiteInputView extends SiteInputView {
 
   protected extractEntity() {
     return new Site(this.titleElem.val() || "", {
-      siteType: SiteType.WORDPRESS,
+      siteType: SiteType.HOSTED_WORDPRESS,
       siteConfig: {
         apiUrl: this.apiUrlElem.val() || "",
       },
@@ -122,15 +167,16 @@ export class WPSiteInputView extends SiteInputView {
     return `
         <label for="title">Title</label>
         <input type="text" name="title" id="title" 
-               value = "{{eitherVal this.site.title Defaults.WPRestApi.Title }}"
+               value = "{{eitherVal this.site.title Defaults.HostedWPRestApi.Title }}"
                class="text ui-widget-content ui-corner-all" />
         <label for="apiUrl">API Endpoint</label>
         <input type="text" name="apiUrl" 
                id="apiUrl" class="text ui-widget-content ui-corner-all" 
-               value = "{{eitherVal this.site.siteConfig.apiUrl Defaults.WPRestApi.ApiUrl }}"
+               value = "{{eitherVal this.site.siteConfig.apiUrl Defaults.HostedWPRestApi.ApiUrl }}"
                />
         
         <hr/>
+
         <label class = "auth_type_label" for="authType">Auth</label>
         <select id = "authType">
             <option value="JWT">Username/Password</option>
