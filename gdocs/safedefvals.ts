@@ -13,7 +13,7 @@ export const Defaults = {
     ValidateUrl: "/v1/token/validate",
     Token: "ENTER_TOKEN_HERE",
   },
-  JWTAuthClient: {
+  LoginAuthClient: {
     Username: "testuser",
     Password: "PASSWORD_1234",
     AuthBaseUrl: "https://example.com/wp-json/jwt-auth",

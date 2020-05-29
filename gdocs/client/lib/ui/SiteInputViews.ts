@@ -79,8 +79,8 @@ export abstract class SiteInputView extends View<Site> {
       this.authDetailElem,
       null
     );
-    var site = this._entity!!;
-    if (site.authType == authType) {
+    var site = this._entity;
+    if (site != null && site.authType == authType) {
       this.authDetailView.entity = site.authConfig;
     }
   }

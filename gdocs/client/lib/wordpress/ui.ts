@@ -13,10 +13,6 @@ export class PublicWPSiteInputView extends SiteInputView {
     this.onAuthTypeChanged();
   }
 
-  get selectedAuthType(): AuthType {
-    return this.authDetailView.entity?.authType || "";
-  }
-
   get siteConfig() {
     return {
       siteType: SITE_TYPE_WP_PUBLIC,
@@ -35,6 +31,7 @@ export class PublicWPSiteInputView extends SiteInputView {
                id="siteUrl" class="text ui-widget-content ui-corner-all" 
                value = "{{eitherVal this.site.siteConfig.siteUrl Defaults.PublicWPRestApi.SiteUrl }}"
                />
+        <input type = "hidden" value="AUTH_TYPE_OAUTH2" id = "authType" />
       `;
   }
 }

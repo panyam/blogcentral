@@ -38,8 +38,8 @@ export class MediumSiteInputView extends SiteInputView {
         <hr/>
         <label class = "auth_type_label" for="authType">Auth</label>
         <select id = "authType">
-            <option value="TOKEN">Integration Tokens</option>
-            <option value="OAUTH2">OAuth2</option>
+            <option value="AUTH_TYPE_TOKEN">Integration Tokens</option>
+            <option value="AUTH_TYPE_OAUTH2">OAuth2</option>
         </select>
         <div class = "auth_details_view"></div>
         `;

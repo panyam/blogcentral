@@ -10,6 +10,10 @@ import { LocalExtractor } from "./lib/flask";
 import { Defaults } from "../defvals";
 
 import { registerApp as wordpress } from "./lib/wordpress/index";
+import { registerApp as medium } from "./lib/medium/index";
+import { registerApp as loginauth } from "./lib/loginauth/index";
+import { registerApp as tokenauth } from "./lib/tokenauth/index";
+import { registerApp as oauth2auth } from "./lib/oauth2/index";
 
 (window as any).BCDefaults = Defaults;
 
@@ -18,9 +22,14 @@ $(function () {
   var httpClient = new JQHttpClient();
   var theApp = new App(store, httpClient);
   theApp.contentExtractor = new LocalExtractor("editor_container");
-
-  wordpress(theApp);
   (window as any).bcApp = theApp;
+
+  // register plugins
+  wordpress(theApp);
+  medium(theApp);
+  loginauth(theApp);
+  tokenauth(theApp);
+  oauth2auth(theApp);
 });
 
 // export default UserList class
