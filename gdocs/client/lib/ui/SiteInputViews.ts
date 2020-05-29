@@ -54,11 +54,14 @@ export abstract class SiteInputView extends View<Site> {
     return new Site(
       this.titleElem.val() || "",
       this.siteConfig,
-      this.authDetailView.entity!!
+      this.authConfig
     );
   }
 
   abstract get siteConfig(): SiteConfig;
+  get authConfig(): AuthConfig {
+    return this.authDetailView.entity!!;
+  }
 
   onAuthTypeChanged() {
     var authType = this.selectedAuthType;

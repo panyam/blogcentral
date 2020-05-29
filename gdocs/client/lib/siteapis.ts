@@ -72,12 +72,8 @@ export class Site {
   get config(): any {
     return {
       title: this.title,
-      config: {
-        siteType: this.siteType,
-        authType: this.authType,
-        siteConfig: this.siteConfig,
-        authConfig: this.authConfig,
-      },
+      siteConfig: this.siteConfig,
+      authConfig: this.authConfig,
     };
   }
 }

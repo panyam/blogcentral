@@ -13,6 +13,12 @@ export class PublicWPSiteInputView extends SiteInputView {
     this.onAuthTypeChanged();
   }
 
+  get authConfig() {
+    return {
+      authType: "AUTH_TYPE_OAUTH2",
+    };
+  }
+
   get siteConfig() {
     return {
       siteType: SITE_TYPE_WP_PUBLIC,
