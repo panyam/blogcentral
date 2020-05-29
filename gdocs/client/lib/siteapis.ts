@@ -8,11 +8,10 @@ export type SiteType = string;
 
 export interface SiteConfig {
   siteType: SiteType;
-  authConfig: AuthConfig;
 }
 
 export abstract class SiteApi {
-  config: any;
+  config: SiteConfig;
   constructor(config: SiteConfig) {
     this.config = config || {};
   }
@@ -42,19 +41,22 @@ export class Post {
 
 export class Site {
   title: string;
-  siteType: SiteType;
-  siteConfig: any;
-  authType: AuthType;
-  authConfig: any;
+  siteConfig: SiteConfig;
+  authConfig: AuthConfig;
   selectedPost: any = null;
 
-  constructor(title: string, configs: any) {
+  constructor(title: string, siteConfig: SiteConfig, authConfig: AuthConfig) {
     this.title = title;
-    configs = configs || {};
-    this.siteType = ensureParam(configs, "siteType");
-    this.authType = ensureParam(configs, "authType");
-    this.siteConfig = ensureParam(configs, "siteConfig");
-    this.authConfig = ensureParam(configs, "authConfig");
+    this.siteConfig = siteConfig;
+    this.authConfig = authConfig;
+  }
+
+  get siteType(): SiteType {
+    return ensureParam(this.siteConfig, "siteType");
+  }
+
+  get authType(): AuthType {
+    return ensureParam(this.authConfig, "authType");
   }
 
   equals(another: Site): boolean {
@@ -122,7 +124,7 @@ export class SiteService {
   async loadAll() {
     var sites = (await this.store.get("sites")) || [];
     this.sites = sites.map(function (data: any, _index: Int) {
-      return new Site(data.title, data.config);
+      return new Site(data.title, data.siteConfig, data.authConfig);
     });
     return true;
   }

@@ -1,4 +1,3 @@
-
 import { App } from "../app";
 import { Nullable } from "../types";
 import { AuthConfig } from "../authclients";
@@ -16,7 +15,7 @@ export function registerApp(app: App) {
     return new OAuth2AuthDetailView(elem_or_id).setup();
   };
 
-  app.authClientFactories[AUTH_TYPE_OAUTH2] = (config: Nullable<AuthConfig>) => {
+  app.authClientFactories[AUTH_TYPE_OAUTH2] = (config: AuthConfig) => {
     return new OAuth2AuthClient(config);
   };
 }

@@ -1,11 +1,12 @@
 import { Request, URLBuilder } from "../net";
 import { ensureParam } from "../utils";
-import { Post , SiteConfig , SiteApi } from "../siteapis";
+import { Post, SiteConfig, SiteApi } from "../siteapis";
+import { PUBLIC_WP, HOSTED_WP } from "./core";
 
 declare var BCDefaults: any;
 
 export abstract class WPRestApi extends SiteApi {
-  abstract get apiUrl() : string
+  abstract get apiUrl(): string;
 
   newRequest(path: string, params: any = null): Request {
     params = params || {};
@@ -82,6 +83,10 @@ export abstract class WPRestApi extends SiteApi {
   }
 }
 
+export interface HostedWPSiteConfig extends SiteConfig {
+  apiUrl: string;
+}
+
 export class HostedWPRestApi extends WPRestApi {
   apiUrl: string;
   constructor(config: SiteConfig) {
@@ -89,11 +94,16 @@ export class HostedWPRestApi extends WPRestApi {
     this.apiUrl = ensureParam(config, "apiUrl");
   }
 
-  static defaultConfig() {
+  static defaultConfig(): HostedWPSiteConfig {
     return {
+      siteType: HOSTED_WP,
       apiUrl: BCDefaults.HostedWPRestApi.ApiUrl,
     };
   }
+}
+
+export interface PublicWPSiteConfig extends SiteConfig {
+  siteUrl: string;
 }
 
 export class PublicWPRestApi extends WPRestApi {
@@ -103,13 +113,13 @@ export class PublicWPRestApi extends WPRestApi {
     this.siteUrl = ensureParam(config, "siteUrl");
   }
 
-  get apiUrl() : string {
-      return "https://public-api.wordpress.com/wp/v2/sites/" + 
-      this.siteUrl
+  get apiUrl(): string {
+    return "https://public-api.wordpress.com/wp/v2/sites/" + this.siteUrl;
   }
 
-  static defaultConfig() {
+  static defaultConfig(): PublicWPSiteConfig {
     return {
+      siteType: PUBLIC_WP,
       siteUrl: BCDefaults.PublicWPRestApi.SiteUrl,
     };
   }

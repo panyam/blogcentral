@@ -1,10 +1,9 @@
 import { App } from "../app";
 import { Nullable } from "../types";
 import { AuthConfig } from "../authclients";
-import { TokenAuthClient } from "./client";
+import { TokenAuthConfig, TokenAuthClient } from "./client";
 import { TokenAuthDetailView } from "./ui";
-
-export const AUTH_TYPE_TOKEN = "AUTH_TYPE_TOKEN";
+import { AUTH_TYPE_TOKEN } from "./core";
 
 export function registerApp(app: App) {
   app.authViewFactories[AUTH_TYPE_TOKEN] = (
@@ -15,7 +14,7 @@ export function registerApp(app: App) {
     return new TokenAuthDetailView(elem_or_id).setup();
   };
 
-  app.authClientFactories[AUTH_TYPE_TOKEN] = (config: Nullable<AuthConfig>) => {
+  app.authClientFactories[AUTH_TYPE_TOKEN] = (config: TokenAuthConfig) => {
     return new TokenAuthClient(config);
   };
 }

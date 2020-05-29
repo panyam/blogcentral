@@ -1,27 +1,21 @@
 import { SiteInputView } from "../ui/SiteInputViews";
 import { SiteSummaryView } from "../ui/SiteSummaryViews";
-import { Site, SiteType } from "../siteapis";
+import { SiteConfig } from "../siteapis";
+import { LINKEDIN } from "./core";
 
 export class LISiteInputView extends SiteInputView {
-  titleElem: any;
   usernameElem: any;
 
   setupViews() {
     super.setupViews();
-    this.titleElem = this.rootElement.find("#title");
     this.usernameElem = this.rootElement.find("#username");
     this.onAuthTypeChanged();
   }
 
-  protected extractEntity() {
-    return new Site(this.titleElem.val() || "", {
-      siteType: LINKEDIN,
-      siteConfig: {},
-      authType: AuthType.TOKEN,
-      authConfig: {
-        username: this.usernameElem.val() || "",
-      },
-    });
+  get siteConfig() {
+    return {
+      siteType: LINKEDIN
+    } as SiteConfig;
   }
 
   template(): string {

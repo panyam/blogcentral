@@ -4,6 +4,7 @@ import { Request, URLBuilder, HttpClient } from "../net";
 import { dateDelta } from "../utils";
 import { ensureCreated } from "../ui/utils";
 import { FormDialog } from "../ui/Views";
+import { AUTH_TYPE_LOGIN } from "./core";
 
 declare var BCDefaults: any;
 
@@ -25,8 +26,12 @@ export class LoginAuthClient extends TokenAuthClient {
     return this._authConfig as LoginAuthConfig;
   }
 
-  static defaultConfig(): any {
-    var out = super.defaultConfig();
+  static defaultConfig(): LoginAuthConfig {
+    var out = {} as any;
+    out["authType"] = AUTH_TYPE_LOGIN;
+    out["authBaseUrl"] = BCDefaults.LoginAuthClient.AuthBaseUrl;
+    out["token"] = "";
+    out["tokenExpiresAt"] = 0;
     out["tokenUrl"] = BCDefaults.LoginAuthClient.TokenUrl;
     out["validateUrl"] = BCDefaults.LoginAuthClient.ValidateUrl;
     return out;

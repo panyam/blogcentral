@@ -1,0 +1,2 @@
+
+export const AUTH_TYPE_LOGIN = "AUTH_TYPE_LOGIN";

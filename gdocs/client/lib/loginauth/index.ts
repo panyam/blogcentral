@@ -1,22 +1,19 @@
-
 import { App } from "../app";
 import { Nullable } from "../types";
-import { AuthConfig } from "../authclients";
-import { LoginAuthClient } from "./client";
+import { LoginAuthConfig, LoginAuthClient } from "./client";
 import { LoginAuthDetailView } from "./ui";
-
-export const AUTH_TYPE_LOGIN = "AUTH_TYPE_LOGIN";
+import { AUTH_TYPE_LOGIN } from "./core";
 
 export function registerApp(app: App) {
   app.authViewFactories[AUTH_TYPE_LOGIN] = (
     _purpose: string,
     elem_or_id: any,
-    _entity: Nullable<AuthConfig>
+    _entity: Nullable<LoginAuthConfig>
   ) => {
     return new LoginAuthDetailView(elem_or_id).setup();
   };
 
-  app.authClientFactories[AUTH_TYPE_LOGIN] = (config: Nullable<AuthConfig>) => {
+  app.authClientFactories[AUTH_TYPE_LOGIN] = (config: LoginAuthConfig) => {
     return new LoginAuthClient(app.httpClient, config);
   };
 }

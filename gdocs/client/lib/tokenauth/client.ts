@@ -3,6 +3,7 @@ import { Nullable } from "../types";
 import { Request } from "../net";
 import { ensureCreated } from "../ui/utils";
 import { FormDialog } from "../ui/Views";
+import { AUTH_TYPE_TOKEN } from "./core";
 
 declare var BCDefaults: any;
 
@@ -88,8 +89,9 @@ export class TokenAuthClient implements AuthClient {
     return AuthResult.SUCCESS;
   }
 
-  static defaultConfig(): any {
+  static defaultConfig(): TokenAuthConfig {
     var out = {} as any;
+    out["authType"] = AUTH_TYPE_TOKEN;
     out["authBaseUrl"] = BCDefaults.TokenAuthClient.AuthBaseUrl;
     out["tokenUrl"] = BCDefaults.TokenAuthClient.TokenUrl;
     out["validateUrl"] = BCDefaults.TokenAuthClient.ValidateUrl;

@@ -15,16 +15,21 @@ export class SiteInputDialog extends FormDialog<Site> {
       template: `
         <label for="platform">Platform</label>
         <select id = "platform">
-            <option value="PUBLIC_WORDPRESS">Public WordPress Blog</option>
-            <option value="HOSTED_WORDPRESS">Hosted WordPress Blog</option>
-            <option value="MEDIUM">Medium</option>
-            <option value="LINKEDIN">LinkedIn</option>
+            {{#eachInMap App.siteApiFactoreis}}
+            <option value="{{key}}">{{key}}</option>
+            {{/eachInMap}}
         </select>
         <div class = "site_details_view"></div>
     `,
     });
     this.app = app;
     this.addingSiteMode = addingSiteMode;
+  }
+
+  enrichViewParams(viewParams: any): any {
+    viewParams = super.enrichViewParams(viewParams);
+    viewParams["App"] = this.app;
+    return viewParams;
   }
 
   setupViews() {
@@ -34,8 +39,6 @@ export class SiteInputDialog extends FormDialog<Site> {
     this.siteTypeElem = this.rootElement.find("select");
     if (this.entity != null) {
       this.selectedSiteType = this.entity.siteType;
-    } else {
-      this.selectedSiteType = SiteType.HOSTED_WORDPRESS;
     }
     this.siteTypeElem.change(function (_evt: any) {
       self.onSiteTypeChanged();

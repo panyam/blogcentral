@@ -2,7 +2,7 @@ import { AuthConfig, AuthResult, AuthClient } from "../authclients";
 import { Request } from "../net";
 import { ensureParam } from "../utils";
 
-export class OAuth2Client implements AuthClient {
+export class OAuth2AuthClient implements AuthClient {
   clientId: string;
   clientSecret: string;
   redirectUrl: string;

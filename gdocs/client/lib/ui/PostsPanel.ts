@@ -6,6 +6,7 @@ import { PostListView, PostListViewDelegate } from "./PostListView";
 import { setVisible, setEnabled, ensureElement, ensureCreated } from "./utils";
 import { Int, Nullable } from "../types";
 import { App } from "../app";
+import { Site, Post } from "../siteapis";
 
 const PAGE_LENGTH = 5;
 
@@ -167,7 +168,7 @@ export class PostsPanel extends View<any> implements PostListViewDelegate {
     try {
       console.log("Creating New Post: ", newPost);
       this.activityIndicator.show();
-      await app.createPost(site, newPost, {});
+      await app.createPost(site, newPost!!, {});
     } catch (e) {
       console.log("Create Post Exception: ", e);
     }

@@ -1,35 +1,31 @@
 import { SiteInputView } from "../ui/SiteInputViews";
 import { SiteSummaryView } from "../ui/SiteSummaryViews";
-import { Site } from "../siteapis";
-import { setEnabled } from "../ui/utils";
+import { Site, SiteConfig } from "../siteapis";
+import { MEDIUM } from "./core";
 
 export class MediumSiteInputView extends SiteInputView {
-  titleElem: any;
   usernameElem: any;
 
   setupViews() {
     super.setupViews();
-    this.titleElem = this.rootElement.find("#title");
     this.usernameElem = this.rootElement.find("#username");
     this.onAuthTypeChanged();
   }
 
   onAuthTypeChanged() {
     super.onAuthTypeChanged();
+    /*
     var tadv = this.authDetailView as TokenAuthDetailView;
     tadv.authBaseUrlElem.val("https://api.medium.com/v1");
     setEnabled(tadv.authBaseUrlElem, false);
+   */
   }
 
-  protected extractEntity() {
-    return new Site(this.titleElem.val() || "", {
-      siteType: SiteType.MEDIUM,
-      siteConfig: {
-        username: this.usernameElem.val() || "",
-      },
-      authType: AuthType.TOKEN,
-      authConfig: this.authDetailView.entity,
-    });
+  get siteConfig() {
+    return {
+      siteType: MEDIUM,
+      username: this.usernameElem.val() || "",
+    } as SiteConfig;
   }
 
   template(): string {

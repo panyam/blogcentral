@@ -1,32 +1,27 @@
 import { SiteInputView } from "../ui/SiteInputViews";
-import { SiteSummaryView  } from "../ui/SiteSummaryViews";
+import { SiteSummaryView } from "../ui/SiteSummaryViews";
 import { AuthType } from "../authclients";
-import { Site , SiteType } from "../siteapis";
+import { Site, SiteConfig } from "../siteapis";
+import { PUBLIC_WP, HOSTED_WP } from "./core";
 
 export class PublicWPSiteInputView extends SiteInputView {
-  titleElem: any;
   siteUrlElem: any;
 
   setupViews() {
     super.setupViews();
-    this.titleElem = this.rootElement.find("#title");
     this.siteUrlElem = this.rootElement.find("#siteUrl");
     this.onAuthTypeChanged();
   }
 
   get selectedAuthType(): AuthType {
-    return OAUTH2;
+    return this.authDetailView.entity?.authType || "";
   }
 
-  protected extractEntity() {
-    return new Site(this.titleElem.val() || "", {
+  get siteConfig() {
+    return {
       siteType: PUBLIC_WP,
-      siteConfig: {
-        siteUrl: this.siteUrlElem.val() || "",
-      },
-      authType: this.selectedAuthType,
-      authConfig: {},
-    });
+      siteUrl: this.siteUrlElem.val() || "",
+    } as SiteConfig;
   }
 
   template(): string {
@@ -45,25 +40,19 @@ export class PublicWPSiteInputView extends SiteInputView {
 }
 
 export class HostedWPSiteInputView extends SiteInputView {
-  titleElem: any;
   apiUrlElem: any;
 
   setupViews() {
     super.setupViews();
-    this.titleElem = this.rootElement.find("#title");
     this.apiUrlElem = this.rootElement.find("#apiUrl");
     this.onAuthTypeChanged();
   }
 
-  protected extractEntity() {
-    return new Site(this.titleElem.val() || "", {
-      siteType: HOSTED_WP,
-      siteConfig: {
+  get siteConfig() {
+      return {
+        siteType: HOSTED_WP,
         apiUrl: this.apiUrlElem.val() || "",
-      },
-      authType: this.selectedAuthType,
-      authConfig: this.authDetailView.entity,
-    });
+      } as SiteConfig
   }
 
   template(): string {

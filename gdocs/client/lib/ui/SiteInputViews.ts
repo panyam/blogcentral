@@ -1,9 +1,8 @@
 import "../../styles/SiteInputView";
 import { Nullable } from "../types";
 import { View } from "./Views";
-import { Site } from "../siteapis";
+import { Site, SiteConfig } from "../siteapis";
 import { AuthConfig, AuthType } from "../authclients";
-import { defaultSite } from "../defaults";
 import { ActivityIndicator } from "./ActivityIndicator";
 
 interface AuthViewCreator {
@@ -15,7 +14,8 @@ interface AuthViewCreator {
   ): View<AuthConfig>;
 }
 
-export class SiteInputView extends View<Site> {
+export abstract class SiteInputView extends View<Site> {
+  titleElem: any;
   activityIndicator: ActivityIndicator;
   authDetailElem: any;
   authDetailView: View<AuthConfig>; // AuthDetailView;
@@ -27,12 +27,13 @@ export class SiteInputView extends View<Site> {
     authViewCreator: AuthViewCreator,
     site: Nullable<Site> = null
   ) {
-    super(elem_or_id, "site", site || defaultSite());
+    super(elem_or_id, "site", site);
     this.authViewCreator = authViewCreator;
   }
 
   setupViews(self: this = this) {
     super.setupViews();
+    this.titleElem = this.rootElement.find("#title");
     this.authDetailElem = this.rootElement.find(".auth_details_view");
     this.authTypeElem = this.rootElement.find("#authType");
     this.authTypeElem.change(function (_evt: any) {
@@ -48,6 +49,16 @@ export class SiteInputView extends View<Site> {
     this.authTypeElem.val(authType);
     this.onAuthTypeChanged();
   }
+
+  protected extractEntity() {
+    return new Site(
+      this.titleElem.val() || "",
+      this.siteConfig,
+      this.authDetailView.entity!!
+    );
+  }
+
+  abstract get siteConfig(): SiteConfig;
 
   onAuthTypeChanged() {
     var authType = this.selectedAuthType;
