@@ -1,8 +1,8 @@
 import { View } from "./Views";
+import { SiteSummaryView } from "./SiteSummaryViews";
 import { Int, Nullable } from "../types";
-import { Site, Post } from "../models";
+import { Site, Post } from "../siteapis";
 import { App } from "../app";
-import { createSiteSummaryView, SiteSummaryView } from "./SiteSummaryViews";
 
 export interface SiteListViewDelegate {
   /**
@@ -35,10 +35,13 @@ export class SiteListView extends View<Site[]> {
     this.siteViews = this.rootElement
       .find(".site_div")
       .map((i: Int, elem: any) => {
-        var siteView = createSiteSummaryView(
+        var site = self.app.siteService.sites[i];
+        var siteView = this.app.createSiteView(
+          site.siteType,
+          "summary",
           elem,
           self.app.siteService.sites[i]
-        );
+        ) as SiteSummaryView;
         siteView.showProgress(false);
         siteView.selectPostButton.button().on("click", (_event: any) => {
           self.onSelectPostClicked(siteView);
@@ -56,7 +59,7 @@ export class SiteListView extends View<Site[]> {
   }
 
   async onSelectPostClicked(siteView: SiteSummaryView) {
-    var site = siteView.entity;
+    var site = siteView.entity!!;
     if (this.delegate != null) {
       await this.delegate.selectPost(site);
       this.refreshViews();
@@ -64,7 +67,7 @@ export class SiteListView extends View<Site[]> {
   }
 
   async onPublishPostClicked(siteView: SiteSummaryView) {
-    var site = siteView.entity;
+    var site = siteView.entity!!;
     if (site.selectedPost == null) {
       if (this.delegate != null) {
         await this.delegate.selectPost(site);
@@ -81,7 +84,7 @@ export class SiteListView extends View<Site[]> {
   onRemoveSiteClicked(siteView: SiteSummaryView) {
     var self = this;
     var siteService = this.app.siteService;
-    var site = siteView.entity;
+    var site = siteView.entity!!;
     console.log("Removing Site: ", site);
     siteService.remove(site).then(() => self.refreshViews());
   }

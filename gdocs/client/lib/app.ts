@@ -106,11 +106,11 @@ export class App {
   async ensureLoggedIn(site: Site) {
     while (true) {
       var authClient = this.createAuthClient(site.authType, site.authConfig);
-      if (await authClient.validateAuth(site)) return true;
+      if (await authClient.validateAuth()) return true;
 
       // if we are not logged in then start the auth flow - This could involve
       // showing responding UIs to gather credentials etc.
-      var result = await authClient.startAuthFlow(site);
+      var result = await authClient.startAuthFlow();
       if (result == AuthResult.CANCELLED) {
         console.log("Login Cancelled");
         return false;

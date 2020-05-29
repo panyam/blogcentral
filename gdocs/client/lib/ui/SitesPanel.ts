@@ -6,7 +6,7 @@ import { ensureElement, ensureCreated } from "./utils";
 import { View } from "./Views";
 import { Nullable } from "../types";
 import { PostsPanel } from "./PostsPanel";
-import { Site, Post } from "../models";
+import { Site, Post } from "../siteapis";
 import { App } from "../app";
 
 export class SitesPanel extends View<null> implements SiteListViewDelegate {

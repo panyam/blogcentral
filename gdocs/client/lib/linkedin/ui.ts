@@ -1,7 +1,6 @@
 import { SiteInputView } from "../ui/SiteInputViews";
 import { SiteSummaryView } from "../ui/SiteSummaryViews";
-import { Site } from "../models";
-import { SiteType } from "../siteapis";
+import { Site, SiteType } from "../siteapis";
 
 export class LISiteInputView extends SiteInputView {
   titleElem: any;

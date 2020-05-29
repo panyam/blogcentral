@@ -1,14 +1,12 @@
 import { setEnabled } from "./utils";
-import { FormDialog } from "./Views";
-import { SiteInputView, createSiteInputView } from "./SiteInputViews";
-import { SiteType } from "../enums";
-import { Site } from "../models";
+import { View, FormDialog } from "./Views";
+import { Site, SiteType } from "../siteapis";
 import { App } from "../app";
 
 export class SiteInputDialog extends FormDialog<Site> {
   siteTypeElem: JQuery<HTMLElement>;
   siteDetailElem: JQuery<HTMLElement>;
-  siteInputView: SiteInputView;
+  siteInputView: View<Site>;
   app: App;
   addingSiteMode: boolean = true;
 
@@ -46,30 +44,12 @@ export class SiteInputDialog extends FormDialog<Site> {
   }
 
   set selectedSiteType(siteType: SiteType) {
-    if (siteType == SiteType.HOSTED_WORDPRESS) {
-      this.siteTypeElem.val("HOSTED_WORDPRESS");
-    } else if (siteType == SiteType.PUBLIC_WORDPRESS) {
-      this.siteTypeElem.val("PUBLIC_WORDPRESS");
-    } else if (siteType == SiteType.LINKEDIN) {
-      this.siteTypeElem.val("LINKEDIN");
-    } else if (siteType == SiteType.MEDIUM) {
-      this.siteTypeElem.val("MEDIUM");
-    }
+    this.siteTypeElem.val(siteType);
     this.onSiteTypeChanged();
   }
 
   get selectedSiteType(): SiteType {
-    var siteType = this.siteTypeElem.val();
-    if (siteType == "HOSTED_WORDPRESS") {
-      return SiteType.HOSTED_WORDPRESS;
-    } else if (siteType == "PUBLIC_WORDPRESS") {
-      return SiteType.PUBLIC_WORDPRESS;
-    } else if (siteType == "MEDIUM") {
-      return SiteType.MEDIUM;
-    } else if (siteType == "LINKEDIN") {
-      return SiteType.LINKEDIN;
-    }
-    return -1;
+    return this.siteTypeElem.val() as SiteType;
   }
 
   onSiteTypeChanged() {
@@ -79,7 +59,12 @@ export class SiteInputDialog extends FormDialog<Site> {
     setEnabled(this.siteTypeElem, this.addingSiteMode);
     // show the different view based on the type
     this.siteDetailElem = this.rootElement.find(".site_details_view");
-    this.siteInputView = createSiteInputView(siteType, this.siteDetailElem);
+    this.siteInputView = this.app.createSiteView(
+      siteType,
+      "input",
+      this.siteDetailElem,
+      null
+    );
   }
 
   extractEntity() {

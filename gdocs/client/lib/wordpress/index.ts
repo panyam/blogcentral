@@ -1,7 +1,6 @@
 import { App } from "../app";
 import { Nullable } from "../types";
-import { Site } from "../models";
-import { SiteConfig } from "../siteapis";
+import { Site , SiteConfig } from "../siteapis";
 import { PublicWPRestApi, HostedWPRestApi } from "./api";
 import { PublicWPSiteInputView, HostedWPSiteInputView } from "./ui";
 import { PublicWPSiteSummaryView, HostedWPSiteSummaryView } from "./ui";

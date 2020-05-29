@@ -1,5 +1,5 @@
 import { FormDialog } from "./Views";
-import { Post } from "../models";
+import { Post } from "../siteapis";
 
 export class AddPostDialog extends FormDialog<Post> {
   titleElem: JQuery<HTMLElement>;

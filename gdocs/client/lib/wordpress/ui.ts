@@ -1,8 +1,7 @@
 import { SiteInputView } from "../ui/SiteInputViews";
 import { SiteSummaryView  } from "../ui/SiteSummaryViews";
-import { Site } from "../models";
 import { AuthType } from "../authclients";
-import { SiteType } from "../siteapis";
+import { Site , SiteType } from "../siteapis";
 
 export class PublicWPSiteInputView extends SiteInputView {
   titleElem: any;

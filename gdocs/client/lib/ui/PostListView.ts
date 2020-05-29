@@ -1,6 +1,6 @@
 import { View } from "./Views";
 import { Nullable } from "../types";
-import { Site, Post } from "../models";
+import { Site, Post } from "../siteapis";
 import { App } from "../app";
 
 export interface PostListViewDelegate {

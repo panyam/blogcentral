@@ -1,6 +1,6 @@
 import { SiteInputView } from "../ui/SiteInputViews";
 import { SiteSummaryView } from "../ui/SiteSummaryViews";
-import { Site } from "../models";
+import { Site } from "../siteapis";
 import { setEnabled } from "../ui/utils";
 
 export class MediumSiteInputView extends SiteInputView {

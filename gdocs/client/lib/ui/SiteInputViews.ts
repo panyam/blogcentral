@@ -1,24 +1,34 @@
 import "../../styles/SiteInputView";
 import { Nullable } from "../types";
 import { View } from "./Views";
-import {
-  AuthDetailView,
-  TokenAuthDetailView,
-  LoginAuthDetailView,
-  OAuth2AuthDetailView,
-} from "./AuthDetailViews";
-import { Site } from "../models";
+import { Site } from "../siteapis";
+import { AuthConfig, AuthType } from "../authclients";
 import { defaultSite } from "../defaults";
 import { ActivityIndicator } from "./ActivityIndicator";
+
+interface AuthViewCreator {
+  createAuthView(
+    authType: string,
+    purpose: string,
+    elem_or_id: any,
+    entity: Nullable<AuthConfig>
+  ): View<AuthConfig>;
+}
 
 export class SiteInputView extends View<Site> {
   activityIndicator: ActivityIndicator;
   authDetailElem: any;
-  authDetailView: AuthDetailView;
+  authDetailView: View<AuthConfig>; // AuthDetailView;
   authTypeElem: any;
+  authViewCreator: AuthViewCreator;
 
-  constructor(elem_or_id: any, site: Nullable<Site> = null) {
+  constructor(
+    elem_or_id: any,
+    authViewCreator: AuthViewCreator,
+    site: Nullable<Site> = null
+  ) {
     super(elem_or_id, "site", site || defaultSite());
+    this.authViewCreator = authViewCreator;
   }
 
   setupViews(self: this = this) {
@@ -31,25 +41,11 @@ export class SiteInputView extends View<Site> {
   }
 
   get selectedAuthType(): AuthType {
-    var authType = this.authTypeElem.val();
-    if (authType == "OAUTH2") {
-      return AuthType.OAUTH2;
-    } else if (authType == "TOKEN") {
-      return AuthType.TOKEN;
-    } else if (authType == "LOGIN") {
-      return AuthType.LOGIN;
-    }
-    return -1;
+    return this.authTypeElem.val() as AuthType;
   }
 
   set selectedAuthType(authType: AuthType) {
-    if (authType == AuthType.OAUTH2) {
-      this.authTypeElem.val("OAUTH2");
-    } else if (authType == AuthType.TOKEN) {
-      this.authTypeElem.val("TOKEN");
-    } else if (authType == AuthType.LOGIN) {
-      this.authTypeElem.val("LOGIN");
-    }
+    this.authTypeElem.val(authType);
     this.onAuthTypeChanged();
   }
 
@@ -66,17 +62,12 @@ export class SiteInputView extends View<Site> {
       // throw new Error(mesg);
       return;
     }
-    if (authType == AuthType.OAUTH2) {
-      this.authDetailView = new OAuth2AuthDetailView(
-        this.authDetailElem
-      ).setup();
-    } else if (authType == AuthType.TOKEN) {
-      this.authDetailView = new TokenAuthDetailView(
-        this.authDetailElem
-      ).setup();
-    } else if (authType == AuthType.LOGIN) {
-      this.authDetailView = new LoginAuthDetailView(this.authDetailElem).setup();
-    }
+    this.authDetailView = this.authViewCreator.createAuthView(
+      authType,
+      "",
+      this.authDetailElem,
+      null
+    );
     var site = this._entity!!;
     if (site.authType == authType) {
       this.authDetailView.entity = site.authConfig;

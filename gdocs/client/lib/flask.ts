@@ -2,7 +2,6 @@ import { Nullable } from "./types";
 import { Store } from "./stores";
 import { ContentExtractor } from "./extractors";
 import { Request, Response, HttpClient } from "./net";
-import { Site } from "./models";
 
 declare var Quill: any;
 export class LocalStore extends Store {
@@ -103,7 +102,7 @@ export class LocalExtractor implements ContentExtractor {
     });
    */
   }
-  async extractHtml(_site: Site) {
+  async extractHtml(/*_site: Site*/) {
     var self = this;
     return new Promise((resolve, _reject) => {
       var val = $("#" + self.elemid).val();

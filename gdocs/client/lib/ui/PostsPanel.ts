@@ -5,7 +5,6 @@ import { ActivityIndicator } from "./ActivityIndicator";
 import { PostListView, PostListViewDelegate } from "./PostListView";
 import { setVisible, setEnabled, ensureElement, ensureCreated } from "./utils";
 import { Int, Nullable } from "../types";
-import { Site, Post } from "../models";
 import { App } from "../app";
 
 const PAGE_LENGTH = 5;

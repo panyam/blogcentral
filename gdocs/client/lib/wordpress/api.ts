@@ -1,7 +1,6 @@
 import { Request, URLBuilder } from "../net";
 import { ensureParam } from "../utils";
-import { Post } from "../models";
-import { SiteConfig , SiteApi } from "../siteapis";
+import { Post , SiteConfig , SiteApi } from "../siteapis";
 
 declare var BCDefaults: any;
 

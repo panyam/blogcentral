@@ -1,6 +1,5 @@
 import { Request } from "../net";
-import { Post } from "../models";
-import { SiteConfig , SiteApi } from "../siteapis";
+import { Post, SiteConfig, SiteApi } from "../siteapis";
 
 declare var BCDefaults: any;
 
