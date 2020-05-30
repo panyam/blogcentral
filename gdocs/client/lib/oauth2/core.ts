@@ -1,0 +1,2 @@
+
+export const AUTH_TYPE_OAUTH2 = "AUTH_TYPE_OAUTH2";

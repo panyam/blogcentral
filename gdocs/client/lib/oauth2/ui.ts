@@ -1,4 +1,5 @@
 import { AuthDetailView } from "../ui/AuthDetailViews";
+import { AUTH_TYPE_OAUTH2 } from "./core";
 
 export class OAuth2AuthDetailView extends AuthDetailView {
   authBaseUrlLabel: JQuery<HTMLElement>;
@@ -22,6 +23,11 @@ export class OAuth2AuthDetailView extends AuthDetailView {
     this.authenticateUrlLabel = this.rootElement.find(
       "label[for='authenticateUrl']"
     );
+  }
+
+  extractEntity() {
+    var out = { authType: AUTH_TYPE_OAUTH2 }
+    return out;
   }
 
   template(): string {

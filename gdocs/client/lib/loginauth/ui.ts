@@ -1,5 +1,5 @@
 import { TokenAuthDetailView } from "../tokenauth/ui";
-import { valOrDefault } from "../utils";
+import { AUTH_TYPE_LOGIN } from "./core";
 
 /**
  * A view to capture details about logging into publicly hosted wordpress site.
@@ -21,6 +21,7 @@ export class LoginAuthDetailView extends TokenAuthDetailView {
 
   extractEntity() {
     var entity: any = super.extractEntity();
+    entity["authType"] = AUTH_TYPE_LOGIN;
     entity["tokenUrl"] = this.tokenUrlElem.val();
     entity["validateUrl"] = this.validateUrlElem.val();
     return entity;

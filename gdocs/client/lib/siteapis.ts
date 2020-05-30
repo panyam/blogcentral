@@ -62,8 +62,6 @@ export class Site {
   equals(another: Site): boolean {
     return (
       this.title == another.title &&
-      this.siteType == another.siteType &&
-      this.authType == another.authType &&
       this.authConfig == another.authConfig &&
       this.siteConfig == another.siteConfig
     );

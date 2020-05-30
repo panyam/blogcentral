@@ -1,6 +1,6 @@
 
 import { AuthDetailView } from "../ui/AuthDetailViews";
-import { valOrDefault } from "../utils";
+import { AUTH_TYPE_TOKEN } from "./core";
 
 export class TokenAuthDetailView extends AuthDetailView {
   authBaseUrlLabel: JQuery<HTMLElement>;
@@ -21,7 +21,7 @@ export class TokenAuthDetailView extends AuthDetailView {
   }
 
   extractEntity() {
-    var out = { token: this.tokenElem.val() || "" } as any;
+    var out = { authType: AUTH_TYPE_TOKEN, token: this.tokenElem.val() || "" } as any;
     out["authBaseUrl"] = this.authBaseUrlElem.val();
     return out;
   }

@@ -4,7 +4,7 @@ import { AuthConfig } from "../authclients";
 import { OAuth2AuthClient } from "./client";
 import { OAuth2AuthDetailView } from "./ui";
 
-export const AUTH_TYPE_OAUTH2 = "AUTH_TYPE_OAUTH2";
+import { AUTH_TYPE_OAUTH2 } from "./core";
 
 export function registerApp(app: App) {
   app.authViewFactories[AUTH_TYPE_OAUTH2] = (
