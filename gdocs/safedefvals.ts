@@ -1,4 +1,8 @@
 export const Defaults = {
+  MediumRestApi: {
+    Title: "My Medium Blog",
+    Username: "mediumuser",
+  },
   HostedWPRestApi: {
     Title: "My Awesome Blog",
     ApiUrl: "https://example.com/wp-json/wp/v2",

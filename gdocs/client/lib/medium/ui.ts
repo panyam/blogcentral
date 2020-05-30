@@ -31,9 +31,14 @@ export class MediumSiteInputView extends SiteInputView {
   template(): string {
     return `
         <label for="title">Title</label>
-        <input type="text" name="title" id="title" class="text ui-widget-content ui-corner-all" value = "My Medium Site" />
+        <input type="text" name="title" id="title" class="text ui-widget-content ui-corner-all"
+               value = "{{eitherVal this.site.title Defaults.MediumRestApi.Title }}"
+               />
+
         <label for="username">Username</label>
-        <input type="text" name="title" id="username" class="text ui-widget-content ui-corner-all" value = "mediumuser" />
+        <input type="text" name="title" id="username" class="text ui-widget-content ui-corner-all" 
+               value = "{{eitherVal this.site.siteConfig.username Defaults.MediumRestApi.Username }}"
+               />
 
         <hr/>
         <label class = "auth_type_label" for="authType">Auth</label>
@@ -52,9 +57,7 @@ export class MediumSiteSummaryView extends SiteSummaryView {
       <div class = "activity_indicator" />
       <h3 class = "site_summary_title">{{this.site.title }}</h3>
       <div class = "site_summary_apiUrl">
-        API Url: <a href="{{this.site.apiUrl }}" target="_blank">
-        {{this.site.siteConfig.apiUrl }}
-        </a>
+        Site: @<a href="https://medium.com/@{{this.site.siteConfig.username}}" target="_blank">{{this.site.siteConfig.username }}</a>
       </div>
       <div class = "auth_summary_details_div"></div>
       <div class = "site_summary_selected_post">
