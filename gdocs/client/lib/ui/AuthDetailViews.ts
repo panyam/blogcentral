@@ -1,6 +1,11 @@
 import { ActivityIndicator } from "./ActivityIndicator";
 import { View } from "./Views";
 
+export interface IAuthDetailView  {
+  showField(_fieldName : string, _show : boolean) : void
+  enableField(_fieldName : string, _show : boolean) : void
+}
+
 export class AuthDetailView extends View<any> {
   activityIndicator: ActivityIndicator;
   allFields: JQuery<any>;
@@ -10,4 +15,5 @@ export class AuthDetailView extends View<any> {
   }
 
   showField(_fieldName : string, _show : boolean) {}
+  enableField(_fieldName : string, _show : boolean) {}
 }

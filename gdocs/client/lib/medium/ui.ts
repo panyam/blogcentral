@@ -17,7 +17,9 @@ export class MediumSiteInputView extends SiteInputView {
     var authType = this.selectedAuthType;
     this.authDetailView.showField("authBaseUrl", false);
     if (authType == "AUTH_TYPE_TOKEN") {
+      var tadv = this.authDetailView as ITokenAuthDetailView;
     } else {
+      var oadv = this.authDetailView as IOAuth2AuthDetailView;
       this.authDetailView.showField("clientId", false);
       this.authDetailView.showField("tokenUrl", false);
       this.authDetailView.showField("authorizeUrl", false);
