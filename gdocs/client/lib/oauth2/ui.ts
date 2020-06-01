@@ -30,25 +30,19 @@ export class OAuth2AuthDetailView extends AuthDetailView {
     );
   }
 
-  showField(fieldName: string, show: boolean = false) {
+  elementsFor(fieldName : string) : any[] { 
     if (fieldName == "tokenUrl") {
-      setVisible(this.tokenUrlLabel, show);
-      setVisible(this.tokenUrlElem, show);
+      return [this.tokenUrlLabel, this.tokenUrlElem]
     } else if (fieldName == "authBaseUrl") {
-      setVisible(this.authBaseUrlLabel, show);
-      setVisible(this.authBaseUrlElem, show);
+      return [this.authBaseUrlLabel, this.authBaseUrlElem]
     } else if (fieldName == "authorizeUrl") {
-      setVisible(this.authorizeUrlLabel, show);
-      setVisible(this.authorizeUrlElem, show);
+      return [this.authorizeUrlLabel, this.authorizeUrlElem]
     } else if (fieldName == "authenticateUrl") {
-      setVisible(this.authenticateUrlLabel, show);
-      setVisible(this.authenticateUrlElem, show);
+      return [this.authenticateUrlLabel, this.authenticateUrlElem]
     } else if (fieldName == "clientId") {
-      setVisible(this.clientIdLabel, show);
-      setVisible(this.clientIdElem, show);
-    } else {
-      super.showField(fieldName, show);
+      return [this.clientIdLabel, this.clientIdElem]
     }
+    return super.elementsFor(fieldName);
   }
 
   extractEntity() {

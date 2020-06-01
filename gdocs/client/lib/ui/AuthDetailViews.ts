@@ -1,12 +1,13 @@
 import { ActivityIndicator } from "./ActivityIndicator";
 import { View } from "./Views";
+import { setVisible } from "./utils";
 
 export interface IAuthDetailView  {
-  showField(_fieldName : string, _show : boolean) : void
-  enableField(_fieldName : string, _show : boolean) : void
+  showField(_fieldName : string, _show : boolean) : this
+  enableField(_fieldName : string, _show : boolean) : this
 }
 
-export class AuthDetailView extends View<any> {
+export class AuthDetailView extends View<any> implements IAuthDetailView {
   activityIndicator: ActivityIndicator;
   allFields: JQuery<any>;
 
@@ -14,6 +15,19 @@ export class AuthDetailView extends View<any> {
     super(elem_or_id, "authConfig", authConfig || {});
   }
 
-  showField(_fieldName : string, _show : boolean) {}
-  enableField(_fieldName : string, _show : boolean) {}
+  elementsFor(_fieldName : string) : any[] { return [] }
+  showField(fieldName : string, show : boolean = true) { 
+   var fields = this.elementsFor(fieldName);
+   fields.forEach((v : any) => {
+       setVisible(v, show);
+   });
+   return this;
+  }
+  enableField(fieldName : string, enabled : boolean = true) {
+   var fields = this.elementsFor(fieldName);
+   fields.forEach((v : any) => {
+       setVisible(v, enabled);
+   });
+   return this;
+  }
 }

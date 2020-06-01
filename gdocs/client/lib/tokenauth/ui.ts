@@ -20,11 +20,11 @@ export class TokenAuthDetailView extends AuthDetailView {
     this.authBaseUrlLabel = this.rootElement.find("label[for='authBaseUrl']");
   }
 
-  showField(fieldName: string, show: boolean = true) {
+  elementsFor(fieldName : string) : any[] { 
     if (fieldName == "authBaseUrl") {
-      setVisible(this.authBaseUrlLabel, show);
-      setVisible(this.authBaseUrlElem, show);
+        return [ this.authBaseUrlLabel, this.authBaseUrlElem ];
     }
+    return []
   }
 
   extractEntity() {

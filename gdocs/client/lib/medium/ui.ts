@@ -2,6 +2,8 @@ import { SiteInputView } from "../ui/SiteInputViews";
 import { SiteSummaryView } from "../ui/SiteSummaryViews";
 import { SiteConfig } from "../siteapis";
 import { SITE_TYPE_MEDIUM } from "./core";
+import { ITokenAuthDetailView } from "../tokenauth/interfaces";
+import { IOAuth2AuthDetailView } from "../oauth2/interfaces";
 
 export class MediumSiteInputView extends SiteInputView {
   usernameElem: any;

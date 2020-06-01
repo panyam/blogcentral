@@ -20,16 +20,13 @@ export class LoginAuthDetailView extends TokenAuthDetailView {
     this.tokenLabel.html("Current Token (optional)");
   }
 
-  showField(fieldName: string, show: boolean = false) {
+  elementsFor(fieldName : string) : any[] { 
     if (fieldName == "tokenUrl") {
-      setVisible(this.tokenUrlLabel, show);
-      setVisible(this.tokenUrlElem, show);
+      return [this.tokenUrlLabel, this.tokenUrlElem]
     } else if (fieldName == "validateUrl") {
-      setVisible(this.validateUrlLabel, show);
-      setVisible(this.validateUrlElem, show);
-    } else {
-      super.showField(fieldName, show);
+      return [this.validateUrlLabel, this.validateUrlElem]
     }
+    return super.elementsFor(fieldName);
   }
 
   extractEntity() {

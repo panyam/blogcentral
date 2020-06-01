@@ -28,7 +28,7 @@ export function ensureCreated(
   return out;
 }
 
-export function setEnabled(elem: any, enable: boolean) {
+export function setEnabled(elem: any, enable: boolean = true) {
   elem.prop("disabled", !enable);
   return elem;
 }
