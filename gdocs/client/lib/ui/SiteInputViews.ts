@@ -4,6 +4,7 @@ import { View } from "./Views";
 import { Site, SiteConfig } from "../siteapis";
 import { AuthConfig, AuthType } from "../authclients";
 import { ActivityIndicator } from "./ActivityIndicator";
+import { AuthDetailView } from "./AuthDetailViews";
 
 interface AuthViewCreator {
   createAuthView(
@@ -11,14 +12,14 @@ interface AuthViewCreator {
     purpose: string,
     elem_or_id: any,
     entity: Nullable<AuthConfig>
-  ): View<AuthConfig>;
+  ): AuthDetailView
 }
 
 export abstract class SiteInputView extends View<Site> {
   titleElem: any;
   activityIndicator: ActivityIndicator;
   authDetailElem: any;
-  authDetailView: View<AuthConfig>; // AuthDetailView;
+  authDetailView: AuthDetailView;
   authTypeElem: any;
   authViewCreator: AuthViewCreator;
 

@@ -8,4 +8,6 @@ export class AuthDetailView extends View<any> {
   constructor(elem_or_id: any, authConfig: any = null) {
     super(elem_or_id, "authConfig", authConfig || {});
   }
+
+  showField(_fieldName : string, _show : boolean) {}
 }

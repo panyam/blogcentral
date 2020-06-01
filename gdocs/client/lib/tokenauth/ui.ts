@@ -1,6 +1,6 @@
-
 import { AuthDetailView } from "../ui/AuthDetailViews";
 import { AUTH_TYPE_TOKEN } from "./core";
+import { setVisible } from "../ui/utils";
 
 export class TokenAuthDetailView extends AuthDetailView {
   authBaseUrlLabel: JQuery<HTMLElement>;
@@ -20,8 +20,18 @@ export class TokenAuthDetailView extends AuthDetailView {
     this.authBaseUrlLabel = this.rootElement.find("label[for='authBaseUrl']");
   }
 
+  showField(fieldName: string, show: boolean = true) {
+    if (fieldName == "authBaseUrl") {
+      setVisible(this.authBaseUrlLabel, show);
+      setVisible(this.authBaseUrlElem, show);
+    }
+  }
+
   extractEntity() {
-    var out = { authType: AUTH_TYPE_TOKEN, token: this.tokenElem.val() || "" } as any;
+    var out = {
+      authType: AUTH_TYPE_TOKEN,
+      token: this.tokenElem.val() || "",
+    } as any;
     out["authBaseUrl"] = this.authBaseUrlElem.val();
     return out;
   }

@@ -1,5 +1,6 @@
 import { TokenAuthDetailView } from "../tokenauth/ui";
 import { AUTH_TYPE_LOGIN } from "./core";
+import { setVisible } from "../ui/utils";
 
 /**
  * A view to capture details about logging into publicly hosted wordpress site.
@@ -17,6 +18,18 @@ export class LoginAuthDetailView extends TokenAuthDetailView {
     this.validateUrlElem = this.rootElement.find("#validateUrl");
     this.validateUrlLabel = this.rootElement.find("label[for='validateUrl']");
     this.tokenLabel.html("Current Token (optional)");
+  }
+
+  showField(fieldName: string, show: boolean = false) {
+    if (fieldName == "tokenUrl") {
+      setVisible(this.tokenUrlLabel, show);
+      setVisible(this.tokenUrlElem, show);
+    } else if (fieldName == "validateUrl") {
+      setVisible(this.validateUrlLabel, show);
+      setVisible(this.validateUrlElem, show);
+    } else {
+      super.showField(fieldName, show);
+    }
   }
 
   extractEntity() {

@@ -1,6 +1,6 @@
 import { SiteInputView } from "../ui/SiteInputViews";
 import { SiteSummaryView } from "../ui/SiteSummaryViews";
-import { Site, SiteConfig } from "../siteapis";
+import { SiteConfig } from "../siteapis";
 import { SITE_TYPE_MEDIUM } from "./core";
 
 export class MediumSiteInputView extends SiteInputView {
@@ -14,6 +14,15 @@ export class MediumSiteInputView extends SiteInputView {
 
   onAuthTypeChanged() {
     super.onAuthTypeChanged();
+    var authType = this.selectedAuthType;
+    this.authDetailView.showField("authBaseUrl", false);
+    if (authType == "AUTH_TYPE_TOKEN") {
+    } else {
+      this.authDetailView.showField("clientId", false);
+      this.authDetailView.showField("tokenUrl", false);
+      this.authDetailView.showField("authorizeUrl", false);
+      this.authDetailView.showField("authenticateUrl", false);
+    }
     /*
     var tadv = this.authDetailView as TokenAuthDetailView;
     tadv.authBaseUrlElem.val("https://api.medium.com/v1");

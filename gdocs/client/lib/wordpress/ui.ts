@@ -16,6 +16,10 @@ export class PublicWPSiteInputView extends SiteInputView {
   get authConfig() {
     return {
       authType: "AUTH_TYPE_OAUTH2",
+      clientId: "69037",
+      tokenUrl: "https://public-api.wordpress.com/oauth2/token",
+      authorizeUrl: "https://public-api.wordpress.com/oauth2/authorize",
+      authenticateUrl: "https://public-api.wordpress.com/oauth2/authenticate",
     };
   }
 
