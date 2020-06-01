@@ -6,11 +6,9 @@ const CopyPlugin = require('copy-webpack-plugin');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 const HTMLWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const uglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const uglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const WebpackShellPlugin = require('webpack-shell-plugin');
-const CreateFilePlugin = require('webpack-create-file-plugin');
 const GAppsJSWrapperPlugin = require("./myplugins");
 
 // Read Samples first
@@ -95,9 +93,8 @@ module.exports = (env, options) => {
         // new webpack.ProvidePlugin({ $: "jquery", jQuery: "jquery" }),
         // new webpack.HotModuleReplacementPlugin()
     ];
-    if (options.mode == "production") {
-        // plugins.splice(0, 0, new uglifyJsPlugin());
-    } else if (options.debug) {
+    if (!isDevelopment) {
+        plugins.splice(0, 0, new uglifyJsPlugin());
     }
 
     var output = {
@@ -190,16 +187,6 @@ module.exports = (env, options) => {
                     ],
                     use: ['ts-loader']
                 },
-                /*
-                {
-                    test: /\.scss$/,
-                    use: [
-                        'style-loader', 
-                        'css-loader', 
-                        'postcss-loader', 
-                        'sass-loader'
-                    ]
-                },*/
                 {
                     test: /\.module\.s(a|c)ss$/,
                     loader: [

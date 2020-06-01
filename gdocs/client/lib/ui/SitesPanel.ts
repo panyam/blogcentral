@@ -12,6 +12,7 @@ import { App } from "../app";
 export class SitesPanel extends View<null> implements SiteListViewDelegate {
   postsPanel: PostsPanel;
   addSiteDialog: Nullable<SiteInputDialog> = null;
+  clearButton: any;
   addButton: any;
   siteListView: SiteListView;
   app: App;
@@ -33,6 +34,11 @@ export class SitesPanel extends View<null> implements SiteListViewDelegate {
     var siteListDiv = this.rootElement.find("#site_list_div");
     this.siteListView = new SiteListView(siteListDiv, this.app).setup();
     this.siteListView.delegate = this;
+
+    this.clearButton = this.rootElement.find("#clear_button");
+    this.clearButton.button().on("click", function () {
+      self.app.siteService.clear();
+    });
 
     this.addButton = this.rootElement.find("#add_button");
     this.addButton.button().on("click", function () {

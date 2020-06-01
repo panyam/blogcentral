@@ -108,6 +108,11 @@ export class SiteService {
     return this.saveAll();
   }
 
+  async clear() {
+      this.sites = [];
+      this.saveAll();
+  }
+
   async saveAll() {
     var configs = this.sites.map((site: Site) => {
       return site.config;
