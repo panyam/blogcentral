@@ -22,10 +22,11 @@ export class MediumSiteInputView extends SiteInputView {
       var tadv = (this.authDetailView as unknown) as ITokenAuthDetailView;
     } else {
       var oadv = (this.authDetailView as unknown) as IOAuth2AuthDetailView;
-      this.authDetailView.showField("clientId", false);
-      this.authDetailView.showField("tokenUrl", false);
-      this.authDetailView.showField("authorizeUrl", false);
-      this.authDetailView.showField("authenticateUrl", false);
+      oadv.showField("clientId", false);
+      oadv.showField("tokenUrl", false);
+      oadv.showField("redirectUri", false);
+      oadv.showField("authorizeUrl", false);
+      oadv.showField("authenticateUrl", false);
     }
     /*
     var tadv = this.authDetailView as TokenAuthDetailView;
