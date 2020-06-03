@@ -1,0 +1,3 @@
+[submodule "blogcentral_config"]
+	path = blogcentral_config
+	url = git@github.com:panyam/blogcentral_config.git

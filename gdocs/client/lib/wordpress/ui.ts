@@ -21,6 +21,7 @@ export class PublicWPSiteInputView extends SiteInputView {
       clientId: "69037",
       scope: "global",
       redirectUri: OAUTH2_REDIRECT_URI,
+      responseType: "code", // Avoid Implicit grants for now
       tokenUrl: "https://public-api.wordpress.com/oauth2/token",
       authorizeUrl: "https://public-api.wordpress.com/oauth2/authorize",
       authenticateUrl: "https://public-api.wordpress.com/oauth2/authenticate",

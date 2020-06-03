@@ -13,13 +13,13 @@ export interface OAuth2AuthConfig extends AuthConfig {
   authorizeUrl: string;
   authenticateUrl: string;
 
-  grantType?: Nullable<string>
-  responseType?: Nullable<string>
-  state?: Nullable<string>
+  grantType?: Nullable<string>;
+  responseType?: Nullable<string>;
+  state?: Nullable<string>;
 
-  token?: Nullable<string>
-  tokenCreatedAt?: number
-  tokenExpiresAt?: number
+  token?: Nullable<string>;
+  tokenCreatedAt?: number;
+  tokenExpiresAt?: number;
 }
 
 export class OAuth2AuthClient implements AuthClient {
@@ -67,7 +67,7 @@ export class OAuth2AuthClient implements AuthClient {
     var builder = new URLBuilder(ac.authorizeUrl)
       .addParam("client_id", ac.clientId)
       .addParam("redirect_uri", ac.redirectUri);
-    if (ac.responseType) builder.addParam("response_type", ac.responseType);
+    builder.addParam("response_type", ac.responseType || "code");
     if (ac.state) builder.addParam("state", ac.state);
     if (ac.scope) builder.addParam("scope", ac.scope);
     return builder.build();
@@ -81,10 +81,12 @@ export class OAuth2AuthClient implements AuthClient {
     // throw new Error("Not Implemented");
     var elem = ensureCreated("start_oauth_auth_dialog");
     elem.addClass("form_dialog");
-    var tokenDialog = new FormDialog<any>(elem, null, this)
+    var tokenDialog = new FormDialog<any>(elem, null, {
+      fullAuthorizeUrl: this.fullAuthorizeUrl,
+    })
       .addButton("Cancel")
       .setTemplate(
-        `<button class="blue">
+        `<button style="width: 100%" class="blue">
             <a href="{{entity.fullAuthorizeUrl}}">Start OAuth2 Login</a>
          </button>`
       )
