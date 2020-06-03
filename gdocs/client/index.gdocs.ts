@@ -11,6 +11,9 @@ import { registerApp as loginauth } from "./lib/loginauth/index";
 import { registerApp as tokenauth } from "./lib/tokenauth/index";
 import { registerApp as oauth2auth } from "./lib/oauth2/index";
 
+const SCRIPT_ID = "1xRQEya-JbepQemUQT7cxV4JzF6MGoinzNtn_FsvPZlJw48xNm1Xd9BM_";
+(window as any).OAUTH2_REDIRECT_URI =
+"https://script.google.com/macros/d/" + SCRIPT_ID + "/usercallback";
 (window as any).BCDefaults = Defaults;
 
 $(function () {

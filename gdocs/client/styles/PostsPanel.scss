@@ -106,7 +106,7 @@ $posts_panel_search_button_height: 30px;
   left: 0px;
   right: 0px;
   bottom: 0px;
-  height: $posts_panel_footer_height;
+  height: $posts_panel_footer_height - 10;
 }
 
 // #posts_panel_div > #post_list_div span.post_title { font-weight: bold; }

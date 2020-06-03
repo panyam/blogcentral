@@ -1,4 +1,5 @@
 import { AuthConfig, AuthResult, AuthClient } from "../authclients";
+import { Nullable } from "../types";
 import { URLBuilder } from "../net";
 import { ensureCreated } from "../ui/utils";
 import { Request } from "../net";
@@ -7,12 +8,18 @@ import { FormDialog } from "../ui/Views";
 export interface OAuth2AuthConfig extends AuthConfig {
   clientId: string;
   tokenUrl: string;
-  responseType: string;
-  state: string;
   scope: string;
   redirectUri: string;
   authorizeUrl: string;
   authenticateUrl: string;
+
+  grantType?: Nullable<string>
+  responseType?: Nullable<string>
+  state?: Nullable<string>
+
+  token?: Nullable<string>
+  tokenCreatedAt?: number
+  tokenExpiresAt?: number
 }
 
 export class OAuth2AuthClient implements AuthClient {
@@ -27,30 +34,43 @@ export class OAuth2AuthClient implements AuthClient {
   }
 
   decorateRequest(request: Request): Request {
+    if (this.authConfig.token) {
+      request.headers["Authorization"] = "Bearer " + this.authConfig.token;
+    }
     return request;
   }
 
+  async isTokenValid() {
+    var token = ((this.authConfig.token as string) || "").trim();
+    return token.length != 0;
+  }
+
+  async hasTokenExpired() {
+    var tokenExpiresAt = this.authConfig.tokenExpiresAt || 0;
+    return tokenExpiresAt >= 0 && tokenExpiresAt <= Date.now();
+  }
+
   /**
-   * Checks if auth credentials are valid asynchronously.
-   * Returns true if auth credentials are valid and requests can
+   * Checks if a site's auth credentials are valid asynchronously.
+   * Returns true if site's auth credentials are valid and requests can
    * be signed with respective credentials going forward.
    */
   async validateAuth() {
-    // throw new Error("Not Implemented");
-    return false;
+    if (!(await this.isTokenValid())) return false;
+    if (await this.hasTokenExpired()) return false;
+    return true;
   }
 
   get fullAuthorizeUrl() {
     var ac = this.authConfig;
     // this should really be based on where we are running as and is specific to where application is deployed
-    var authUrl = new URLBuilder(ac.authorizeUrl)
+    var builder = new URLBuilder(ac.authorizeUrl)
       .addParam("client_id", ac.clientId)
-      .addParam("redirect_uri", ac.redirectUri)
-      .addParam("response_type", ac.responseType)
-      .addParam("scope", ac.scope)
-      .addParam("state", ac.state)
-      .build();
-    return authUrl;
+      .addParam("redirect_uri", ac.redirectUri);
+    if (ac.responseType) builder.addParam("response_type", ac.responseType);
+    if (ac.state) builder.addParam("state", ac.state);
+    if (ac.scope) builder.addParam("scope", ac.scope);
+    return builder.build();
   }
 
   /**

@@ -1,8 +1,10 @@
 import { SiteInputView } from "../ui/SiteInputViews";
 import { SiteSummaryView } from "../ui/SiteSummaryViews";
-import { AuthType } from "../authclients";
-import { Site, SiteConfig } from "../siteapis";
+import { SiteConfig } from "../siteapis";
 import { SITE_TYPE_WP_PUBLIC, SITE_TYPE_WP_HOSTED } from "./core";
+import { OAuth2AuthConfig } from "../oauth2/client";
+
+declare var OAUTH2_REDIRECT_URI: string;
 
 export class PublicWPSiteInputView extends SiteInputView {
   siteUrlElem: any;
@@ -13,10 +15,12 @@ export class PublicWPSiteInputView extends SiteInputView {
     this.onAuthTypeChanged();
   }
 
-  get authConfig() {
+  get authConfig(): OAuth2AuthConfig {
     return {
       authType: "AUTH_TYPE_OAUTH2",
       clientId: "69037",
+      scope: "global",
+      redirectUri: OAUTH2_REDIRECT_URI,
       tokenUrl: "https://public-api.wordpress.com/oauth2/token",
       authorizeUrl: "https://public-api.wordpress.com/oauth2/authorize",
       authenticateUrl: "https://public-api.wordpress.com/oauth2/authenticate",

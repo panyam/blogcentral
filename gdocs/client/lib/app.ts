@@ -1,7 +1,7 @@
 // import "webpack-jquery-ui/button";
 // import "webpack-jquery-ui/css";
 import { SitesPanel } from "./ui/SitesPanel";
-import { AuthDetailView } from "./ui/AuthDetailViews"
+import { AuthDetailView } from "./ui/AuthDetailViews";
 import { HttpClient } from "./net";
 import { View } from "./ui/Views";
 import { Store } from "./stores";
@@ -40,7 +40,7 @@ export interface ClientFactory<ConfigType, ValueType> {
 }
 
 export interface ViewFactory<ValueType, ViewType = View<ValueType>> {
-  (purpose: string, elem_or_id: any, config: Nullable<ValueType>): ViewType
+  (purpose: string, elem_or_id: any, config: Nullable<ValueType>): ViewType;
 }
 
 export class App {

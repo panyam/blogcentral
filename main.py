@@ -33,11 +33,9 @@ def client():
 def homepage():
     return render_template("homepage.html", **common_properties())
 
-"""
-@app.route('/oauth/callback')
-def homepage():
+@app.route('/oauth/redirect')
+def oauth_redirect():
     return render_template("homepage.html", **common_properties())
-"""
 
 if __name__ == '__main__':
     import os, sys
