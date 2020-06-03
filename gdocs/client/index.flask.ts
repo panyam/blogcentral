@@ -15,8 +15,16 @@ import { registerApp as loginauth } from "./lib/loginauth/index";
 import { registerApp as tokenauth } from "./lib/tokenauth/index";
 import { registerApp as oauth2auth } from "./lib/oauth2/index";
 
-(window as any).OAUTH2_REDIRECT_URI =
-  window.location.protocol + "//" + window.location.host + "/oauth/redirect";
+(window as any).redirectUriForSite = (site: string) => {
+  return (
+    window.location.protocol +
+    "//" +
+    window.location.host +
+    "/oauth2/" +
+    site +
+    "/redirect"
+  );
+};
 (window as any).BCDefaults = Defaults;
 
 $(function () {

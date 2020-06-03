@@ -4,7 +4,7 @@ import { SiteConfig } from "../siteapis";
 import { SITE_TYPE_WP_PUBLIC, SITE_TYPE_WP_HOSTED } from "./core";
 import { OAuth2AuthConfig } from "../oauth2/client";
 
-declare var OAUTH2_REDIRECT_URI: string;
+declare var redirectUriForSite: (site: string) => string;
 
 export class PublicWPSiteInputView extends SiteInputView {
   siteUrlElem: any;
@@ -20,7 +20,7 @@ export class PublicWPSiteInputView extends SiteInputView {
       authType: "AUTH_TYPE_OAUTH2",
       clientId: "69037",
       scope: "global",
-      redirectUri: OAUTH2_REDIRECT_URI,
+      redirectUri: redirectUriForSite("wordpress"),
       responseType: "code", // Avoid Implicit grants for now
       tokenUrl: "https://public-api.wordpress.com/oauth2/token",
       authorizeUrl: "https://public-api.wordpress.com/oauth2/authorize",

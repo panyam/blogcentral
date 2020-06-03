@@ -3,7 +3,7 @@ import "./styles/global";
 import { App } from "./lib/app";
 import { PropertiesStore, GAppsHttpClient } from "./lib/gapps";
 import { GAppsExtractor } from "./lib/gapps";
-import { Defaults } from "../defvals"
+import { Defaults } from "../defvals";
 // import { JQHttpClient } from "./lib/flask";
 import { registerApp as wordpress } from "./lib/wordpress/index";
 import { registerApp as medium } from "./lib/medium/index";
@@ -12,9 +12,15 @@ import { registerApp as tokenauth } from "./lib/tokenauth/index";
 import { registerApp as oauth2auth } from "./lib/oauth2/index";
 
 const SCRIPT_ID = "1xRQEya-JbepQemUQT7cxV4JzF6MGoinzNtn_FsvPZlJw48xNm1Xd9BM_";
-(window as any).OAUTH2_REDIRECT_URI =
-"https://script.google.com/macros/d/" + SCRIPT_ID + "/usercallback";
-(window as any).BCDefaults = Defaults;
+(window as any).redirectUriForSite = (site: string) => {
+  return (
+    "https://script.google.com/macros/d/" +
+    SCRIPT_ID +
+    "/oauth2callback/" +
+    site
+  );
+};
+(window as any).OAUTH2_REDIRECT_URI = (window as any).BCDefaults = Defaults;
 
 $(function () {
   var store = new PropertiesStore("BC");

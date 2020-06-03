@@ -1,5 +1,6 @@
 from flask import request, Flask, Blueprint, render_template, redirect, jsonify
 import requests
+import blogcentral_config as bcconfigs
 
 
 # If `entrypoint` is not defined in app.yaml, App Engine will look for an app
@@ -34,14 +35,16 @@ def client():
 def homepage():
     return render_template("homepage.html", **common_properties())
 
-class OAuth2Api:
+class OAuth2Handler(object):
+    __name__ = "oauth2_redirect_handler"
     def __init__(self, **kwargs):
         self.client_id = kwargs["client_id"]
         self.client_secret = kwargs["client_secret"]
         self.redirect_uri = kwargs["redirect_uri"]
         self.token_url = kwargs["token_url"]
 
-    def get(self):
+    def __call__(self, *args, **kwargs):
+        code = request.args.get("code")
         data = {
             "grant_type": "authorization_code",
             "redirect_uri": self.redirect_uri,
@@ -57,7 +60,9 @@ class OAuth2Api:
         # Redirect back to home page (or manage state to go to right place)
         return render_template("homepage.html", **common_properties())
 
-app.route("/oauth2/wordpress/redirect")(OAuth2Api(**wpconfigs))
+for route,config in bcconfigs.oauth2.items():
+    print("Setting up route: ", route)
+    app.route(route)(OAuth2Handler(**config))
 
 if __name__ == '__main__':
     import os, sys
