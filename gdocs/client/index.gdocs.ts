@@ -11,6 +11,9 @@ import { registerApp as loginauth } from "./lib/loginauth/index";
 import { registerApp as tokenauth } from "./lib/tokenauth/index";
 import { registerApp as oauth2auth } from "./lib/oauth2/index";
 
+import { parseQP } from "./lib/utils";
+(window as any).parsedQueryParams = parseQP(window.location.search);
+
 const SCRIPT_ID = "1xRQEya-JbepQemUQT7cxV4JzF6MGoinzNtn_FsvPZlJw48xNm1Xd9BM_";
 (window as any).redirectUriForSite = (site: string) => {
   return (

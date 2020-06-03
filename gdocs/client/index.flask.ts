@@ -15,6 +15,9 @@ import { registerApp as loginauth } from "./lib/loginauth/index";
 import { registerApp as tokenauth } from "./lib/tokenauth/index";
 import { registerApp as oauth2auth } from "./lib/oauth2/index";
 
+import { parseCookies } from "./lib/utils";
+(window as any).ParsedCookies = parseCookies();
+
 (window as any).redirectUriForSite = (site: string) => {
   return (
     window.location.protocol +

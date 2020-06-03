@@ -9,6 +9,8 @@ import { PostsPanel } from "./PostsPanel";
 import { Site, Post } from "../siteapis";
 import { App } from "../app";
 
+declare var ParsedCookies: any;
+
 export class SitesPanel extends View<null> implements SiteListViewDelegate {
   postsPanel: PostsPanel;
   addSiteDialog: Nullable<SiteInputDialog> = null;
@@ -51,7 +53,17 @@ export class SitesPanel extends View<null> implements SiteListViewDelegate {
       });
     });
 
-    this.app.siteService.loadAll().then(() => {
+    var siteService = this.app.siteService;
+    siteService.loadAll().then(() => {
+      if ("auth_response" in ParsedCookies) {
+        var authstate = ParsedCookies["auth_state"];
+        siteService.sites.forEach(function (site: Site) {
+          if (authstate["authType"] == site.authType && authstate["authId"] == site.authConfig.authId) {
+              site.authConfig
+          }
+        });
+        siteService.saveAll();
+      }
       self.siteListView.entity = self.app.siteService.sites;
     });
   }

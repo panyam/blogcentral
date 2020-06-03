@@ -66,10 +66,16 @@ export class OAuth2AuthClient implements AuthClient {
     // this should really be based on where we are running as and is specific to where application is deployed
     var builder = new URLBuilder(ac.authorizeUrl)
       .addParam("client_id", ac.clientId)
-      .addParam("redirect_uri", ac.redirectUri);
-    builder.addParam("response_type", ac.responseType || "code");
-    if (ac.state) builder.addParam("state", ac.state);
-    if (ac.scope) builder.addParam("scope", ac.scope);
+      .addParam("redirect_uri", ac.redirectUri)
+      .addParam("response_type", ac.responseType || "code")
+      .addParam(
+        "state",
+        JSON.stringify({
+          authType: ac.authType,
+          authId: ac.authId,
+        })
+      )
+      .addParam("scope", ac.scope || "");
     return builder.build();
   }
 

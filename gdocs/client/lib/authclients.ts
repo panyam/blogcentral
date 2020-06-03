@@ -9,6 +9,7 @@ export enum AuthResult {
 export type AuthType = string;
 
 export interface AuthConfig {
+  readonly authId: string;
   authType: AuthType;
 }
 

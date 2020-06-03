@@ -17,6 +17,7 @@ export class PublicWPSiteInputView extends SiteInputView {
 
   get authConfig(): OAuth2AuthConfig {
     return {
+      authId: "" + Date.now(),
       authType: "AUTH_TYPE_OAUTH2",
       clientId: "69037",
       scope: "global",
@@ -31,8 +32,12 @@ export class PublicWPSiteInputView extends SiteInputView {
   get siteConfig() {
     return {
       siteType: SITE_TYPE_WP_PUBLIC,
-      siteUrl: this.siteUrlElem.val() || "",
+      siteUrl: this.siteUrl,
     } as SiteConfig;
+  }
+
+  get siteUrl() {
+    return this.siteUrlElem.val() || "";
   }
 
   template(): string {

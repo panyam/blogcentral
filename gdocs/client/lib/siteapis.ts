@@ -40,6 +40,7 @@ export class Post {
 }
 
 export class Site {
+    readonly id : string
   title: string;
   siteConfig: SiteConfig;
   authConfig: AuthConfig;
@@ -49,6 +50,7 @@ export class Site {
     this.title = title;
     this.siteConfig = siteConfig;
     this.authConfig = authConfig;
+    this.id = "" + Date.now();
   }
 
   get siteType(): SiteType {
@@ -61,6 +63,7 @@ export class Site {
 
   equals(another: Site): boolean {
     return (
+      this.id == another.id &&
       this.title == another.title &&
       this.authConfig == another.authConfig &&
       this.siteConfig == another.siteConfig
@@ -69,6 +72,7 @@ export class Site {
 
   get config(): any {
     return {
+      id : this.id,
       title: this.title,
       siteConfig: this.siteConfig,
       authConfig: this.authConfig,
@@ -109,8 +113,8 @@ export class SiteService {
   }
 
   async clear() {
-      this.sites = [];
-      this.saveAll();
+    this.sites = [];
+    this.saveAll();
   }
 
   async saveAll() {
@@ -125,6 +129,7 @@ export class SiteService {
     this.sites = sites.map(function (data: any, _index: Int) {
       return new Site(data.title, data.siteConfig, data.authConfig);
     });
+
     return true;
   }
 

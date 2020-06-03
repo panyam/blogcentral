@@ -4,6 +4,11 @@ import { SiteConfig } from "../siteapis";
 import { SITE_TYPE_MEDIUM } from "./core";
 import { ITokenAuthDetailView } from "../tokenauth/interfaces";
 import { IOAuth2AuthDetailView } from "../oauth2/interfaces";
+import { TokenAuthConfig } from "../tokenauth/client";
+import { OAuth2AuthConfig } from "../oauth2/client";
+import { AUTH_TYPE_OAUTH2 } from "../oauth2/core";
+
+declare var redirectUriForSite: (site: string) => string;
 
 export class MediumSiteInputView extends SiteInputView {
   usernameElem: any;
@@ -14,12 +19,35 @@ export class MediumSiteInputView extends SiteInputView {
     this.onAuthTypeChanged();
   }
 
+  get authConfig(): OAuth2AuthConfig | TokenAuthConfig {
+    if (this.selectedAuthType == AUTH_TYPE_OAUTH2) {
+      return {
+        authId: "" + Date.now(),
+        authType: "AUTH_TYPE_OAUTH2",
+        clientId: "1d26e3f346e",
+        scope: "basicProfile,listPublications,publishPost",
+        redirectUri: redirectUriForSite("wordpress"),
+        responseType: "code", // Avoid Implicit grants for now
+        tokenUrl: "https://public-api.wordpress.com/oauth2/token",
+        authorizeUrl: "https://public-api.wordpress.com/oauth2/authorize",
+        authenticateUrl: "https://public-api.wordpress.com/oauth2/authenticate",
+      };
+    } else {
+      return this.authDetailView.entity;
+    }
+  }
+
   onAuthTypeChanged() {
     super.onAuthTypeChanged();
     var authType = this.selectedAuthType;
     this.authDetailView.showField("authBaseUrl", false);
     if (authType == "AUTH_TYPE_TOKEN") {
       var tadv = (this.authDetailView as unknown) as ITokenAuthDetailView;
+      /*
+    var tadv = this.authDetailView as TokenAuthDetailView;
+    tadv.authBaseUrlElem.val("https://api.medium.com/v1");
+    setEnabled(tadv.authBaseUrlElem, false);
+   */
     } else {
       var oadv = (this.authDetailView as unknown) as IOAuth2AuthDetailView;
       oadv.showField("clientId", false);
@@ -28,18 +56,17 @@ export class MediumSiteInputView extends SiteInputView {
       oadv.showField("authorizeUrl", false);
       oadv.showField("authenticateUrl", false);
     }
-    /*
-    var tadv = this.authDetailView as TokenAuthDetailView;
-    tadv.authBaseUrlElem.val("https://api.medium.com/v1");
-    setEnabled(tadv.authBaseUrlElem, false);
-   */
   }
 
   get siteConfig() {
     return {
       siteType: SITE_TYPE_MEDIUM,
-      username: this.usernameElem.val() || "",
+      username: this.username,
     } as SiteConfig;
+  }
+
+  get username() {
+    return this.usernameElem.val() || "";
   }
 
   template(): string {

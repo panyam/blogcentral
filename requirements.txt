@@ -1,4 +1,7 @@
 Flask==1.1.1
 requests
 jinja2
-
+google-api-python-client
+google-cloud-datastore
+google-auth
+google-api

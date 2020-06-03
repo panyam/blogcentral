@@ -1,7 +1,6 @@
 from flask import request, Flask, Blueprint, render_template, redirect, jsonify
-import requests
 import blogcentral_config as bcconfigs
-
+from oauth2 import OAuth2Handler
 
 # If `entrypoint` is not defined in app.yaml, App Engine will look for an app
 # called `app` in `main.py`.
@@ -34,31 +33,6 @@ def client():
 @app.route('/')
 def homepage():
     return render_template("homepage.html", **common_properties())
-
-class OAuth2Handler(object):
-    __name__ = "oauth2_redirect_handler"
-    def __init__(self, **kwargs):
-        self.client_id = kwargs["client_id"]
-        self.client_secret = kwargs["client_secret"]
-        self.redirect_uri = kwargs["redirect_uri"]
-        self.token_url = kwargs["token_url"]
-
-    def __call__(self, *args, **kwargs):
-        code = request.args.get("code")
-        data = {
-            "grant_type": "authorization_code",
-            "redirect_uri": self.redirect_uri,
-            "code": code,
-            "client_id": self.client_id,
-            "client_secret": self.client_secret
-        }
-        import ipdb ; ipdb.set_trace()
-        response = requests.post(self.token_url, data = data)
-
-        # if token is valid save it so it can be sent next time
-
-        # Redirect back to home page (or manage state to go to right place)
-        return render_template("homepage.html", **common_properties())
 
 for route,config in bcconfigs.oauth2.items():
     print("Setting up route: ", route)

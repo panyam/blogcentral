@@ -8,7 +8,8 @@ Publish Blogs from Google Docs
 ```
 pyenv install 3.8.2
 pyenv virtualenv 3.8.2 blogcentral
-pip install -r requirements
+pip install -r dev_requirements.txt
+pip install -r requirements.txt
 ```
 
 Active env before dev:
