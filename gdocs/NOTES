@@ -1,7 +1,0 @@
-
-
-Setup Types
-
-npm install typings -g
-
-in tsconfig add any types you want in the types section!  eg google-apps-script
