@@ -1,9 +1,32 @@
 
 from flask import request, Flask, Blueprint, render_template, redirect, jsonify, make_response
+from werkzeug.routing import RequestRedirect, MethodNotAllowed, NotFound
 import requests
 
+def get_view_function(app, url, host = "localhost", method='GET'):
+    """Match a url and return the view and arguments
+    it will be called with, or None if there is no view.
+    """
+    adapter = app.url_map.bind(host)
+    try:
+        match = adapter.match(url, method=method)
+    except RequestRedirect as e:
+        # recursively match redirects
+        return get_view_function(app, e.new_url, method)
+    except (MethodNotAllowed, NotFound):
+        # no match
+        return None,None
+
+    try:
+        # return the view function and arguments
+        return app.view_functions[match[0]], match[1]
+    except KeyError:
+        # no view is associated with the endpoint
+        return None,None
+
 class OAuth2Handler(object):
-    def __init__(self, **kwargs):
+    def __init__(self, app, **kwargs):
+        self.app = app
         self.site = kwargs['site']
         self.success_uri = kwargs.get("success_uri", "/")
         self.client_id = kwargs["client_id"]
@@ -28,10 +51,10 @@ class OAuth2Handler(object):
 
     def handle_access_token(self, state, response):
         import json, urllib.parse
-        qstate = urllib.parse.quote(json.dumps(state))
-        qresponse = urllib.parse.quote(json.dumps(response))
-        # redir_url = f"{self.success_uri}?oauth2_state={qstate}&oauth2_response={qresponse}"
-        redir_response = make_response(redirect(self.success_uri))
-        redir_response.set_cookie("auth_state", qstate);
-        redir_response.set_cookie("auth_response", qresponse);
-        return redir_response
+        auth_results = [{
+            'state': state,
+            'response': response
+        }]
+        safe_ar = urllib.parse.quote(json.dumps(auth_results))
+        viewfunc, vfargs = get_view_function(self.app, self.success_uri, request.host)
+        return viewfunc(auth_results = auth_results)

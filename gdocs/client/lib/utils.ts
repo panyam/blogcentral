@@ -25,7 +25,7 @@ export function dateDelta(time: any, delta: number = 1, units: string = "s") {
   return time + delta;
 }
 
-const JSON_DECODE = { oauth2_state: true, oauth2_response: true };
+const JSON_DECODE = { auth_result : true };
 
 export function parseQP(qpstring: string) {
   var out: any = {};

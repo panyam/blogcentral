@@ -9,7 +9,6 @@ export enum AuthResult {
 export type AuthType = string;
 
 export interface AuthConfig {
-  readonly authId: string;
   authType: AuthType;
 }
 
@@ -31,4 +30,9 @@ export interface AuthClient {
    * Returns true if auth resulted in valid credentials false otherwise.
    */
   startAuthFlow(): Promise<AuthResult>;
+
+  /**
+   * Completes the auth flow with finalized auth results.
+   */
+  completeAuthFlow(authResult : any) : boolean
 }

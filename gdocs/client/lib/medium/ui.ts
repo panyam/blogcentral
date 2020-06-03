@@ -22,7 +22,6 @@ export class MediumSiteInputView extends SiteInputView {
   get authConfig(): OAuth2AuthConfig | TokenAuthConfig {
     if (this.selectedAuthType == AUTH_TYPE_OAUTH2) {
       return {
-        authId: "" + Date.now(),
         authType: "AUTH_TYPE_OAUTH2",
         clientId: "1d26e3f346e",
         scope: "basicProfile,listPublications,publishPost",

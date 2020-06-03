@@ -6,9 +6,9 @@ from oauth2 import OAuth2Handler
 # called `app` in `main.py`.
 app = Flask(__name__)
 
-def common_properties():
+def common_properties(**extra_kwargs):
     gsuite_marketplace_id = "712411571237"
-    return dict(
+    out = dict(
         company_name = "Blog Central",
         gsuite_marketplace_id = f"{gsuite_marketplace_id}",
         gsuite_marketplace_url = f"https://gsuite.google.com/marketplace/app/blogcentral/{gsuite_marketplace_id}",
@@ -16,7 +16,10 @@ def common_properties():
         servers_locations_label = "US",
         retention_period_string = "30 days",
         contact_email = "sri.panyam@gmail.com"
-        )
+    )
+    out = common_properties()
+    out.update(extra_kwargs)
+    return out
 
 @app.route('/terms-of-service/')
 def tos():
@@ -26,17 +29,17 @@ def tos():
 def privacypolicy():
     return render_template("privacy.html", **common_properties())
 
-@app.route('/client/')
-def client():
-    return render_template("client/index.flask.html", **common_properties())
+@app.route('/client')
+def client(**kwargs):
+    return render_template("client/index.flask.html", **common_properties(**kwargs))
 
 @app.route('/')
-def homepage():
+def homepage(**kwargs):
     return render_template("homepage.html", **common_properties())
 
 for route,config in bcconfigs.oauth2.items():
     print("Setting up route: ", route)
-    app.route(route)(OAuth2Handler(**config))
+    app.route(route)(OAuth2Handler(app, **config))
 
 if __name__ == '__main__':
     import os, sys

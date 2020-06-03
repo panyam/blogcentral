@@ -89,6 +89,10 @@ export class TokenAuthClient implements AuthClient {
     return AuthResult.SUCCESS;
   }
 
+  completeAuthFlow(_authResult : any) : boolean {
+      return false;
+  }
+
   static defaultConfig(): TokenAuthConfig {
     var out = {} as any;
     out["authType"] = AUTH_TYPE_TOKEN;

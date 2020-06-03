@@ -9,7 +9,7 @@ import { PostsPanel } from "./PostsPanel";
 import { Site, Post } from "../siteapis";
 import { App } from "../app";
 
-declare var ParsedCookies: any;
+declare var AuthResults: any[];
 
 export class SitesPanel extends View<null> implements SiteListViewDelegate {
   postsPanel: PostsPanel;
@@ -55,15 +55,17 @@ export class SitesPanel extends View<null> implements SiteListViewDelegate {
 
     var siteService = this.app.siteService;
     siteService.loadAll().then(() => {
-      if ("auth_response" in ParsedCookies) {
-        var authstate = ParsedCookies["auth_state"];
-        siteService.sites.forEach(function (site: Site) {
-          if (authstate["authType"] == site.authType && authstate["authId"] == site.authConfig.authId) {
-              site.authConfig
-          }
+        siteService.sites.forEach((site : Site) => {
+        var client = self.app.createAuthClient(
+          site.authType,
+          site.authConfig
+        );
+        AuthResults.forEach((authResult : any) => {
+          if (typeof authResult["state"] === "string")
+            authResult["state"] = JSON.parse(authResult["state"]);
+          client.completeAuthFlow(authResult);
         });
-        siteService.saveAll();
-      }
+      });
       self.siteListView.entity = self.app.siteService.sites;
     });
   }

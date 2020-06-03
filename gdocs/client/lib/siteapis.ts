@@ -40,7 +40,7 @@ export class Post {
 }
 
 export class Site {
-    readonly id : string
+  readonly id: string;
   title: string;
   siteConfig: SiteConfig;
   authConfig: AuthConfig;
@@ -72,7 +72,7 @@ export class Site {
 
   get config(): any {
     return {
-      id : this.id,
+      id: this.id,
       title: this.title,
       siteConfig: this.siteConfig,
       authConfig: this.authConfig,

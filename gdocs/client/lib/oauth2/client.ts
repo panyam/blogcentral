@@ -18,7 +18,6 @@ export interface OAuth2AuthConfig extends AuthConfig {
   state?: Nullable<string>;
 
   token?: Nullable<string>;
-  tokenCreatedAt?: number;
   tokenExpiresAt?: number;
 }
 
@@ -72,7 +71,8 @@ export class OAuth2AuthClient implements AuthClient {
         "state",
         JSON.stringify({
           authType: ac.authType,
-          authId: ac.authId,
+          clientId: ac.clientId,
+          redirectUri: ac.redirectUri,
         })
       )
       .addParam("scope", ac.scope || "");
@@ -105,5 +105,21 @@ export class OAuth2AuthClient implements AuthClient {
 
     // Can never get here
     return AuthResult.SUCCESS;
+  }
+
+  /**
+   * Completes the auth flow with finalized auth results.
+   */
+  completeAuthFlow(authResult: any): boolean {
+    if (
+      this.authConfig.authType == authResult.state.authType &&
+      this.authConfig.clientId == authResult.state.clientId &&
+      this.authConfig.redirectUri == authResult.state.redirectUri
+    ) {
+      this.authConfig.token = authResult.response.access_token || null;
+      this.authConfig.tokenExpiresAt = authResult.response.expires_in || null;
+      return true;
+    }
+    return false;
   }
 }
