@@ -1,5 +1,5 @@
 
-from flask import request, Flask, Blueprint, render_template, redirect, jsonify, make_response
+from flask import request, Flask, Blueprint, render_template, redirect, jsonify, make_response, session
 from werkzeug.routing import RequestRedirect, MethodNotAllowed, NotFound
 import requests
 
@@ -12,7 +12,7 @@ def get_view_function(app, url, host = "localhost", method='GET'):
         match = adapter.match(url, method=method)
     except RequestRedirect as e:
         # recursively match redirects
-        return get_view_function(app, e.new_url, method)
+        return get_view_function(app, e.new_url, host, method)
     except (MethodNotAllowed, NotFound):
         # no match
         return None,None
@@ -51,10 +51,12 @@ class OAuth2Handler(object):
 
     def handle_access_token(self, state, response):
         import json, urllib.parse
-        auth_results = [{
+        session["auth_results"] = urllib.parse.quote(json.dumps([{
             'state': state,
             'response': response
-        }]
-        safe_ar = urllib.parse.quote(json.dumps(auth_results))
+        }]))
+        return redirect(self.success_uri);
+        """
         viewfunc, vfargs = get_view_function(self.app, self.success_uri, request.host)
         return viewfunc(auth_results = auth_results)
+        """

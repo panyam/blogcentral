@@ -1,10 +1,11 @@
-from flask import request, Flask, Blueprint, render_template, redirect, jsonify
+from flask import request, Flask, Blueprint, render_template, redirect, jsonify, session
 import blogcentral_config as bcconfigs
 from oauth2 import OAuth2Handler
 
 # If `entrypoint` is not defined in app.yaml, App Engine will look for an app
 # called `app` in `main.py`.
 app = Flask(__name__)
+app.secret_key = bcconfigs.SESSION_SECRET_KEY
 
 def common_properties(**extra_kwargs):
     gsuite_marketplace_id = "712411571237"
@@ -17,8 +18,7 @@ def common_properties(**extra_kwargs):
         retention_period_string = "30 days",
         contact_email = "sri.panyam@gmail.com"
     )
-    out = common_properties()
-    out.update(extra_kwargs)
+    out["auth_results"] = session.get("auth_results", "[]")
     return out
 
 @app.route('/terms-of-service/')
@@ -29,13 +29,18 @@ def tos():
 def privacypolicy():
     return render_template("privacy.html", **common_properties())
 
-@app.route('/client')
-def client(**kwargs):
-    return render_template("client/index.flask.html", **common_properties(**kwargs))
+@app.route('/client/')
+def client():
+    return render_template("client/index.flask.html", **common_properties())
 
 @app.route('/')
-def homepage(**kwargs):
+def homepage():
     return render_template("homepage.html", **common_properties())
+
+@app.route("/clear")
+def clear():
+    session.clear()
+    return redirect("/");
 
 for route,config in bcconfigs.oauth2.items():
     print("Setting up route: ", route)

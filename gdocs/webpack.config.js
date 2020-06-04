@@ -57,6 +57,9 @@ module.exports = (env, options) => {
                 from: path.resolve(__dirname, 'client/body.html'), to: 'client/body.html'
             },
             {
+                from: path.resolve(__dirname, 'client/variables.html'), to: 'client/variables.html'
+            },
+            {
                 from: path.resolve(__dirname, 'client/editor.html'), to: 'client/editor.html'
             }
         ]),
