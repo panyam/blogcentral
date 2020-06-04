@@ -133,9 +133,10 @@ export class PostsPanel extends View<any> implements PostListViewDelegate {
     var site = this.site;
     var app = this.app;
     if (site != null) {
+      var siteApi = app.apiForSite(site)
       if (await app.ensureLoggedIn(site)) {
         this.activityIndicator.show();
-        var posts = await this.app.getPosts(site, {
+        var posts = await siteApi.getPosts({
           order: order,
           orderby: orderBy,
           searchIn: searchIn,
@@ -166,9 +167,10 @@ export class PostsPanel extends View<any> implements PostListViewDelegate {
     if (button.title == "Cancel") return;
     var newPost = this.addPostDialog.entity;
     try {
+      var siteApi = app.apiForSite(site)
       console.log("Creating New Post: ", newPost);
       this.activityIndicator.show();
-      await app.createPost(site, newPost!!, {});
+      await siteApi.createPost(newPost!!, {});
     } catch (e) {
       console.log("Create Post Exception: ", e);
     }

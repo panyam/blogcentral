@@ -1,7 +1,7 @@
-import { Request } from "./net";
+import { Request, HttpClient } from "./net";
 import { Int, Nullable } from "./types";
 import { ensureParam } from "./utils";
-import { AuthType, AuthConfig } from "./authclients";
+import { AuthType, AuthConfig, AuthClient } from "./authclients";
 import { Store } from "./stores";
 
 export type SiteType = string;
@@ -11,15 +11,48 @@ export interface SiteConfig {
 }
 
 export abstract class SiteApi {
-  config: SiteConfig;
-  constructor(config: SiteConfig) {
-    this.config = config || {};
+  site: Site
+  authClient : AuthClient
+  httpClient : HttpClient
+  constructor(site : Site, authClient : AuthClient, httpClient : HttpClient) {
+    this.site = site
+    this.authClient = authClient
+    this.httpClient = httpClient
   }
 
   abstract createPostRequest(post: Post, options: any): Request;
   abstract updatePostRequest(postid: String, options: any): Request;
   abstract getPostsRequest(options: any): Request;
   abstract removePostRequest(id: any): Request;
+
+  async createPost(post: Post, options: any) {
+    var request = this.createPostRequest(post, options);
+    request = this.authClient.decorateRequest(request);
+    return this.httpClient.send(request);
+  }
+  async updatePost(postid: String, options: any) {
+    var request = this.updatePostRequest(postid, options);
+    request = this.authClient.decorateRequest(request);
+    return this.httpClient.send(request);
+  }
+  async getPosts(options: any): Promise<Post[]> {
+    var request = this.getPostsRequest(options);
+    request = this.authClient.decorateRequest(request);
+    var response = await this.httpClient.send(request);
+    try {
+      return response.data.map((p: any) => {
+        return new Post(p.id, p);
+      });
+    } catch (e) {
+      console.log("Get Posts Exception: ", e);
+      throw e;
+    }
+  }
+  async removePost(id: any) {
+    var request = this.removePostRequest(id);
+    request = this.authClient.decorateRequest(request);
+    return this.httpClient.send(request);
+  }
 }
 
 export class Post {

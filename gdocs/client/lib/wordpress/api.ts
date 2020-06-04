@@ -1,6 +1,7 @@
-import { Request, URLBuilder } from "../net";
+import { Request, URLBuilder, HttpClient } from "../net";
 import { ensureParam } from "../utils";
-import { Post, SiteConfig, SiteApi } from "../siteapis";
+import { Site, Post, SiteConfig, SiteApi } from "../siteapis";
+import { AuthClient } from "../authclients";
 import { SITE_TYPE_WP_PUBLIC, SITE_TYPE_WP_HOSTED } from "./core";
 
 declare var BCDefaults: any;
@@ -89,9 +90,9 @@ export interface HostedWPSiteConfig extends SiteConfig {
 
 export class HostedWPRestApi extends WPRestApi {
   apiUrl: string;
-  constructor(config: SiteConfig) {
-    super(config);
-    this.apiUrl = ensureParam(config, "apiUrl");
+  constructor(site: Site, authClient: AuthClient, httpClient: HttpClient) {
+    super(site, authClient, httpClient);
+    this.apiUrl = ensureParam(site.siteConfig, "apiUrl");
   }
 
   static defaultConfig(): HostedWPSiteConfig {
@@ -108,9 +109,9 @@ export interface PublicWPSiteConfig extends SiteConfig {
 
 export class PublicWPRestApi extends WPRestApi {
   siteUrl: string;
-  constructor(config: any) {
-    super(config);
-    this.siteUrl = ensureParam(config, "siteUrl");
+  constructor(site: Site, authClient: AuthClient, httpClient: HttpClient) {
+    super(site, authClient, httpClient);
+    this.siteUrl = ensureParam(site.siteConfig, "siteUrl");
   }
 
   get apiUrl(): string {

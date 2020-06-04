@@ -55,12 +55,9 @@ export class SitesPanel extends View<null> implements SiteListViewDelegate {
 
     var siteService = this.app.siteService;
     siteService.loadAll().then(() => {
-        siteService.sites.forEach((site : Site) => {
-        var client = self.app.createAuthClient(
-          site.authType,
-          site.authConfig
-        );
-        AuthResults.forEach((authResult : any) => {
+      siteService.sites.forEach((site: Site) => {
+        var client = self.app.createAuthClient(site.authType, site.authConfig);
+        AuthResults.forEach((authResult: any) => {
           if (typeof authResult["state"] === "string")
             authResult["state"] = JSON.parse(authResult["state"]);
           client.completeAuthFlow(authResult);
@@ -121,7 +118,8 @@ export class SitesPanel extends View<null> implements SiteListViewDelegate {
 
     // Now publish it!
     if (await app.ensureLoggedIn(site)) {
-      var result = await app.updatePost(site, site.selectedPost.id, {
+      var siteApi = app.apiForSite(site);
+      var result = await siteApi.updatePost(site.selectedPost.id, {
         content: html,
       });
       console.log("Published Post, Result: ", result);

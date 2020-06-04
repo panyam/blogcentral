@@ -7,14 +7,7 @@ import { View } from "./ui/Views";
 import { Store } from "./stores";
 import { ContentExtractor } from "./extractors";
 import { AuthResult, AuthConfig, AuthClient } from "./authclients";
-import {
-  SiteService,
-  Site,
-  Post,
-  SiteType,
-  SiteConfig,
-  SiteApi,
-} from "./siteapis";
+import { SiteService, Site, SiteApi } from "./siteapis";
 import { Nullable } from "./types";
 
 declare var Handlebars: any;
@@ -35,8 +28,12 @@ Handlebars.registerHelper("eitherVal", function (
   return new Handlebars.SafeString(out);
 });
 
-export interface ClientFactory<ConfigType, ValueType> {
-  (config: Nullable<ConfigType>): ValueType;
+export interface SiteApiFactory {
+  (site: Site, authClient: AuthClient, httpClient: HttpClient): SiteApi;
+}
+
+export interface AuthClientFactory {
+  (config: AuthConfig): AuthClient;
 }
 
 export interface ViewFactory<ValueType, ViewType = View<ValueType>> {
@@ -50,13 +47,13 @@ export class App {
   contentExtractor: ContentExtractor;
   sitesPanel: SitesPanel;
   siteApiFactories: {
-    [siteType: string]: ClientFactory<SiteConfig, SiteApi>;
+    [siteType: string]: SiteApiFactory;
+  } = {};
+  authClientFactories: {
+    [authType: string]: AuthClientFactory;
   } = {};
   siteViewFactories: {
     [siteType: string]: ViewFactory<Site>;
-  } = {};
-  authClientFactories: {
-    [siteType: string]: ClientFactory<AuthConfig, AuthClient>;
   } = {};
   authViewFactories: {
     [authType: string]: ViewFactory<AuthConfig, AuthDetailView>;
@@ -79,8 +76,29 @@ export class App {
     // wp.register(this);
   }
 
-  createSiteApi(siteType: SiteType, siteConfig: Nullable<SiteConfig>) {
-    return this.siteApiFactories[siteType](siteConfig);
+  createAuthClient(authType: string, entity: AuthConfig) {
+    return this.authClientFactories[authType](entity);
+  }
+
+  authClientForSite(site: Site): AuthClient {
+    var s = site as any;
+    if (!s.authClient) {
+      s.authClient = this.createAuthClient(site.authType, site.authConfig);
+    }
+    return s.authClient as AuthClient;
+  }
+
+  apiForSite(site: Site): SiteApi {
+    var s = site as any;
+    if (!s.siteApi) {
+      s.siteApi = this.createSiteApi(site);
+    }
+    return s.siteApi as SiteApi;
+  }
+
+  createSiteApi(site: Site) {
+    var ac = this.authClientForSite(site);
+    return this.siteApiFactories[site.siteType](site, ac, this.httpClient);
   }
 
   createSiteView(
@@ -90,10 +108,6 @@ export class App {
     entity: Nullable<Site>
   ) {
     return this.siteViewFactories[siteType](purpose, elem_or_id, entity);
-  }
-
-  createAuthClient(authType: string, entity: Nullable<AuthConfig>) {
-    return this.authClientFactories[authType](entity);
   }
 
   createAuthView(
@@ -127,42 +141,5 @@ export class App {
         return true;
       }
     }
-  }
-
-  async createPost(site: Site, post: Post, options: any) {
-    var siteApi = this.createSiteApi(site.siteType, site.siteConfig);
-    var request = siteApi.createPostRequest(post, options);
-    var authClient = this.createAuthClient(site.authType, site.authConfig);
-    request = authClient.decorateRequest(request);
-    return this.httpClient.send(request);
-  }
-  async updatePost(site: Site, postid: String, options: any) {
-    var siteApi = this.createSiteApi(site.siteType, site.siteConfig);
-    var request = siteApi.updatePostRequest(postid, options);
-    var authClient = this.createAuthClient(site.authType, site.authConfig);
-    request = authClient.decorateRequest(request);
-    return this.httpClient.send(request);
-  }
-  async getPosts(site: Site, options: any): Promise<Post[]> {
-    var siteApi = this.createSiteApi(site.siteType, site.siteConfig);
-    var request = siteApi.getPostsRequest(options);
-    var authClient = this.createAuthClient(site.authType, site.authConfig);
-    request = authClient.decorateRequest(request);
-    var response = await this.httpClient.send(request);
-    try {
-      return response.data.map((p: any) => {
-        return new Post(p.id, p);
-      });
-    } catch (e) {
-      console.log("Get Posts Exception: ", e);
-      throw e;
-    }
-  }
-  async removePost(site: Site, id: any) {
-    var siteApi = this.createSiteApi(site.siteType, site.siteConfig);
-    var request = siteApi.removePostRequest(id);
-    var authClient = this.createAuthClient(site.authType, site.authConfig);
-    request = authClient.decorateRequest(request);
-    return this.httpClient.send(request);
   }
 }
