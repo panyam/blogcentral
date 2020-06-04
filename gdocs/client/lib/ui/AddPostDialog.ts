@@ -14,10 +14,10 @@ export class AddPostDialog extends FormDialog<Post> {
 
   setupViews() {
     super.setupViews();
-    this.titleElem = this.rootElement.find("#post_title");
-    this.passwordElem = this.rootElement.find("#post_password");
-    this.excerptElem = this.rootElement.find("#post_excerpt");
-    this.slugElem = this.rootElement.find("#post_slug");
+    this.titleElem = this.findElement("#post_title");
+    this.passwordElem = this.findElement("#post_password");
+    this.excerptElem = this.findElement("#post_excerpt");
+    this.slugElem = this.findElement("#post_slug");
     this.allFields
       .add(this.titleElem)
       .add(this.passwordElem)

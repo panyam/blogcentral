@@ -5,7 +5,8 @@ import "./styles/global";
 import "./styles/editor";
 
 import { App } from "./lib/app";
-import { LocalStore, JQHttpClient } from "./lib/flask";
+import { LocalStore } from "./lib/flask";
+import { ProxyHttpClient } from "./lib/proxy";
 import { LocalExtractor } from "./lib/flask";
 import { Defaults } from "../defvals";
 
@@ -32,7 +33,9 @@ import { parseCookies } from "./lib/utils";
 
 $(function () {
   var store = new LocalStore("BC");
-  var httpClient = new JQHttpClient();
+  var fetchEndpoint =
+    window.location.protocol + "//" + window.location.host + "/urlfetch/";
+  var httpClient = new ProxyHttpClient(fetchEndpoint);
   var theApp = new App(store, httpClient);
   theApp.contentExtractor = new LocalExtractor("editor_container");
   (window as any).bcApp = theApp;

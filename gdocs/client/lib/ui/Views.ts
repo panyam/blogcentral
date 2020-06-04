@@ -1,5 +1,6 @@
 declare var Handlebars: any;
 import { ensureElement } from "./utils";
+// import { findElement } from "../ui/utils";
 import { Nullable } from "../types";
 
 declare const BCDefaults: any;
@@ -31,6 +32,10 @@ export class View<EntityType> {
     this._template = configs.template || "<div>Hello World</div>";
     var self = this;
     setTimeout(() => self.setup(), 0);
+  }
+
+  findElement(target : string) {
+      return this.rootElement.find(target)
   }
 
   /**

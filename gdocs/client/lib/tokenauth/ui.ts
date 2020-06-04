@@ -1,8 +1,9 @@
 import { AuthDetailView } from "../ui/AuthDetailViews";
 import { AUTH_TYPE_TOKEN } from "./core";
-import { ITokenAuthDetailView} from "./interfaces"
+import { ITokenAuthDetailView } from "./interfaces";
 
-export class TokenAuthDetailView extends AuthDetailView implements ITokenAuthDetailView {
+export class TokenAuthDetailView extends AuthDetailView
+  implements ITokenAuthDetailView {
   authBaseUrlLabel: JQuery<HTMLElement>;
   authBaseUrlElem: JQuery<HTMLElement>;
   tokenLabel: JQuery<HTMLElement>;
@@ -12,24 +13,32 @@ export class TokenAuthDetailView extends AuthDetailView implements ITokenAuthDet
 
   setupViews() {
     super.setupViews();
-    this.tokenElem = this.rootElement.find("#token");
-    this.tokenLabel = this.rootElement.find("label[for='token']");
-    this.expiresAtElem = this.rootElement.find("#expiresAt");
-    this.expiresAtLabel = this.rootElement.find("label[for='expiresAt']");
-    this.authBaseUrlElem = this.rootElement.find("#authBaseUrl");
-    this.authBaseUrlLabel = this.rootElement.find("label[for='authBaseUrl']");
+    this.tokenElem = this.findElement("#token");
+    this.tokenLabel = this.findElement("label[for='token']");
+    this.expiresAtElem = this.findElement("#expiresAt");
+    this.expiresAtLabel = this.findElement("label[for='expiresAt']");
+    this.authBaseUrlElem = this.findElement("#authBaseUrl");
+    this.authBaseUrlLabel = this.findElement("label[for='authBaseUrl']");
   }
 
-  get token() { return this.tokenElem.val() as string; }
-  set token(t : string) { this.tokenElem.val(t); }
-  get authBaseUrl() { return this.authBaseUrlElem.val() as string; }
-  set authBaseUrl(t : string) { this.authBaseUrlElem.val(t); }
+  get token() {
+    return this.tokenElem.val() as string;
+  }
+  set token(t: string) {
+    this.tokenElem.val(t);
+  }
+  get authBaseUrl() {
+    return this.authBaseUrlElem.val() as string;
+  }
+  set authBaseUrl(t: string) {
+    this.authBaseUrlElem.val(t);
+  }
 
-  elementsFor(fieldName : string) : any[] { 
+  elementsFor(fieldName: string): any[] {
     if (fieldName == "authBaseUrl") {
-        return [ this.authBaseUrlLabel, this.authBaseUrlElem ];
+      return [this.authBaseUrlLabel, this.authBaseUrlElem];
     }
-    return []
+    return [];
   }
 
   extractEntity() {

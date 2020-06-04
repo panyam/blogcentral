@@ -1,35 +1,44 @@
 import { TokenAuthDetailView } from "../tokenauth/ui";
 import { AUTH_TYPE_LOGIN } from "./core";
-import {ILoginAuthDetailView} from './interfaces';
+import { ILoginAuthDetailView } from "./interfaces";
 
 /**
  * A view to capture details about logging into publicly hosted wordpress site.
  */
-export class LoginAuthDetailView extends TokenAuthDetailView implements ILoginAuthDetailView {
-  tokenUrlLabel: JQuery<HTMLElement>;
-  tokenUrlElem: JQuery<HTMLElement>;
-  validateUrlLabel: JQuery<HTMLElement>;
-  validateUrlElem: JQuery<HTMLElement>;
+export class LoginAuthDetailView extends TokenAuthDetailView
+  implements ILoginAuthDetailView {
+  tokenUrlLabel: any;
+  tokenUrlElem: any;
+  validateUrlLabel: any;
+  validateUrlElem: any;
 
   setupViews() {
     super.setupViews();
-    this.tokenUrlElem = this.rootElement.find("#tokenUrl");
-    this.tokenUrlLabel = this.rootElement.find("label[for='tokenUrl']");
-    this.validateUrlElem = this.rootElement.find("#validateUrl");
-    this.validateUrlLabel = this.rootElement.find("label[for='validateUrl']");
+    this.tokenUrlElem = this.findElement("#tokenUrl");
+    this.tokenUrlLabel = this.findElement("label[for='tokenUrl']");
+    this.validateUrlElem = this.findElement("#validateUrl");
+    this.validateUrlLabel = this.findElement("label[for='validateUrl']");
     this.tokenLabel.html("Current Token (optional)");
   }
 
-  get tokenUrl() { return this.tokenUrlElem.val() as string; }
-  set tokenUrl(t : string) { this.tokenUrlElem.val(t); }
-  get validateUrl() { return this.validateUrlElem.val() as string; }
-  set validateUrl(t : string) { this.validateUrlElem.val(t); }
+  get tokenUrl() {
+    return this.tokenUrlElem.val() as string;
+  }
+  set tokenUrl(t: string) {
+    this.tokenUrlElem.val(t);
+  }
+  get validateUrl() {
+    return this.validateUrlElem.val() as string;
+  }
+  set validateUrl(t: string) {
+    this.validateUrlElem.val(t);
+  }
 
-  elementsFor(fieldName : string) : any[] { 
+  elementsFor(fieldName: string): any[] {
     if (fieldName == "tokenUrl") {
-      return [this.tokenUrlLabel, this.tokenUrlElem]
+      return [this.tokenUrlLabel, this.tokenUrlElem];
     } else if (fieldName == "validateUrl") {
-      return [this.validateUrlLabel, this.validateUrlElem]
+      return [this.validateUrlLabel, this.validateUrlElem];
     }
     return super.elementsFor(fieldName);
   }

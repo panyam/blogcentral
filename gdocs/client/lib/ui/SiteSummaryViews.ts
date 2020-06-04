@@ -16,12 +16,12 @@ export class SiteSummaryView extends View<Site> {
 
   setupViews() {
     super.setupViews();
-    this.progressbar = this.rootElement.find(".progressbar");
-    var aidiv = this.rootElement.find(".activity_indicator");
+    this.progressbar = this.findElement(".progressbar");
+    var aidiv = this.findElement(".activity_indicator");
     this.activityIndicator = new ActivityIndicator(aidiv).setup();
-    this.publishPostButton = this.rootElement.find(".publish_post_button");
-    this.selectPostButton = this.rootElement.find(".select_post_button");
-    this.removeButton = this.rootElement.find(".remove_site_button");
+    this.publishPostButton = this.findElement(".publish_post_button");
+    this.selectPostButton = this.findElement(".select_post_button");
+    this.removeButton = this.findElement(".remove_site_button");
   }
 
   showBusy(busy: boolean) {

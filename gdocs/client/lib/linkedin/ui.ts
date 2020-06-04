@@ -8,13 +8,13 @@ export class LISiteInputView extends SiteInputView {
 
   setupViews() {
     super.setupViews();
-    this.usernameElem = this.rootElement.find("#username");
+    this.usernameElem = this.findElement("#username");
     this.onAuthTypeChanged();
   }
 
   get siteConfig() {
     return {
-      siteType: SITE_TYPE_LINKEDIN
+      siteType: SITE_TYPE_LINKEDIN,
     } as SiteConfig;
   }
 

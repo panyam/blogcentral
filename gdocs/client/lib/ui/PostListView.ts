@@ -54,12 +54,12 @@ export class PostListView extends View<Post[]> {
 
   setupViews(self: this = this) {
     super.setupViews();
-    var select_post_buttons = this.rootElement.find(".select_post_button");
+    var select_post_buttons = this.findElement(".select_post_button");
     select_post_buttons.on("click", function (event: any) {
       self.onSelectPostClicked(event);
     });
 
-    var remove_post_buttons = this.rootElement.find(".remove_post_button");
+    var remove_post_buttons = this.findElement(".remove_post_button");
     remove_post_buttons.on("click", function (event: any) {
       self.onRemovePostClicked(event);
     });

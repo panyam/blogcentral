@@ -15,7 +15,7 @@ export class MediumSiteInputView extends SiteInputView {
 
   setupViews() {
     super.setupViews();
-    this.usernameElem = this.rootElement.find("#username");
+    this.usernameElem = this.findElement("#username");
     this.onAuthTypeChanged();
   }
 

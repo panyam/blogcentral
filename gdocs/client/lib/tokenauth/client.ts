@@ -73,10 +73,10 @@ export class TokenAuthClient implements AuthClient {
       )
       .setup();
     tokenDialog.title = "Enter Token";
-    var tokenElem = elem.find("#token");
+    var tokenElem = tokenDialog.findElement("#token");
     tokenDialog.shouldClose = (button: any) => {
       if (button.title == "Cancel") return true;
-      var token = tokenElem.val().trim();
+      var token = (tokenElem as any).val().trim();
       return token.length > 0;
     };
     var result = (await tokenDialog.open()) as any;
@@ -84,7 +84,7 @@ export class TokenAuthClient implements AuthClient {
       tokenDialog.destroy();
       return AuthResult.CANCELLED;
     }
-    this.authConfig.token = tokenElem.val().trim();
+    this.authConfig.token = (tokenElem as any).val().trim();
     tokenDialog.destroy();
     return AuthResult.SUCCESS;
   }

@@ -32,30 +32,28 @@ export class SiteListView extends View<Site[]> {
 
   setupViews(self: this = this) {
     super.setupViews();
-    this.siteViews = this.rootElement
-      .find(".site_div")
-      .map((i: Int, elem: any) => {
-        var site = self.app.siteService.sites[i];
-        var siteView = this.app.createSiteView(
-          site.siteType,
-          "summary",
-          elem,
-          self.app.siteService.sites[i]
-        ) as SiteSummaryView;
-        siteView.showProgress(false);
-        siteView.selectPostButton.button().on("click", (_event: any) => {
-          self.onSelectPostClicked(siteView);
-        });
-
-        siteView.publishPostButton.button().on("click", (_event: any) => {
-          self.onPublishPostClicked(siteView);
-        });
-
-        siteView.removeButton.button().on("click", (_event: any) => {
-          self.onRemoveSiteClicked(siteView);
-        });
-        return siteView;
+    this.siteViews = this.findElement(".site_div").map((i: Int, elem: any) => {
+      var site = self.app.siteService.sites[i];
+      var siteView = this.app.createSiteView(
+        site.siteType,
+        "summary",
+        elem,
+        self.app.siteService.sites[i]
+      ) as SiteSummaryView;
+      siteView.showProgress(false);
+      siteView.selectPostButton.button().on("click", (_event: any) => {
+        self.onSelectPostClicked(siteView);
       });
+
+      siteView.publishPostButton.button().on("click", (_event: any) => {
+        self.onPublishPostClicked(siteView);
+      });
+
+      siteView.removeButton.button().on("click", (_event: any) => {
+        self.onRemoveSiteClicked(siteView);
+      });
+      return siteView;
+    });
   }
 
   async onSelectPostClicked(siteView: SiteSummaryView) {

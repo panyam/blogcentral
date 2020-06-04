@@ -4,7 +4,6 @@ import { App } from "./lib/app";
 import { PropertiesStore, GAppsHttpClient } from "./lib/gapps";
 import { GAppsExtractor } from "./lib/gapps";
 import { Defaults } from "../defvals";
-// import { JQHttpClient } from "./lib/flask";
 import { registerApp as wordpress } from "./lib/wordpress/index";
 import { registerApp as medium } from "./lib/medium/index";
 import { registerApp as loginauth } from "./lib/loginauth/index";
@@ -28,7 +27,6 @@ const SCRIPT_ID = "1xRQEya-JbepQemUQT7cxV4JzF6MGoinzNtn_FsvPZlJw48xNm1Xd9BM_";
 $(function () {
   var store = new PropertiesStore("BC");
   var httpClient = new GAppsHttpClient();
-  // var httpClient = new JQHttpClient();
   var theApp = new App(store, httpClient);
   theApp.contentExtractor = new GAppsExtractor();
   (window as any).bcApp = theApp;

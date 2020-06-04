@@ -87,40 +87,40 @@ export class PostsPanel extends View<any> implements PostListViewDelegate {
       self.searchButton.html(v.length == 0 ? "Refresh" : "Search");
     });
 
-    var postListDiv = this.rootElement.find("#post_list_div");
+    var postListDiv = this.findElement("#post_list_div");
     this.postListView = new PostListView(postListDiv, this.app).setup();
     this.postListView.delegate = this;
 
-    this.prevButton = this.rootElement.find("#prev_button");
+    this.prevButton = this.findElement("#prev_button");
     this.prevButton.button().on("click", function () {
       self.enableButtons(false);
       self.searchPosts(self.currentPage - 1);
     });
     this.prevButton.hide();
 
-    this.nextButton = this.rootElement.find("#next_button");
+    this.nextButton = this.findElement("#next_button");
     this.nextButton.button().on("click", function () {
       self.enableButtons(false);
       self.searchPosts(self.currentPage + 1);
     });
     this.nextButton.hide();
 
-    this.addButton = this.rootElement.find("#add_button");
+    this.addButton = this.findElement("#add_button");
     this.addButton.button().on("click", function () {
       self.onAddPost();
     });
 
-    this.confirmButton = this.rootElement.find("#confirm_button");
+    this.confirmButton = this.findElement("#confirm_button");
     this.confirmButton.button().on("click", function () {
       self.close(self.selectedPost);
     });
 
-    this.cancelButton = this.rootElement.find("#cancel_button");
+    this.cancelButton = this.findElement("#cancel_button");
     this.cancelButton.button().on("click", function () {
       self.close(null);
     });
 
-    var aidiv = this.rootElement.find(".activity_indicator");
+    var aidiv = this.findElement(".activity_indicator");
     this.activityIndicator = new ActivityIndicator(aidiv).setup();
   }
 
@@ -133,7 +133,7 @@ export class PostsPanel extends View<any> implements PostListViewDelegate {
     var site = this.site;
     var app = this.app;
     if (site != null) {
-      var siteApi = app.apiForSite(site)
+      var siteApi = app.apiForSite(site);
       if (await app.ensureLoggedIn(site)) {
         this.activityIndicator.show();
         var posts = await siteApi.getPosts({
@@ -167,7 +167,7 @@ export class PostsPanel extends View<any> implements PostListViewDelegate {
     if (button.title == "Cancel") return;
     var newPost = this.addPostDialog.entity;
     try {
-      var siteApi = app.apiForSite(site)
+      var siteApi = app.apiForSite(site);
       console.log("Creating New Post: ", newPost);
       this.activityIndicator.show();
       await siteApi.createPost(newPost!!, {});

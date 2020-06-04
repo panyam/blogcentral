@@ -12,7 +12,7 @@ interface AuthViewCreator {
     purpose: string,
     elem_or_id: any,
     entity: Nullable<AuthConfig>
-  ): AuthDetailView
+  ): AuthDetailView;
 }
 
 export abstract class SiteInputView extends View<Site> {
@@ -34,9 +34,9 @@ export abstract class SiteInputView extends View<Site> {
 
   setupViews(self: this = this) {
     super.setupViews();
-    this.titleElem = this.rootElement.find("#title");
-    this.authDetailElem = this.rootElement.find(".auth_details_view");
-    this.authTypeElem = this.rootElement.find("#authType");
+    this.titleElem = this.findElement("#title");
+    this.authDetailElem = this.findElement(".auth_details_view");
+    this.authTypeElem = this.findElement("#authType");
     this.authTypeElem.change(function (_evt: any) {
       self.onAuthTypeChanged();
     });
@@ -69,7 +69,7 @@ export abstract class SiteInputView extends View<Site> {
     console.log("Selected Type: ", authType);
 
     // show the different view based on the type
-    this.authDetailElem = this.rootElement.find(".auth_details_view");
+    this.authDetailElem = this.findElement(".auth_details_view");
     if (this.authDetailElem.length == 0) {
       var mesg =
         "Could not find div with class 'auth_details_view' to create auth view in.";

@@ -98,20 +98,20 @@ export class LoginAuthClient extends TokenAuthClient {
       )
       .setup();
     tokenDialog.title = "Enter Username/Password";
-    var usernameElem = elem.find("#username");
-    var passwordElem = elem.find("#password");
+    var usernameElem = tokenDialog.findElement("#username");
+    var passwordElem = tokenDialog.findElement("#password");
     tokenDialog.shouldClose = (button: any) => {
       if (button == null || button.text == "Cancel") return true;
-      var username = usernameElem.val().trim();
-      var password = passwordElem.val().trim();
+      var username = (usernameElem as any).val().trim();
+      var password = (passwordElem as any).val().trim();
       return username.length > 0 && password.length > 0;
     };
     var result = (await tokenDialog.open()) as any;
     if (result.text == "Cancel") {
       return AuthResult.CANCELLED;
     }
-    var username = usernameElem.val().trim();
-    var password = passwordElem.val().trim();
+    var username = (usernameElem as any).val().trim();
+    var password = (passwordElem as any).val().trim();
 
     // use this to get token
     this.authConfig.username = username;

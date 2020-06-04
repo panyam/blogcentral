@@ -11,7 +11,7 @@ export class PublicWPSiteInputView extends SiteInputView {
 
   setupViews() {
     super.setupViews();
-    this.siteUrlElem = this.rootElement.find("#siteUrl");
+    this.siteUrlElem = this.findElement("#siteUrl");
     this.onAuthTypeChanged();
   }
 
@@ -60,7 +60,7 @@ export class HostedWPSiteInputView extends SiteInputView {
 
   setupViews() {
     super.setupViews();
-    this.apiUrlElem = this.rootElement.find("#apiUrl");
+    this.apiUrlElem = this.findElement("#apiUrl");
     this.onAuthTypeChanged();
   }
 
@@ -100,8 +100,8 @@ export class HostedWPSiteSummaryView extends SiteSummaryView {
   siteApiUrlElem: JQuery<HTMLElement>;
   setupViews() {
     super.setupViews();
-    this.siteTitleElem = this.rootElement.find(".site_summary_title");
-    this.siteApiUrlElem = this.rootElement.find(".site_summary_apiUrl");
+    this.siteTitleElem = this.findElement(".site_summary_title");
+    this.siteApiUrlElem = this.findElement(".site_summary_apiUrl");
   }
 
   template() {
@@ -141,8 +141,8 @@ export class PublicWPSiteSummaryView extends SiteSummaryView {
   siteUrlElem: JQuery<HTMLElement>;
   setupViews() {
     super.setupViews();
-    this.siteTitleElem = this.rootElement.find(".site_summary_title");
-    this.siteUrlElem = this.rootElement.find(".site_summary_siteUrl");
+    this.siteTitleElem = this.findElement(".site_summary_title");
+    this.siteUrlElem = this.findElement(".site_summary_siteUrl");
   }
 
   template() {

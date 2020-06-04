@@ -27,22 +27,22 @@ export class SitesPanel extends View<null> implements SiteListViewDelegate {
 
   setupViews() {
     var self = this;
-    var aidiv = this.rootElement.find(".activity_indicator");
+    var aidiv = this.findElement(".activity_indicator");
     this.activityIndicator = new ActivityIndicator(aidiv).setup();
 
     var postsPanelElem = ensureElement("posts_panel_div", this.rootElement);
     this.postsPanel = new PostsPanel(postsPanelElem, this.app).setup();
 
-    var siteListDiv = this.rootElement.find("#site_list_div");
+    var siteListDiv = this.findElement("#site_list_div");
     this.siteListView = new SiteListView(siteListDiv, this.app).setup();
     this.siteListView.delegate = this;
 
-    this.clearButton = this.rootElement.find("#clear_button");
+    this.clearButton = this.findElement("#clear_button");
     this.clearButton.button().on("click", function () {
       self.app.siteService.clear();
     });
 
-    this.addButton = this.rootElement.find("#add_button");
+    this.addButton = this.findElement("#add_button");
     this.addButton.button().on("click", function () {
       self.showAddSiteDialog().then((site: Site) => {
         if (site != null) {
