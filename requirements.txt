@@ -5,3 +5,4 @@ google-api-python-client
 google-cloud-datastore
 google-auth
 google-api
+# google-python-cloud-debugger

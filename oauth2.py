@@ -1,7 +1,7 @@
 
 from flask import request, Flask, Blueprint, render_template, redirect, jsonify, make_response, session
 from werkzeug.routing import RequestRedirect, MethodNotAllowed, NotFound
-import requests
+import requests, logging
 
 def get_view_function(app, url, host = "localhost", method='GET'):
     """Match a url and return the view and arguments
@@ -38,6 +38,22 @@ class OAuth2Handler(object):
     def __call__(self, *args, **kwargs):
         code = request.args.get("code")
         state = request.args.get("state", "")
+
+        # Hack to work around medium's not allowing localhost URLs
+        # So we forward to localhost if we are not currently running on 
+        # localhost and the state param this flag
+        if state:
+            import json
+            js = json.loads(state)
+            forward_host = js.get("forward_host", None)
+            logging.debug("Forward Host: ", forward_host)
+            logging.debug("Request Host: ", request.host)
+            if forward_host and forward_host != request.host:
+                new_url = f"{request.scheme}://{request.host}{request.path}"
+                if request.query_string:
+                    new_url += "?" + request.query_string.decode("utf-8")
+                return redirect(new_url)
+
         redirect_uri = f"{request.scheme}://{request.host}{self.redirect_uri}"
         data = {
             "grant_type": "authorization_code",

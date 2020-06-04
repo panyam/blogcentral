@@ -1,3 +1,8 @@
+
+# import googleclouddebugger
+# googleclouddebugger.enable()
+
+
 from flask import request, Flask, Blueprint, render_template, redirect, jsonify, session
 import blogcentral_config as bcconfigs
 from oauth2 import OAuth2Handler
@@ -6,6 +11,7 @@ from oauth2 import OAuth2Handler
 # called `app` in `main.py`.
 app = Flask(__name__)
 app.secret_key = bcconfigs.SESSION_SECRET_KEY
+app.debug = True
 
 def common_properties(**extra_kwargs):
     gsuite_marketplace_id = "712411571237"

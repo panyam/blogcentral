@@ -13,6 +13,10 @@ gdocs
 # below:
 .git
 .gitignore
+.gitmodules
+README.md
+LICENSE
+.swp
 
 # Python pycache:
 __pycache__/

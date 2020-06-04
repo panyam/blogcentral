@@ -46,7 +46,7 @@ export class OAuth2AuthClient implements AuthClient {
 
   async hasTokenExpired() {
     var tokenExpiresAt = this.authConfig.tokenExpiresAt || 0;
-    return tokenExpiresAt >= 0 && tokenExpiresAt <= Date.now();
+    return tokenExpiresAt > 0 && tokenExpiresAt <= Date.now();
   }
 
   /**
@@ -63,18 +63,17 @@ export class OAuth2AuthClient implements AuthClient {
   get fullAuthorizeUrl() {
     var ac = this.authConfig;
     // this should really be based on where we are running as and is specific to where application is deployed
+    var state = {
+      authType: ac.authType,
+      clientId: ac.clientId,
+      redirectUri: ac.redirectUri,
+      forward_host: window.location.host,
+    };
     var builder = new URLBuilder(ac.authorizeUrl)
       .addParam("client_id", ac.clientId)
       .addParam("redirect_uri", ac.redirectUri)
       .addParam("response_type", ac.responseType || "code")
-      .addParam(
-        "state",
-        JSON.stringify({
-          authType: ac.authType,
-          clientId: ac.clientId,
-          redirectUri: ac.redirectUri,
-        })
-      )
+      .addParam("state", JSON.stringify(state))
       .addParam("scope", ac.scope || "");
     return builder.build();
   }

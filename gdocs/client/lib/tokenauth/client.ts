@@ -38,7 +38,7 @@ export class TokenAuthClient implements AuthClient {
 
   async hasTokenExpired() {
     var tokenExpiresAt = this.authConfig.tokenExpiresAt || 0;
-    return tokenExpiresAt >= 0 && tokenExpiresAt <= Date.now();
+    return tokenExpiresAt > 0 && tokenExpiresAt <= Date.now();
   }
 
   /**
@@ -89,8 +89,8 @@ export class TokenAuthClient implements AuthClient {
     return AuthResult.SUCCESS;
   }
 
-  completeAuthFlow(_authResult : any) : boolean {
-      return false;
+  completeAuthFlow(_authResult: any): boolean {
+    return false;
   }
 
   static defaultConfig(): TokenAuthConfig {

@@ -25,11 +25,11 @@ export class MediumSiteInputView extends SiteInputView {
         authType: "AUTH_TYPE_OAUTH2",
         clientId: "1d26e3f346e",
         scope: "basicProfile,listPublications,publishPost",
-        redirectUri: redirectUriForSite("wordpress"),
+        redirectUri: "https://blogcentral.appspot.com/oauth2/medium/redirect", // redirectUriForSite("medium"),
         responseType: "code", // Avoid Implicit grants for now
-        tokenUrl: "https://public-api.wordpress.com/oauth2/token",
-        authorizeUrl: "https://public-api.wordpress.com/oauth2/authorize",
-        authenticateUrl: "https://public-api.wordpress.com/oauth2/authenticate",
+        tokenUrl: "https://medium.com/v1/tokens",
+        authorizeUrl: "https://medium.com/m/oauth/authorize",
+        authenticateUrl: "https://medium.com/m/oauth/authenticate",
       };
     } else {
       return this.authDetailView.entity;
