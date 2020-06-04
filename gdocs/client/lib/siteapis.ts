@@ -1,3 +1,4 @@
+import { App } from "./app";
 import { Request, HttpClient } from "./net";
 import { Int, Nullable } from "./types";
 import { ensureParam } from "./utils";
@@ -11,13 +12,13 @@ export interface SiteConfig {
 }
 
 export abstract class SiteApi {
-  site: Site
-  authClient : AuthClient
-  httpClient : HttpClient
-  constructor(site : Site, authClient : AuthClient, httpClient : HttpClient) {
-    this.site = site
-    this.authClient = authClient
-    this.httpClient = httpClient
+  site: Site;
+  authClient: AuthClient;
+  app: App;
+  constructor(site: Site, authClient: AuthClient, app: App) {
+    this.site = site;
+    this.authClient = authClient;
+    this.app = app;
   }
 
   abstract createPostRequest(post: Post, options: any): Request;
@@ -28,17 +29,17 @@ export abstract class SiteApi {
   async createPost(post: Post, options: any) {
     var request = this.createPostRequest(post, options);
     request = this.authClient.decorateRequest(request);
-    return this.httpClient.send(request);
+    return this.app.httpClient.send(request);
   }
   async updatePost(postid: String, options: any) {
     var request = this.updatePostRequest(postid, options);
     request = this.authClient.decorateRequest(request);
-    return this.httpClient.send(request);
+    return this.app.httpClient.send(request);
   }
   async getPosts(options: any): Promise<Post[]> {
     var request = this.getPostsRequest(options);
     request = this.authClient.decorateRequest(request);
-    var response = await this.httpClient.send(request);
+    var response = await this.app.httpClient.send(request);
     try {
       return response.data.map((p: any) => {
         return new Post(p.id, p);
@@ -51,7 +52,7 @@ export abstract class SiteApi {
   async removePost(id: any) {
     var request = this.removePostRequest(id);
     request = this.authClient.decorateRequest(request);
-    return this.httpClient.send(request);
+    return this.app.httpClient.send(request);
   }
 }
 

@@ -29,7 +29,7 @@ Handlebars.registerHelper("eitherVal", function (
 });
 
 export interface SiteApiFactory {
-  (site: Site, authClient: AuthClient, httpClient: HttpClient): SiteApi;
+  (site: Site, authClient: AuthClient, app: App): SiteApi;
 }
 
 export interface AuthClientFactory {
@@ -98,7 +98,7 @@ export class App {
 
   createSiteApi(site: Site) {
     var ac = this.authClientForSite(site);
-    return this.siteApiFactories[site.siteType](site, ac, this.httpClient);
+    return this.siteApiFactories[site.siteType](site, ac, this);
   }
 
   createSiteView(
@@ -127,11 +127,12 @@ export class App {
    */
   async ensureLoggedIn(site: Site) {
     while (true) {
-      var authClient = this.createAuthClient(site.authType, site.authConfig);
+      var authClient = this.authClientForSite(site);
       if (await authClient.validateAuth()) return true;
 
-      // if we are not logged in then start the auth flow - This could involve
-      // showing responding UIs to gather credentials etc.
+      // if we are not logged in then start the auth flow -
+      // This could involve showing responding UIs to gather
+      // credentials etc.
       var result = await authClient.startAuthFlow();
       if (result == AuthResult.CANCELLED) {
         console.log("Login Cancelled");
