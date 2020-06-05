@@ -3,7 +3,7 @@
 # googleclouddebugger.enable()
 
 
-from flask import request, Flask, Blueprint, render_template, redirect, jsonify, session
+from flask import request, Flask, Blueprint, render_template, redirect, jsonify, session, send_from_directory
 import blogcentral_config as bcconfigs
 from oauth2 import OAuth2Handler
 
@@ -42,6 +42,11 @@ def client():
 @app.route('/')
 def homepage():
     return render_template("homepage.html", **common_properties())
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'icons/icon_16.ico', mimetype='image/vnd.microsoft.icon')
 
 @app.route("/clear")
 def clear():
