@@ -50,10 +50,6 @@ export class JQHttpClient implements HttpClient {
         });
     });
   }
-
-  toResponse(_response: any): Response {
-    return new Response();
-  }
 }
 
 export class LocalExtractor implements ContentExtractor {

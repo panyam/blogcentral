@@ -2,16 +2,16 @@
 # import googleclouddebugger
 # googleclouddebugger.enable()
 
-
 from flask import request, Flask, Blueprint, render_template, redirect, jsonify, session, send_from_directory
 import blogcentral_config as bcconfigs
-from oauth2 import OAuth2Handler
+import utils
 
 # If `entrypoint` is not defined in app.yaml, App Engine will look for an app
 # called `app` in `main.py`.
 app = Flask(__name__)
 app.secret_key = bcconfigs.SESSION_SECRET_KEY
 app.debug = True
+app.json_encoder = utils.JsonEncoder
 
 def common_properties(**extra_kwargs):
     gsuite_marketplace_id = "712411571237"
@@ -53,9 +53,10 @@ def clear():
     session.clear()
     return redirect("/");
 
+app.route("/urlfetch/", methods = ["GET", "PUT", "POST", "DELETE", "OPTIONS"])(utils.urlfetch)
 for route,config in bcconfigs.oauth2.items():
     print("Setting up route: ", route)
-    app.route(route)(OAuth2Handler(app, **config))
+    app.route(route)(utils.OAuth2Handler(app, **config))
 
 if __name__ == '__main__':
     import os, sys

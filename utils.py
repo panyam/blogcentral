@@ -1,7 +1,42 @@
 
-from flask import request, Flask, Blueprint, render_template, redirect, jsonify, make_response, session
+from flask import request, Flask, Blueprint, render_template, redirect, jsonify, make_response, session, json
 from werkzeug.routing import RequestRedirect, MethodNotAllowed, NotFound
-import requests, logging
+import requests, logging, base64, datetime, urllib.parse
+
+class JsonEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            return obj.strftime(DEFAULT_DATETIME_FORMAT)
+        elif isinstance(obj, bytes):
+            return base64.b64encode(obj).decode()
+        elif hasattr(obj, "to_json"):
+            return obj.to_json()
+        elif isinstance(obj, bytes):
+            return obj.decode()
+        else:
+            pass
+        return super(JsonEncoder, self).default(obj)
+
+def urlfetch():
+    payload = {}
+    if request.data:
+        payload = request.json
+    url = request.args.get("url") or payload["url"]
+    method = (request.args.get("method") or payload.get("method", "get")).lower()
+    headers = payload.get("headers", {})
+    body = payload.get("body", None)
+
+    methodfunc = getattr(requests, method)
+    response = methodfunc(url, data = body, headers = headers)
+    # import ipdb ; ipdb.set_trace()
+    out = {
+        "status": response.status_code,
+        "statusText": response.reason,
+        "contentType": response.headers["content-type"],
+        "headers": dict(response.headers.items()),
+        "data": base64.b64encode(response.content).decode("utf-8")
+    }
+    return jsonify(out)
 
 def get_view_function(app, url, host = "localhost", method='GET'):
     """Match a url and return the view and arguments
@@ -43,7 +78,6 @@ class OAuth2Handler(object):
         # So we forward to localhost if we are not currently running on 
         # localhost and the state param this flag
         if state:
-            import json
             js = json.loads(state)
             forward_host = js.get("forward_host", None)
             logging.debug("Forward Host: ", forward_host)
@@ -66,7 +100,6 @@ class OAuth2Handler(object):
         return self.handle_access_token(state, response.json())
 
     def handle_access_token(self, state, response):
-        import json, urllib.parse
         session["auth_results"] = urllib.parse.quote(json.dumps([{
             'state': state,
             'response': response
