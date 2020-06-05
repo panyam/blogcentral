@@ -44,7 +44,7 @@ export class MediumApi extends SiteApi {
   }
 
   processGetPosts(response: Response, _options: any) {
-    return response.data.map((p: any) => {
+    return response.data.data.map((p: any) => {
       return new Post(p.id, p);
     });
   }
