@@ -21,7 +21,7 @@ export function ensureCreated(
     // creat it then
     out = $("<" + elemType + "></" + elemType + ">");
     if (elem_or_id != null && typeof elem_or_id === "string")
-      out.attr(elem_or_id, elem_or_id);
+      out.attr("id", elem_or_id);
     if (root == null) root = $("body");
     root.append(out);
   }

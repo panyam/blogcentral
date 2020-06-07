@@ -183,6 +183,9 @@ export class PostsPanel extends View<any> implements PostListViewDelegate {
         "add_post_dialog",
         this.rootElement
       );
+      if (!addPostDialogElem.attr("title")) {
+        addPostDialogElem.attr("title", "Add new post");
+      }
       this.addPostDialog = new AddPostDialog(addPostDialogElem).setup();
     }
     return this.addPostDialog.open();

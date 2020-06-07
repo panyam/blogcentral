@@ -32,8 +32,7 @@ export class SiteInputDialog extends FormDialog<Site> {
     return viewParams;
   }
 
-  setupViews() {
-    var self = this;
+  setupViews(self : this = this) {
     super.setupViews();
     this.allFields.add(this.siteTypeElem);
     this.siteTypeElem = this.findElement("select");

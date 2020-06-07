@@ -14,6 +14,10 @@ export class MediumApi extends SiteApi {
     return this.userDetails.id;
   }
 
+  get currentUserId() {
+    return this.userDetails.id || null;
+  }
+
   async getPosts(options: any) {
     await this.ensureUserId();
     return super.getPosts(options);
@@ -50,7 +54,19 @@ export class MediumApi extends SiteApi {
   }
 
   createPostRequest(post: Post, options: any = null) {
-    return new Request("", {});
+    //github.com/Medium/medium-api-docs#33-posts
+    var builder = new URLBuilder("https://api.medium.com/v1/users/")
+      .appendPath(this.currentUserId)
+      .appendPath("posts");
+    options = options || {};
+    var request = new Request(builder.build(), options);
+    request.options.method = "post";
+    request.body = {};
+    request.body.title = options.title || post.options.title;
+    request.body.contentFormat = "html";
+    request.body.publishStatus = "draft";
+    request.body.content = options.content || "<h1>Hello World</h1>";
+    return request;
   }
 
   updatePostRequest(postid: String, options: any = null) {

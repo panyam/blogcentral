@@ -25,25 +25,27 @@ export class AddPostDialog extends FormDialog<Post> {
       .add(this.slugElem);
   }
 
-  html() {
+  template() {
     return `
         <label for="post_title">Title</label>
-        <input type="url" name="post_title" id="post_title" value="Awesome Title!" class="text ui-widget-content ui-corner-all" value = "{{post.options.title}}"/>
+        <input type="url" name="post_title" id="post_title" 
+                value = "{{post.options.title}}"/>
 
         <label for="post_excerpt">Excerpt</label>
         <textarea name="post_excerpt" id="post_excerpt" 
-                  class="text ui-widget-content ui-corner-all" rows="5" 
+                  rows="5" 
                   placeholder = "Enter your amazing excerpt here!!!">{{post.options.excerpt}}</textarea>
 
         <label for="post_slug">Slug</label>
-        <input type="url" name="post_slug" id="post_slug" value="{{post.options.slug}}" 
-               class="text ui-widget-content ui-corner-all"/>
+        <input type="url" name="post_slug" id="post_slug" 
+               value="{{post.options.slug}}" 
+               />
 
         <label for="post_password">Password</label>
         <input type="password" name="post_password" 
                id="post_password" 
                value="{{post.options.password}}" 
-               class="text ui-widget-content ui-corner-all"/>
+               />
         `;
   }
 
