@@ -32,7 +32,7 @@ export class PostsPanel extends View<any> implements PostListViewDelegate {
   activityIndicator: ActivityIndicator;
   currentPage = 1;
   hasNextPage = false;
-  siteManager : SiteManager
+  siteManager: SiteManager;
 
   constructor(elem_or_id: string, app: App) {
     super(elem_or_id, null, null);
@@ -40,15 +40,10 @@ export class PostsPanel extends View<any> implements PostListViewDelegate {
   }
 
   async open(site: Site): Promise<Nullable<Post>> {
-    /*
-        var parent = this.rootElement.parent();
-        var margins = parseInt(parent.css("margin-left")) + 
-                      parseInt(parent.css("margin-right"));
-        */
     var width = "100%"; // (parent.width() + margins) + "px";
     this.rootElement.animate({ width: width });
     var self = this;
-    self.siteManager = this.app.managerForSite(site);
+    self.siteManager = this.app.managerForSite(site.siteType);
     self.site = site;
     self.postListView.site = site;
     self.postListView.entity = [];

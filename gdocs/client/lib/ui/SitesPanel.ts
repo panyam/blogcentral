@@ -56,7 +56,8 @@ export class SitesPanel extends View<null> {
     var siteService = this.app.siteService;
     siteService.loadAll().then(() => {
       siteService.sites.forEach((site: Site) => {
-        var client = self.app.createAuthClient(site.authType, site.authConfig);
+        var authManager = self.app.managerForAuth(site.authType);
+        var client = authManager.createAuthClient(site.authConfig);
         AuthResults.forEach((authResult: any) => {
           if (typeof authResult["state"] === "string")
             authResult["state"] = JSON.parse(authResult["state"]);
@@ -107,7 +108,8 @@ export class SitesPanel extends View<null> {
    */
   async publishPost(site: Site) {
     var app = this.app;
-    var siteApi = app.apiForSite(site);
+    var siteManager = app.managerForSite(site.siteType);
+    var siteApi = siteManager.apiForSite(site);
     if (site.selectedPost == null && siteApi.canUpdatePosts) {
       alert("Please select a post for this site to publish to");
       return null;

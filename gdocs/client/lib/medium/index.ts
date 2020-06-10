@@ -16,7 +16,7 @@ export class MediumSiteManager extends SiteManager {
     site: Nullable<Site>
   ): View<Site> {
     if (purpose == "input") {
-      return new MediumSiteInputView(elem_or_id, this.app).setup();
+      return new MediumSiteInputView(elem_or_id, this).setup();
     } else {
       return new MediumSiteSummaryView(elem_or_id, this, site!!).setup();
     }

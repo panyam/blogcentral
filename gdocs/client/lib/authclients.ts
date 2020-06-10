@@ -1,4 +1,7 @@
+import { App } from "./app";
+import { Nullable } from "./types"
 import { Request } from "./net";
+import { View } from "./ui/Views";
 
 export enum AuthResult {
   SUCCESS,
@@ -10,6 +13,28 @@ export type AuthType = string;
 
 export interface AuthConfig {
   authType: AuthType;
+}
+
+export abstract class AuthManager {
+  app: App;
+  constructor(app : App) {
+      this.app = app
+  }
+
+  /**
+   * Creates the auth client given the right AuthConfig.
+   */
+  abstract createAuthClient(entity: AuthConfig) : AuthClient;
+
+  /**
+   * Called to create a new view for a given purpose specific to this
+   * auth type
+   */
+  abstract createAuthView(
+    purpose: string,
+    elem_or_id: any,
+    entity: Nullable<AuthConfig>
+    ) : View<AuthConfig>;
 }
 
 export interface AuthClient {

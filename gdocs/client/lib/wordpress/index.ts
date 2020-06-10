@@ -15,7 +15,7 @@ class PublicWPSiteManager extends SiteManager {
     site: Nullable<Site>
   ) : View<Site> {
     if (purpose == "input") {
-      return new PublicWPSiteInputView(elem_or_id, this.app).setup();
+      return new PublicWPSiteInputView(elem_or_id, this).setup();
     } else {
       return new PublicWPSiteSummaryView(elem_or_id, this, site!!).setup();
     }
@@ -33,7 +33,7 @@ class HostedWPSiteManager extends SiteManager {
     site: Nullable<Site>
   ) : View<Site> {
     if (purpose == "input") {
-      return new HostedWPSiteInputView(elem_or_id, this.app).setup();
+      return new HostedWPSiteInputView(elem_or_id, this).setup();
     } else {
       return new HostedWPSiteSummaryView(elem_or_id, this, site!!).setup();
     }

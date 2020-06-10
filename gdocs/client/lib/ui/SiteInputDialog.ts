@@ -32,7 +32,7 @@ export class SiteInputDialog extends FormDialog<Site> {
     return viewParams;
   }
 
-  setupViews(self : this = this) {
+  setupViews(self: this = this) {
     super.setupViews();
     this.allFields.add(this.siteTypeElem);
     this.siteTypeElem = this.findElement("select");
@@ -61,8 +61,8 @@ export class SiteInputDialog extends FormDialog<Site> {
     setEnabled(this.siteTypeElem, this.addingSiteMode);
     // show the different view based on the type
     this.siteDetailElem = this.findElement(".site_details_view");
-    this.siteInputView = this.app.createSiteView(
-      siteType,
+    var siteManager = this.app.managerForSite(siteType);
+    this.siteInputView = siteManager.createSiteView(
       "input",
       this.siteDetailElem,
       null

@@ -73,7 +73,8 @@ export class PostListView extends View<Post[]> {
     var posts = this.entity!!;
     var post = posts[index];
     console.log("Removing Post at: ", index);
-    var siteApi = app.apiForSite(this.site);
+    var siteManager = app.managerForSite(this.site.siteType);
+    var siteApi = siteManager.apiForSite(this.site);
     await siteApi.removePost(post.id);
     posts.splice(index, 1);
     this.refreshViews();

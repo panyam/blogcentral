@@ -21,7 +21,7 @@ export class SiteListView extends View<Site[]> {
     super.setupViews();
     this.siteViews = this.findElement(".site_div").map((i: Int, elem: any) => {
       var site = self.app.siteService.sites[i];
-      var siteManager = self.app.managerForSite(site);
+      var siteManager = self.app.managerForSite(site.siteType);
       var siteView = siteManager.createSiteView(
         "summary",
         elem,

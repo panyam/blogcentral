@@ -1,14 +1,18 @@
 // import "webpack-jquery-ui/button";
 // import "webpack-jquery-ui/css";
 import { SitesPanel } from "./ui/SitesPanel";
-import { AuthDetailView } from "./ui/AuthDetailViews";
 import { HttpClient } from "./net";
-import { View } from "./ui/Views";
+import { EventHub } from "./events";
 import { Store } from "./stores";
 import { ContentExtractor } from "./extractors";
-import { AuthResult, AuthConfig, AuthClient } from "./authclients";
-import { SiteService, Site, SiteManager } from "./siteapis";
-import { Nullable } from "./types";
+import {
+  AuthType,
+  AuthResult,
+  AuthConfig,
+  AuthClient,
+  AuthManager,
+} from "./authclients";
+import { SiteType, SiteService, Site, SiteManager } from "./siteapis";
 
 declare var Handlebars: any;
 Handlebars.registerHelper("eachInMap", function (map: any, block: any) {
@@ -32,24 +36,18 @@ export interface AuthClientFactory {
   (config: AuthConfig): AuthClient;
 }
 
-export interface ViewFactory<ValueType, ViewType = View<ValueType>> {
-  (app : App, purpose: string, elem_or_id: any, config: Nullable<ValueType>): ViewType;
-}
-
 export class App {
+  eventHub = new EventHub();
   store: Store;
   siteService: SiteService;
   httpClient: HttpClient;
   contentExtractor: ContentExtractor;
   sitesPanel: SitesPanel;
   siteManagers: {
-    [siteType: string]: SiteManager
+    [siteType: string]: SiteManager;
   } = {};
-  authClientFactories: {
-    [authType: string]: AuthClientFactory;
-  } = {};
-  authViewFactories: {
-    [authType: string]: ViewFactory<AuthConfig, AuthDetailView>;
+  authManagers: {
+    [authType: string]: AuthManager;
   } = {};
 
   constructor(store: Store, httpClient: HttpClient) {
@@ -57,41 +55,23 @@ export class App {
     this.httpClient = httpClient;
     this.siteService = new SiteService(store);
     this.sitesPanel = new SitesPanel("sites_panel_div", this);
-
-    // register things!
-    // import wp from "./wordpress/index";
-
-    // this should register 2 suites with each suite containing:
-    //  0. SiteType that will act as the grouping for everything about this Site class
-    //  1. A SiteApi representing the kind of site.
-    //  2. A SiteInputView - for showing a UI that can input data for hte Site
-    //  3. A SiteSummaryView - for showing a UI for summarizing a site in a cell
-    // wp.register(this);
   }
 
-  managerForSite(site : Site) : SiteManager {
-    return this.siteManagers[site.siteType];
+  managerForSite(siteType: SiteType): SiteManager {
+    return this.siteManagers[siteType];
   }
 
-  createAuthClient(authType: string, entity: AuthConfig) {
-    return this.authClientFactories[authType](entity);
+  managerForAuth(authType: AuthType): AuthManager {
+    return this.authManagers[authType];
   }
 
   authClientForSite(site: Site): AuthClient {
     var s = site as any;
     if (!s.authClient) {
-      s.authClient = this.createAuthClient(site.authType, site.authConfig);
+      var authManager = this.authManagers[site.authType];
+      s.authClient = authManager.createAuthClient(site.authConfig);
     }
     return s.authClient as AuthClient;
-  }
-
-  createAuthView(
-    authType: string,
-    purpose: string,
-    elem_or_id: any,
-    entity: Nullable<AuthConfig>
-  ) {
-    return this.authViewFactories[authType](this, purpose, elem_or_id, entity);
   }
 
   /**

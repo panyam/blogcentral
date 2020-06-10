@@ -1,19 +1,10 @@
 import "../../styles/SiteInputView";
 import { Nullable } from "../types";
 import { View } from "./Views";
-import { Site, SiteConfig } from "../siteapis";
+import { SiteManager, Site, SiteConfig } from "../siteapis";
 import { AuthConfig, AuthType } from "../authclients";
 import { ActivityIndicator } from "./ActivityIndicator";
 import { AuthDetailView } from "./AuthDetailViews";
-
-interface AuthViewCreator {
-  createAuthView(
-    authType: string,
-    purpose: string,
-    elem_or_id: any,
-    entity: Nullable<AuthConfig>
-  ): AuthDetailView;
-}
 
 export abstract class SiteInputView extends View<Site> {
   titleElem: any;
@@ -21,15 +12,15 @@ export abstract class SiteInputView extends View<Site> {
   authDetailElem: any;
   authDetailView: AuthDetailView;
   authTypeElem: any;
-  authViewCreator: AuthViewCreator;
+  siteManager: SiteManager;
 
   constructor(
     elem_or_id: any,
-    authViewCreator: AuthViewCreator,
+    siteManager: SiteManager,
     site: Nullable<Site> = null
   ) {
     super(elem_or_id, "site", site);
-    this.authViewCreator = authViewCreator;
+    this.siteManager = siteManager;
   }
 
   setupViews(self: this = this) {
@@ -77,14 +68,14 @@ export abstract class SiteInputView extends View<Site> {
       // throw new Error(mesg);
       return;
     }
-    this.authDetailView = this.authViewCreator.createAuthView(
-      authType,
-      "",
-      this.authDetailElem,
-      null
-    );
     var site = this._entity;
     if (site != null && site.authType == authType) {
+      var authManager = this.siteManager.app.managerForAuth(site.authType);
+      this.authDetailView = authManager.createAuthView(
+        "",
+        this.authDetailElem,
+        null
+      ) as AuthDetailView;
       this.authDetailView.entity = site.authConfig;
     }
   }
