@@ -7,6 +7,7 @@ import { AUTH_TYPE_TOKEN } from "./core";
 
 export function registerApp(app: App) {
   app.authViewFactories[AUTH_TYPE_TOKEN] = (
+    app : App,
     _purpose: string,
     elem_or_id: any,
     _entity: Nullable<AuthConfig>

@@ -1,7 +1,7 @@
 import "../../styles/SitesPanel";
 import { SiteInputDialog } from "./SiteInputDialog";
 import { ActivityIndicator } from "./ActivityIndicator";
-import { SiteListView, SiteListViewDelegate } from "./SiteListView";
+import { SiteListView } from "./SiteListView";
 import { ensureElement, ensureCreated } from "./utils";
 import { View } from "./Views";
 import { Nullable } from "../types";
@@ -11,7 +11,7 @@ import { App } from "../app";
 
 declare var AuthResults: any[];
 
-export class SitesPanel extends View<null> implements SiteListViewDelegate {
+export class SitesPanel extends View<null> {
   postsPanel: PostsPanel;
   addSiteDialog: Nullable<SiteInputDialog> = null;
   clearButton: any;
@@ -107,7 +107,8 @@ export class SitesPanel extends View<null> implements SiteListViewDelegate {
    */
   async publishPost(site: Site) {
     var app = this.app;
-    if (site.selectedPost == null) {
+    var siteApi = app.apiForSite(site);
+    if (site.selectedPost == null && siteApi.canUpdatePosts) {
       alert("Please select a post for this site to publish to");
       return null;
     }
@@ -118,10 +119,16 @@ export class SitesPanel extends View<null> implements SiteListViewDelegate {
 
     // Now publish it!
     if (await app.ensureLoggedIn(site)) {
-      var siteApi = app.apiForSite(site);
-      var result = await siteApi.updatePost(site.selectedPost.id, {
-        content: html,
-      });
+      var result: any;
+      if (siteApi.canUpdatePosts) {
+        result = await siteApi.updatePost(site.selectedPost.id, {
+          content: html,
+        });
+      } else {
+        result = await siteApi.updatePost(site.selectedPost.id, {
+          content: html,
+        });
+      }
       console.log("Published Post, Result: ", result);
     }
     this.activityIndicator.hide();

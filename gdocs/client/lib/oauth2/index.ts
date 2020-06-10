@@ -8,6 +8,7 @@ import { AUTH_TYPE_OAUTH2 } from "./core";
 
 export function registerApp(app: App) {
   app.authViewFactories[AUTH_TYPE_OAUTH2] = (
+    app : App,
     _purpose: string,
     elem_or_id: any,
     _entity: Nullable<AuthConfig>

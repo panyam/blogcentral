@@ -1,6 +1,7 @@
 import { App } from "./app";
 import { Request, Response } from "./net";
 import { Int, Nullable } from "./types";
+import { View } from "./ui/Views";
 import { ensureParam } from "./utils";
 import { AuthType, AuthConfig, AuthClient } from "./authclients";
 import { Store } from "./stores";
@@ -11,15 +12,61 @@ export interface SiteConfig {
   siteType: SiteType;
 }
 
+export abstract class SiteManager {
+  app: App;
+  constructor(app : App) {
+      this.app = app
+  }
+
+  apiForSite(site: Site): SiteApi {
+    var s = site as any;
+    if (!s.siteApi) {
+      var ac = this.app.authClientForSite(site);
+      s.siteApi = this.createSiteApi(site, ac);
+    }
+    return s.siteApi as SiteApi;
+  }
+
+  /**
+   * Called to create the Api client for the Site.
+   */
+  abstract createSiteApi(site: Site, authClient: AuthClient): SiteApi;
+
+  /**
+   * Called to create a new view for a given purpose specific to this
+   * site type
+   */
+  abstract createSiteView(
+    purpose: string,
+    elem_or_id: any,
+    site: Nullable<Site>) : View<Site>;
+
+  /**
+   * Lets one select one or more posts in a site.
+   */
+  async selectPost(site: Site): Promise<Nullable<Post>> {
+      return null;
+  }
+
+  /**
+   * Kicks of publishing of content to the given site.
+   */
+  async publishPost(site: Site): Promise<Nullable<boolean>> {
+      return false
+  }
+}
+
 export abstract class SiteApi {
   site: Site;
+  siteManager : SiteManager
   authClient: AuthClient;
-  app: App;
-  constructor(site: Site, authClient: AuthClient, app: App) {
+  constructor(site: Site, authClient: AuthClient, siteManager : SiteManager) {
     this.site = site;
     this.authClient = authClient;
-    this.app = app;
+    this.siteManager = siteManager;
   }
+
+  get app() { return this.siteManager.app; }
 
   get canGetPosts(): boolean {
     return true;

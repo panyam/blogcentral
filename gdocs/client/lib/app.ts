@@ -7,7 +7,7 @@ import { View } from "./ui/Views";
 import { Store } from "./stores";
 import { ContentExtractor } from "./extractors";
 import { AuthResult, AuthConfig, AuthClient } from "./authclients";
-import { SiteService, Site, SiteApi } from "./siteapis";
+import { SiteService, Site, SiteManager } from "./siteapis";
 import { Nullable } from "./types";
 
 declare var Handlebars: any;
@@ -28,16 +28,12 @@ Handlebars.registerHelper("eitherVal", function (
   return new Handlebars.SafeString(out);
 });
 
-export interface SiteApiFactory {
-  (site: Site, authClient: AuthClient, app: App): SiteApi;
-}
-
 export interface AuthClientFactory {
   (config: AuthConfig): AuthClient;
 }
 
 export interface ViewFactory<ValueType, ViewType = View<ValueType>> {
-  (purpose: string, elem_or_id: any, config: Nullable<ValueType>): ViewType;
+  (app : App, purpose: string, elem_or_id: any, config: Nullable<ValueType>): ViewType;
 }
 
 export class App {
@@ -46,14 +42,11 @@ export class App {
   httpClient: HttpClient;
   contentExtractor: ContentExtractor;
   sitesPanel: SitesPanel;
-  siteApiFactories: {
-    [siteType: string]: SiteApiFactory;
+  siteManagers: {
+    [siteType: string]: SiteManager
   } = {};
   authClientFactories: {
     [authType: string]: AuthClientFactory;
-  } = {};
-  siteViewFactories: {
-    [siteType: string]: ViewFactory<Site>;
   } = {};
   authViewFactories: {
     [authType: string]: ViewFactory<AuthConfig, AuthDetailView>;
@@ -76,6 +69,10 @@ export class App {
     // wp.register(this);
   }
 
+  managerForSite(site : Site) : SiteManager {
+    return this.siteManagers[site.siteType];
+  }
+
   createAuthClient(authType: string, entity: AuthConfig) {
     return this.authClientFactories[authType](entity);
   }
@@ -88,35 +85,13 @@ export class App {
     return s.authClient as AuthClient;
   }
 
-  apiForSite(site: Site): SiteApi {
-    var s = site as any;
-    if (!s.siteApi) {
-      s.siteApi = this.createSiteApi(site);
-    }
-    return s.siteApi as SiteApi;
-  }
-
-  createSiteApi(site: Site) {
-    var ac = this.authClientForSite(site);
-    return this.siteApiFactories[site.siteType](site, ac, this);
-  }
-
-  createSiteView(
-    siteType: string,
-    purpose: string,
-    elem_or_id: any,
-    entity: Nullable<Site>
-  ) {
-    return this.siteViewFactories[siteType](purpose, elem_or_id, entity);
-  }
-
   createAuthView(
     authType: string,
     purpose: string,
     elem_or_id: any,
     entity: Nullable<AuthConfig>
   ) {
-    return this.authViewFactories[authType](purpose, elem_or_id, entity);
+    return this.authViewFactories[authType](this, purpose, elem_or_id, entity);
   }
 
   /**

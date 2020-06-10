@@ -6,6 +6,7 @@ import { AUTH_TYPE_LOGIN } from "./core";
 
 export function registerApp(app: App) {
   app.authViewFactories[AUTH_TYPE_LOGIN] = (
+    _app : App,
     _purpose: string,
     elem_or_id: any,
     _entity: Nullable<LoginAuthConfig>

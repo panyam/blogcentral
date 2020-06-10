@@ -35,7 +35,7 @@ def urlfetch():
         "headers": dict(response.headers.items()),
         "data": base64.b64encode(response.content).decode("utf-8")
     }
-    import ipdb ; ipdb.set_trace()
+    # import ipdb ; ipdb.set_trace()
     return jsonify(out)
 
 def get_view_function(app, url, host = "localhost", method='GET'):

@@ -95,12 +95,18 @@ export class HostedWPSiteInputView extends SiteInputView {
   }
 }
 
-export class HostedWPSiteSummaryView extends SiteSummaryView {
+export class WPSiteSummaryView extends SiteSummaryView {
   siteTitleElem: JQuery<HTMLElement>;
+  setupViews(self : this = this) {
+    super.setupViews();
+    this.siteTitleElem = this.findElement(".site_summary_title");
+  }
+}
+
+export class HostedWPSiteSummaryView extends WPSiteSummaryView {
   siteApiUrlElem: JQuery<HTMLElement>;
   setupViews() {
     super.setupViews();
-    this.siteTitleElem = this.findElement(".site_summary_title");
     this.siteApiUrlElem = this.findElement(".site_summary_apiUrl");
   }
 
@@ -136,12 +142,10 @@ export class HostedWPSiteSummaryView extends SiteSummaryView {
   }
 }
 
-export class PublicWPSiteSummaryView extends SiteSummaryView {
-  siteTitleElem: JQuery<HTMLElement>;
+export class PublicWPSiteSummaryView extends WPSiteSummaryView {
   siteUrlElem: JQuery<HTMLElement>;
   setupViews() {
     super.setupViews();
-    this.siteTitleElem = this.findElement(".site_summary_title");
     this.siteUrlElem = this.findElement(".site_summary_siteUrl");
   }
 

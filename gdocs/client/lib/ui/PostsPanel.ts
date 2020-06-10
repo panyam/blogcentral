@@ -6,7 +6,7 @@ import { PostListView, PostListViewDelegate } from "./PostListView";
 import { setVisible, setEnabled, ensureElement, ensureCreated } from "./utils";
 import { Int, Nullable } from "../types";
 import { App } from "../app";
-import { Site, Post } from "../siteapis";
+import { SiteManager, Site, Post } from "../siteapis";
 
 const PAGE_LENGTH = 5;
 
@@ -32,6 +32,7 @@ export class PostsPanel extends View<any> implements PostListViewDelegate {
   activityIndicator: ActivityIndicator;
   currentPage = 1;
   hasNextPage = false;
+  siteManager : SiteManager
 
   constructor(elem_or_id: string, app: App) {
     super(elem_or_id, null, null);
@@ -47,6 +48,7 @@ export class PostsPanel extends View<any> implements PostListViewDelegate {
     var width = "100%"; // (parent.width() + margins) + "px";
     this.rootElement.animate({ width: width });
     var self = this;
+    self.siteManager = this.app.managerForSite(site);
     self.site = site;
     self.postListView.site = site;
     self.postListView.entity = [];
@@ -133,7 +135,7 @@ export class PostsPanel extends View<any> implements PostListViewDelegate {
     var site = this.site;
     var app = this.app;
     if (site != null) {
-      var siteApi = app.apiForSite(site);
+      var siteApi = this.siteManager.apiForSite(site);
       if (await app.ensureLoggedIn(site)) {
         this.activityIndicator.show();
         var posts = await siteApi.getPosts({
@@ -167,7 +169,7 @@ export class PostsPanel extends View<any> implements PostListViewDelegate {
     if (button.title == "Cancel") return;
     var newPost = this.addPostDialog.entity;
     try {
-      var siteApi = app.apiForSite(site);
+      var siteApi = this.siteManager.apiForSite(site);
       console.log("Creating New Post: ", newPost);
       this.activityIndicator.show();
       await siteApi.createPost(newPost!!, {});
