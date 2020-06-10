@@ -1,5 +1,5 @@
 import { App } from "./app";
-import { Request, Response} from "./net";
+import { Request, Response } from "./net";
 import { Int, Nullable } from "./types";
 import { ensureParam } from "./utils";
 import { AuthType, AuthConfig, AuthClient } from "./authclients";
@@ -19,6 +19,16 @@ export abstract class SiteApi {
     this.site = site;
     this.authClient = authClient;
     this.app = app;
+  }
+
+  get canGetPosts(): boolean {
+    return true;
+  }
+  get canDeletePosts(): boolean {
+    return true;
+  }
+  get canUpdatePosts(): boolean {
+    return true;
   }
 
   abstract createPostRequest(post: Post, options: any): Request;
@@ -41,7 +51,7 @@ export abstract class SiteApi {
     request = this.authClient.decorateRequest(request);
     var response = await this.app.httpClient.send(request);
     try {
-      return this.processGetPosts(response, options)
+      return this.processGetPosts(response, options);
     } catch (e) {
       console.log("Get Posts Exception: ", e);
       throw e;
@@ -53,7 +63,7 @@ export abstract class SiteApi {
     return this.app.httpClient.send(request);
   }
 
-  processGetPosts(response : Response, _options : any) {
+  processGetPosts(response: Response, _options: any) {
     return response.data.map((p: any) => {
       return new Post(p.id, p);
     });

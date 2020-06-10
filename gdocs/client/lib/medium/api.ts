@@ -14,6 +14,16 @@ export class MediumApi extends SiteApi {
     return this.userDetails.id;
   }
 
+  get canGetPosts(): boolean {
+    return false;
+  }
+  get canDeletePosts(): boolean {
+    return false;
+  }
+  get canUpdatePosts(): boolean {
+    return false;
+  }
+
   get currentUserId() {
     return this.userDetails.id || null;
   }
