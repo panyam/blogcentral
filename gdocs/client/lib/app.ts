@@ -86,7 +86,8 @@ export class App {
   async ensureLoggedIn(site: Site) {
     while (true) {
       var authClient = this.authClientForSite(site);
-      if (await authClient.validateAuth()) return true;
+      var authValidated = await authClient.validateAuth();
+      if (authValidated) return true;
 
       // if we are not logged in then start the auth flow -
       // This could involve showing responding UIs to gather

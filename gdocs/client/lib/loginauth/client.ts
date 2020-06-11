@@ -69,7 +69,12 @@ export class LoginAuthClient extends TokenAuthClient {
   async hasTokenExpired() {
     var expired = await super.hasTokenExpired();
     if (!expired) return false;
-    var response = await this.validateToken();
+    try {
+      await this.validateToken();
+    } catch (error_response) {
+      console.log("Found Error: ", error_response);
+      return true;
+    }
     return false;
   }
 

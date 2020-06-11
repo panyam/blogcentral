@@ -1,7 +1,8 @@
 import "../../styles/SiteSummaryView";
-import { SiteManager, Site, SiteApi } from "../siteapis";
+import { SiteManager, Post, Site, SiteApi } from "../siteapis";
 import { ActivityIndicator } from "./ActivityIndicator";
 import { View } from "./Views";
+import { Nullable } from "../types";
 
 export class SiteSummaryView extends View<Site> {
   publishPostButton: any;
@@ -32,15 +33,15 @@ export class SiteSummaryView extends View<Site> {
       self.onPublishPostClicked();
     });
 
-    if (this.selectPostButton && this.selectPostButton >= 0) {
+    this.removeButton.button().on("click", (_event: any) => {
+      self.onRemoveSiteClicked();
+    });
+
+    if (this.selectPostButton && this.selectPostButton.length >= 0) {
       this.selectPostButton.button().on("click", (_event: any) => {
         self.onSelectPostClicked();
       });
     }
-
-    this.removeButton.button().on("click", (_event: any) => {
-      self.onRemoveSiteClicked();
-    });
   }
 
   showBusy(busy: boolean) {
@@ -59,29 +60,69 @@ export class SiteSummaryView extends View<Site> {
     }
   }
 
+  /**
+   * Lets one select one or more posts in a site.
+   */
   async onSelectPostClicked() {
     var site = this.entity!!;
-    await this.siteManager.selectPost(site);
-    this.siteManager.app.eventHub.triggerOn("PostSelected", this, site);
+    if (!this.siteApi.canGetPosts) {
+      return null;
+    }
+    var app = this.siteManager.app
+    var siteService = app.siteService;
+    var post = (await app.postsPanel.open(site)) as Nullable<Post>;
+    console.log("Post Selected from Panel: ", post);
+    if (post != null) {
+      site.selectedPost = {
+        id: post.id,
+        title: post.options.title,
+        link: post.options.link,
+      };
+      // await siteService.saveSite(site);
+      await siteService.saveAll();
+    }
+    return post;
   }
 
   async onPublishPostClicked() {
     var site = this.entity!!;
+    var app = this.siteManager.app;
+    var siteApi = this.siteApi;
     // select a post if possible
     if (site.selectedPost == null) {
-      if (this.siteApi.canGetPosts) {
+      if (siteApi.canGetPosts) {
         await this.onSelectPostClicked();
       } else {
         // then show the "new Post" view
+        site.selectedPost = await this.siteManager.obtainNewPost()
       }
     }
 
     if (site.selectedPost == null) {
-      // perhaps we cannot get posts - so kick off a
-      // post creation
+      // Then it was cancelled 
+      return false
     }
 
-    return this.siteManager.publishPost(site);
+    this.activityIndicator.show();
+    var html = await app.contentExtractor.extractHtml(site);
+    console.log("Published Post, HTML: ", html);
+
+    // Now publish it!
+    if (await app.ensureLoggedIn(site)) {
+      var result: any;
+      if (siteApi.canUpdatePosts) {
+        result = await siteApi.updatePost(site.selectedPost.id, {
+          content: html,
+        });
+      } else {
+        result = await siteApi.updatePost(site.selectedPost.id, {
+          content: html,
+        });
+      }
+      console.log("Published Post, Result: ", result);
+    }
+    this.activityIndicator.hide();
+    return true;
   }
 
   onRemoveSiteClicked() {
