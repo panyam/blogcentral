@@ -113,7 +113,6 @@ export class MediumSiteSummaryView extends SiteSummaryView {
             <button class="remove_site_button ui-button ui-widget ui-corner-all ui-button-icon-only" title="Remove Site">
                 <span class="ui-icon ui-icon-trash"></span> Remove Site
             </button>
-            <button class = "select_post_button ui-button ui-widget ui-corner-all" title="Select Post">Posts</button>
             <button class = "publish_post_button ui-button ui-widget ui-corner-all" >Publish</button>
         </center>
         <center> <div class = "progressbar"></div> </center>
