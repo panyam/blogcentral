@@ -1,5 +1,6 @@
 import { Nullable, Timestamp, Undefined } from "./types";
 
+export type EventSource = any
 export type EventType = any;
 export type EventCallback = (
   eventType: EventType,

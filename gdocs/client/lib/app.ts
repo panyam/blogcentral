@@ -1,6 +1,7 @@
 // import "webpack-jquery-ui/button";
 // import "webpack-jquery-ui/css";
 import { SitesPanel } from "./ui/SitesPanel";
+import { PostsPanel } from "./ui/PostsPanel";
 import { HttpClient } from "./net";
 import { EventHub } from "./events";
 import { Store } from "./stores";
@@ -43,6 +44,7 @@ export class App {
   httpClient: HttpClient;
   contentExtractor: ContentExtractor;
   sitesPanel: SitesPanel;
+  postsPanel: PostsPanel;
   siteManagers: {
     [siteType: string]: SiteManager;
   } = {};
@@ -55,6 +57,7 @@ export class App {
     this.httpClient = httpClient;
     this.siteService = new SiteService(store);
     this.sitesPanel = new SitesPanel("sites_panel_div", this);
+    this.postsPanel = new PostsPanel("posts_panel_div", this);
   }
 
   managerForSite(siteType: SiteType): SiteManager {

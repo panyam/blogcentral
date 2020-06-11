@@ -28,6 +28,11 @@ export abstract class SiteManager {
   }
 
   /**
+   * Kicks off a flow to obtain a new Post without saving it.
+   */
+  abstract obtainNewPost() : Promise<Nullable<Post>>
+
+  /**
    * Called to create the Api client for the Site.
    */
   abstract createSiteApi(site: Site, authClient: AuthClient): SiteApi;
@@ -44,15 +49,59 @@ export abstract class SiteManager {
   /**
    * Lets one select one or more posts in a site.
    */
-  async selectPost(site: Site): Promise<Nullable<Post>> {
-      return null;
+  async selectPost(site: Site) {
+    var siteApi = this.apiForSite(site);
+    if (!siteApi.canGetPosts) {
+        return null;
+    }
+
+    var siteService = this.app.siteService;
+    var post = (await this.app.postsPanel.open(site)) as Nullable<Post>;
+    console.log("Post Selected from Panel: ", post);
+    if (post != null) {
+      site.selectedPost = {
+        id: post.id,
+        title: post.options.title,
+        link: post.options.link,
+      };
+      // await siteService.saveSite(site);
+      await siteService.saveAll();
+    }
+    return post;
   }
 
   /**
    * Kicks of publishing of content to the given site.
    */
-  async publishPost(site: Site): Promise<Nullable<boolean>> {
-      return false
+  async publishPost(site: Site) {
+    var app = this.app;
+    var siteManager = app.managerForSite(site.siteType);
+    var siteApi = siteManager.apiForSite(site);
+    if (site.selectedPost == null && siteApi.canUpdatePosts) {
+      alert("Please select a post for this site to publish to");
+      return null;
+    }
+
+    this.activityIndicator.show();
+    var html = await this.app.contentExtractor.extractHtml(site);
+    console.log("Published Post, HTML: ", html);
+
+    // Now publish it!
+    if (await app.ensureLoggedIn(site)) {
+      var result: any;
+      if (siteApi.canUpdatePosts) {
+        result = await siteApi.updatePost(site.selectedPost.id, {
+          content: html,
+        });
+      } else {
+        result = await siteApi.updatePost(site.selectedPost.id, {
+          content: html,
+        });
+      }
+      console.log("Published Post, Result: ", result);
+    }
+    this.activityIndicator.hide();
+    return true;
   }
 }
 

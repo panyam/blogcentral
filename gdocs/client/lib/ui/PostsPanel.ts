@@ -1,9 +1,8 @@
 import "../../styles/PostsPanel";
 import { View } from "./Views";
-import { AddPostDialog } from "./AddPostDialog";
 import { ActivityIndicator } from "./ActivityIndicator";
 import { PostListView, PostListViewDelegate } from "./PostListView";
-import { setVisible, setEnabled, ensureElement, ensureCreated } from "./utils";
+import { setVisible, setEnabled, ensureElement } from "./utils";
 import { Int, Nullable } from "../types";
 import { App } from "../app";
 import { SiteManager, Site, Post } from "../siteapis";
@@ -11,8 +10,6 @@ import { SiteManager, Site, Post } from "../siteapis";
 const PAGE_LENGTH = 5;
 
 export class PostsPanel extends View<any> implements PostListViewDelegate {
-  addPostDialog: AddPostDialog;
-  addButton: any;
   searchBarDiv: any;
   searchButton: any;
   searchField: any;
@@ -21,8 +18,6 @@ export class PostsPanel extends View<any> implements PostListViewDelegate {
   searchInField: any;
   prevButton: any;
   nextButton: any;
-  confirmButton: any;
-  cancelButton: any;
   postListView: PostListView;
   app: App;
   resolveFunc: any;
@@ -102,18 +97,15 @@ export class PostsPanel extends View<any> implements PostListViewDelegate {
     });
     this.nextButton.hide();
 
-    this.addButton = this.findElement("#add_button");
-    this.addButton.button().on("click", function () {
+    this.findElement("#add_button").button().on("click", () => {
       self.onAddPost();
     });
 
-    this.confirmButton = this.findElement("#confirm_button");
-    this.confirmButton.button().on("click", function () {
+    this.findElement("#confirm_button").button().on("click", () => {
       self.close(self.selectedPost);
     });
 
-    this.cancelButton = this.findElement("#cancel_button");
-    this.cancelButton.button().on("click", function () {
+    this.findElement("#cancel_button").button().on("click", () => {
       self.close(null);
     });
 
@@ -158,34 +150,18 @@ export class PostsPanel extends View<any> implements PostListViewDelegate {
   async onAddPost() {
     var site = this.site;
     if (site == null) return;
-
-    var app = this.app;
-    var button = await this.showAddPostDialog();
-    if (button.title == "Cancel") return;
-    var newPost = this.addPostDialog.entity;
-    try {
-      var siteApi = this.siteManager.apiForSite(site);
-      console.log("Creating New Post: ", newPost);
-      this.activityIndicator.show();
-      await siteApi.createPost(newPost!!, {});
-    } catch (e) {
-      console.log("Create Post Exception: ", e);
-    }
-    this.activityIndicator.hide();
-  }
-
-  async showAddPostDialog() {
-    if (this.addPostDialog == null) {
-      var addPostDialogElem: any = ensureCreated(
-        "add_post_dialog",
-        this.rootElement
-      );
-      if (!addPostDialogElem.attr("title")) {
-        addPostDialogElem.attr("title", "Add new post");
+    var newPost = await this.siteManager.obtainNewPost()
+    if (newPost != null) {
+      try {
+        var siteApi = this.siteManager.apiForSite(site);
+        console.log("Creating New Post: ", newPost);
+        this.activityIndicator.show();
+        await siteApi.createPost(newPost!!, {});
+      } catch (e) {
+        console.log("Create Post Exception: ", e);
       }
-      this.addPostDialog = new AddPostDialog(addPostDialogElem).setup();
+      this.activityIndicator.hide();
     }
-    return this.addPostDialog.open();
   }
 
   enableButtons(enable: boolean = true) {
