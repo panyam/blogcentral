@@ -65,10 +65,11 @@ export class SiteSummaryView extends View<Site> {
    */
   async onSelectPostClicked() {
     var site = this.entity!!;
-    if (!this.siteApi.canGetPosts) {
+    // if our api is create-only then selecting posts doesnt make sense.
+    if (!this.siteApi.canUpdatePosts) {
       return null;
     }
-    var app = this.siteManager.app
+    var app = this.siteManager.app;
     var siteService = app.siteService;
     var post = (await app.postsPanel.open(site)) as Nullable<Post>;
     console.log("Post Selected from Panel: ", post);
@@ -90,17 +91,17 @@ export class SiteSummaryView extends View<Site> {
     var siteApi = this.siteApi;
     // select a post if possible
     if (site.selectedPost == null) {
-      if (siteApi.canGetPosts) {
+      if (siteApi.canUpdatePosts) {
         await this.onSelectPostClicked();
       } else {
         // then show the "new Post" view
-        site.selectedPost = await this.siteManager.obtainNewPost()
+        site.selectedPost = await this.siteManager.obtainNewPost();
       }
     }
 
     if (site.selectedPost == null) {
-      // Then it was cancelled 
-      return false
+      // Then it was cancelled
+      return false;
     }
 
     this.activityIndicator.show();

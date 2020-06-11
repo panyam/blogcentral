@@ -34,8 +34,8 @@ export class View<EntityType> {
     setTimeout(() => self.setup(), 0);
   }
 
-  findElement(target : string) {
-      return this.rootElement.find(target)
+  findElement(target: string) {
+    return this.rootElement.find(target);
   }
 
   /**
@@ -182,7 +182,7 @@ export class Dialog<EntityType> extends View<EntityType> {
   }
 
   destroy() {
-      this.dialog.dialog("destroy").remove();
+    this.dialog.dialog("destroy").remove();
   }
 
   buttons() {
@@ -247,10 +247,10 @@ export class FormDialog<EntityType> extends Dialog<EntityType> {
     });
   }
 
-  close(data: Nullable<any> = null): boolean {
-    if (!super.close(data)) return false;
+  async open(): Promise<any> {
+    var out = super.open();
     this.form[0].reset();
     this.allFields.removeClass("ui-state-error");
-    return true;
+    return out;
   }
 }

@@ -27,7 +27,7 @@ export class MediumSiteManager extends SiteManager {
     return new MediumApi(site, authClient, this);
   }
 
-  async obtainNewPost(post : Nullable<Post> = null) : Promise<Nullable<Post>> {
+  async obtainNewPost(post: Nullable<Post> = null): Promise<Nullable<Post>> {
     // Show a dialog asking for token
     var elem = ensureCreated("add_wp_post_dialog");
     elem.addClass("form_dialog");
@@ -37,32 +37,23 @@ export class MediumSiteManager extends SiteManager {
       .setTemplate(
         `
         <label for="post_title">Title</label>
-        <input type="url" name="post_title" id="post_title" 
+        <input type="text" name="post_title" id="post_title" 
                 value = "{{post.options.title}}"/>
 
-        <label for="post_excerpt">Excerpt</label>
-        <textarea name="post_excerpt" id="post_excerpt" 
-                  rows="5" 
-                  placeholder = "Enter your amazing excerpt here!!!">{{post.options.excerpt}}</textarea>
+        <label for="post_tags">Tags (Comma Seperated)</label>
+        <input type="text" name="post_tags" id="post_tags" 
+                value = "{{post.options.tags}}"/>
 
-        <label for="post_slug">Slug</label>
-        <input type="url" name="post_slug" id="post_slug" 
-               value="{{post.options.slug}}" 
-               />
-
-        <label for="post_password">Password</label>
-        <input type="password" name="post_password" 
-               id="post_password" 
-               value="{{post.options.password}}" 
-               />
+        <div style="text-align: justify; background-color: pink; padding: 10px; margin-top: 10px">
+        <h3 style="text-align: center">Sorry Authors</h3>
+        Medium does <a href="https://medium.com/the-partnered-pen/medium-update-you-can-no-longer-delete-and-re-post-old-content-e4882ddf2bd5">NOT allow reposting or updating</a> existing content.  So this plugin will only create content in draft mode.  Once you are ready to publish please go to your Medium account and mark the status as public.
+        </div>
         `
       )
       .setup();
     postDialog.title = "Create New Post";
     var titleElem = postDialog.findElement("#post_title");
-    var passwordElem = postDialog.findElement("#post_password");
-    var excerptElem = postDialog.findElement("#post_excerpt");
-    var slugElem = postDialog.findElement("#post_slug");
+    var tagsElem = postDialog.findElement("#post_tags");
     postDialog.shouldClose = (button: any) => {
       if (button == null || button.text == "Cancel") return true;
       var title = (titleElem as any).val().trim();
@@ -71,16 +62,12 @@ export class MediumSiteManager extends SiteManager {
     var result = (await postDialog.open()) as any;
     if (result.text == "Cancel") return null;
     var title = (titleElem as any).val().trim();
-    var password = (passwordElem as any).val().trim();
-    var excerpt = (excerptElem as any).val().trim();
-    var slug = (slugElem as any).val().trim();
+    var tags = (tagsElem as any).val().trim().split(",");
 
     // use this to get token
     return new Post(null, {
       title: title,
-      password: password,
-      excerpt: excerpt,
-      slug: slug,
+      tags: tags,
     });
   }
 }

@@ -73,6 +73,7 @@ export class MediumApi extends SiteApi {
     request.options.method = "post";
     request.body = {};
     request.body.title = options.title || post.options.title;
+    request.body.tags = options.tags || post.options.tags || [];
     request.body.contentFormat = "html";
     request.body.publishStatus = "draft";
     request.body.content = options.content || "<h1>Hello World</h1>";
