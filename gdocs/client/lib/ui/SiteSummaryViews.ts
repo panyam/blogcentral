@@ -116,7 +116,7 @@ export class SiteSummaryView extends View<Site> {
           content: html,
         });
       } else {
-        result = await siteApi.updatePost(site.selectedPost.id, {
+        result = await siteApi.createPost(site.selectedPost, {
           content: html,
         });
       }
