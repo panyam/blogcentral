@@ -1,7 +1,7 @@
 {
   "name": "blogcentral",
   "version": "0.0.1",
-  "repository": "https://github.com/gitlab/blogcentral",
+  "repository": "https://github.com/panyam/blogcentral",
   "license": "APACHE",
   "private": true,
   "engines": {

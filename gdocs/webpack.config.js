@@ -67,14 +67,6 @@ module.exports = (env, options) => {
             filename: isDevelopment ? '[name].css' : '[name].[hash].css',
             chunkFilename: isDevelopment ? '[id].css' : '[id].[hash].css'
         }),
-        /*
-        new HTMLWebpackPlugin({
-            title: "Blog Central",
-            myPageHeader: "Blog Central",
-            template: path.resolve(__dirname, 'client/index.gdocs.ejs'),
-            filename: "client/index.gdocs.html"
-        }),
-        */
         new HTMLWebpackPlugin({
             title: "Blog Central",
             myPageHeader: "Blog Central",
@@ -223,12 +215,6 @@ module.exports = (env, options) => {
                       }
                     ]
                 },
-                /*
-                {
-                    test: /\.css$/,
-                    loaders: ["style-loader","css-loader"]
-                },
-                */
                 {
                     test: /\.(jpe?g|png|gif)$/i,
                     loader:"file-loader",
