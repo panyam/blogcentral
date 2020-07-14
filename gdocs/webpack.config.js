@@ -13,232 +13,230 @@ const GAppsJSWrapperPlugin = require("./myplugins");
 
 // Read Samples first
 function readdir(path) {
-    var items = fs.readdirSync(path);
-    return items.map(function(item) {
-        var file = path;
-        if (item.startsWith("/") || file.endsWith("/")) {
-            file += item;
-        } else {
-            file += ('/' + item);
-        }
-        var stats = fs.statSync(file);
-        return {'file': file, 'name': item, 'stats': stats};
-    });
+  var items = fs.readdirSync(path);
+  return items.map(function(item) {
+    var file = path;
+    if (item.startsWith("/") || file.endsWith("/")) {
+      file += item;
+    } else {
+      file += ('/' + item);
+    }
+    var stats = fs.statSync(file);
+    return {'file': file, 'name': item, 'stats': stats};
+  });
 }
 
 module.exports = (env, options) => {
-    console.log("Options: ", options);
-    var isDevelopment = options.mode == "development"
-    var plugins = [
-        new GasPlugin(),
-        // new uglifyJsPlugin(),
-        // new BundleAnalyzerPlugin(),
-        new CleanWebpackPlugin(),
-        new CopyPlugin([
-            {
-                from: path.resolve(__dirname, 'appsscript.json'),
-                to: 'appsscript.json'
+  console.log("Options: ", options);
+  var isDevelopment = options.mode == "development"
+  var plugins = [
+    new GasPlugin(),
+    // new uglifyJsPlugin(),
+    // new BundleAnalyzerPlugin(),
+    new CleanWebpackPlugin(),
+    new CopyPlugin([
+      {
+        from: path.resolve(__dirname, 'appsscript.json'),
+        to: 'appsscript.json'
+      },
+      {
+        from: path.resolve(__dirname, '.claspignore'),
+        to: './'
+      },
+      {
+        from: path.resolve(__dirname, 'server/'),
+        to: 'server/'
+      },
+      {
+        from: path.resolve(__dirname, 'client/index.gdocs.html'), to: 'client/index.gdocs.html'
+      },
+      {
+        from: path.resolve(__dirname, 'client/ext.html'), to: 'client/ext.html'
+      },
+      {
+        from: path.resolve(__dirname, 'client/body.html'), to: 'client/body.html'
+      },
+      {
+        from: path.resolve(__dirname, 'client/variables.html'), to: 'client/variables.html'
+      },
+      {
+        from: path.resolve(__dirname, 'client/editor.html'), to: 'client/editor.html'
+      }
+    ]),
+    new MiniCssExtractPlugin({
+      filename: isDevelopment ? '[name].css' : '[name].[hash].css',
+      chunkFilename: isDevelopment ? '[id].css' : '[id].[hash].css'
+    }),
+    new HTMLWebpackPlugin({
+      title: "Blog Central",
+      myPageHeader: "Blog Central",
+      chunks: ['flask'],
+      template: path.resolve(__dirname, 'client/index.flask.html'),
+      filename: "client/index.flask.html"
+    }),
+    new GAppsJSWrapperPlugin({ source: "client/index.gdocs.js" }),
+    new GAppsJSWrapperPlugin({ source: "client/index.flask~gdocs.js" }),
+    /*
+    new HTMLWebpackIncludeAssetsPlugin({
+      files: [ "client/index.flask.html", "client/index.gdocs.html" ],
+      assets: [
+        "./client/css/styles.css"
+      ],
+      append: true
+    })
+    */
+    // new webpack.ProvidePlugin({ $: "jquery", jQuery: "jquery" }),
+    // new webpack.HotModuleReplacementPlugin()
+  ];
+  if (!isDevelopment) {
+    plugins.splice(0, 0, new uglifyJsPlugin());
+  }
+
+  var webpackConfigs = {
+    entry: {
+      gdocs: "./client/index.gdocs.ts",
+      flask: "./client/index.flask.ts"
+    },
+    optimization: {
+      splitChunks: {
+        chunks: 'all'
+      },
+    },
+    output: {
+      library: 'BCJS',
+      libraryTarget: 'this',
+      libraryExport: 'default',
+      path: path.resolve(__dirname, 'dist'),
+      publicPath: "/static",
+      filename: 'client/index.[name].js'
+    },
+    module: {
+      rules: [
+        // The rule for rendering html from an ejs template.
+        {
+          test: /\/client\/index.*.ejs$/,
+          use: [{
+          loader: 'extract-loader'
+          },
+          {
+          loader: 'html-loader',
+          options: {
+            // interpolate: 'require'
+          }
+          },
+          {
+          loader: 'render-template-loader',
+          options: {
+            engine: 'ejs',
+            locals: {
+            title: 'Render Template Loader',
+            desc: 'Rendering templates with a Webpack loader since 2017'
             },
-            {
-                from: path.resolve(__dirname, '.claspignore'),
-                to: './'
-            },
-            {
-                from: path.resolve(__dirname, 'server/'),
-                to: 'server/'
-            },
-            {
-                from: path.resolve(__dirname, 'client/index.gdocs.html'), to: 'client/index.gdocs.html'
-            },
-            {
-                from: path.resolve(__dirname, 'client/ext.html'), to: 'client/ext.html'
-            },
-            {
-                from: path.resolve(__dirname, 'client/body.html'), to: 'client/body.html'
-            },
-            {
-                from: path.resolve(__dirname, 'client/variables.html'), to: 'client/variables.html'
-            },
-            {
-                from: path.resolve(__dirname, 'client/editor.html'), to: 'client/editor.html'
+            engineOptions: function (info) {
+            // Ejs wants a filename for partials rendering.
+            // (Configuring a "views" option can also be done.)
+            return { filename: info.filename }
             }
-        ]),
-        new MiniCssExtractPlugin({
-            filename: isDevelopment ? '[name].css' : '[name].[hash].css',
-            chunkFilename: isDevelopment ? '[id].css' : '[id].[hash].css'
-        }),
-        new HTMLWebpackPlugin({
-            title: "Blog Central",
-            myPageHeader: "Blog Central",
-            chunks: ['flask'],
-            template: path.resolve(__dirname, 'client/index.flask.html'),
-            filename: "client/index.flask.html"
-        }),
-        new GAppsJSWrapperPlugin({ source: "client/index.gdocs.js" }),
-        new GAppsJSWrapperPlugin({ source: "client/index.flask~gdocs.js" }),
-        /*
-        new HTMLWebpackIncludeAssetsPlugin({
-            files: [ "client/index.flask.html", "client/index.gdocs.html" ],
-            assets: [
-                "./client/css/styles.css"
-            ],
-            append: true
-        })
-        */
-        // new webpack.ProvidePlugin({ $: "jquery", jQuery: "jquery" }),
-        // new webpack.HotModuleReplacementPlugin()
-    ];
-    if (!isDevelopment) {
-        plugins.splice(0, 0, new uglifyJsPlugin());
-    }
-
-    var output = {
-        library: 'BCJS',
-        libraryTarget: 'this',
-        libraryExport: 'default',
-        path: path.resolve(__dirname, 'dist'),
-        publicPath: "/static",
-        filename: 'client/index.[name].js'
-    };
-
-    var webpack_configs = {
-        entry: {
-            gdocs: "./client/index.gdocs.ts",
-            flask: "./client/index.flask.ts"
+          }
+          }]
         },
-        optimization: {
-            splitChunks: {
-                chunks: 'all'
+        // { test: /\.handlebars$/, loader: "handlebars-loader" },
+        // The rule for rendering page-hbs.html from a handlebars template.
+        {
+          test: /\.hbs$/,
+          use: [{
+          loader: 'file-loader?name=[name]-[ext].html'
+          },
+          {
+          loader: 'extract-loader'
+          },
+          {
+          loader: 'render-template-loader',
+          options: {
+            engine: 'handlebars',
+            init: function (engine, info) {
+            engine.registerPartial(
+              'body',
+              fs.readFileSync('./client/body.hbs').toString()
+            )
             },
+            locals: {
+            title: 'Rendered with Handlebars!',
+            desc: 'Partials Support'
+            },
+          }
+          }]
         },
-        output: output,
-        module: {
-            rules: [
-                // The rule for rendering html from an ejs template.
-                {
-                  test: /\/client\/index.*.ejs$/,
-                  use: [{
-                    loader: 'extract-loader'
-                  },
-                  {
-                    loader: 'html-loader',
-                    options: {
-                      // interpolate: 'require'
-                    }
-                  },
-                  {
-                    loader: 'render-template-loader',
-                    options: {
-                      engine: 'ejs',
-                      locals: {
-                        title: 'Render Template Loader',
-                        desc: 'Rendering templates with a Webpack loader since 2017'
-                      },
-                      engineOptions: function (info) {
-                        // Ejs wants a filename for partials rendering.
-                        // (Configuring a "views" option can also be done.)
-                        return { filename: info.filename }
-                      }
-                    }
-                  }]
-                },
-                // { test: /\.handlebars$/, loader: "handlebars-loader" },
-                // The rule for rendering page-hbs.html from a handlebars template.
-                {
-                  test: /\.hbs$/,
-                  use: [{
-                    loader: 'file-loader?name=[name]-[ext].html'
-                  },
-                  {
-                    loader: 'extract-loader'
-                  },
-                  {
-                    loader: 'render-template-loader',
-                    options: {
-                      engine: 'handlebars',
-                      init: function (engine, info) {
-                        engine.registerPartial(
-                          'body',
-                          fs.readFileSync('./client/body.hbs').toString()
-                        )
-                      },
-                      locals: {
-                        title: 'Rendered with Handlebars!',
-                        desc: 'Partials Support'
-                      },
-                    }
-                  }]
-                },
-                {
-                    test: /\.js$/,
-                    exclude: /node_modules/,
-                    use: ['babel-loader']
-                },
-                {
-                    test: /\.ts$/,
-                    exclude: [
-                        /node_modules/,
-                        /server/,
-                    ],
-                    use: ['ts-loader']
-                },
-                {
-                    test: /\.module\.s(a|c)ss$/,
-                    loader: [
-                      isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader,
-                      {
-                        loader: 'css-loader',
-                        options: {
-                          modules: true,
-                          sourceMap: isDevelopment
-                        }
-                      },
-                      {
-                        loader: 'sass-loader',
-                        options: {
-                          sourceMap: isDevelopment
-                        }
-                      }
-                    ]
-                },
-                {
-                    test: /\.s(a|c)ss$/,
-                    exclude: /\.module.(s(a|c)ss)$/,
-                    loader: [
-                      isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader,
-                      'css-loader',
-                      {
-                        loader: 'sass-loader',
-                        options: {
-                          sourceMap: isDevelopment
-                        }
-                      }
-                    ]
-                },
-                {
-                    test: /\.(jpe?g|png|gif)$/i,
-                    loader:"file-loader",
-                    options:{
-                        name:'[name].[ext]',
-                        publicPath: "/static/assets/images/",
-                        outputPath: "assets/images/"
-                        //the images will be emited to dist/assets/images/ folder
-                    }
-                },
-                {
-                    test: /\.(png|svg|jpg|gif)$/,
-                    use: [ 'url-loader' ]
-                }
-            ]
+        {
+          test: /\.js$/,
+          exclude: /node_modules/,
+          use: ['babel-loader']
         },
-        plugins: plugins,
-        resolve: {
-            extensions: ['.js', '.jsx', '.ts', '.tsx', '.scss']
+        {
+          test: /\.ts$/,
+          exclude: [
+            /node_modules/,
+            /server/,
+          ],
+          use: ['ts-loader']
+        },
+        {
+          test: /\.module\.s(a|c)ss$/,
+          loader: [
+            isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader,
+            {
+            loader: 'css-loader',
+            options: {
+              modules: true,
+              sourceMap: isDevelopment
+            }
+            },
+            {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: isDevelopment
+            }
+            }
+          ]
+        },
+        {
+          test: /\.s(a|c)ss$/,
+          exclude: /\.module.(s(a|c)ss)$/,
+          loader: [
+            isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader,
+            'css-loader',
+            {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: isDevelopment
+            }
+            }
+          ]
+        },
+        {
+          test: /\.(jpe?g|png|gif)$/i,
+          loader:"file-loader",
+          options:{
+            name:'[name].[ext]',
+            publicPath: "/static/assets/images/",
+            outputPath: "assets/images/"
+            //the images will be emited to dist/assets/images/ folder
+          }
+        },
+        {
+          test: /\.(png|svg|jpg|gif)$/,
+          use: [ 'url-loader' ]
         }
-    };
-    if (isDevelopment) {
-        webpack_configs.devtool = 'inline-source-map';
+      ]
+    },
+    plugins: plugins,
+    resolve: {
+      extensions: ['.js', '.jsx', '.ts', '.tsx', '.scss']
     }
-    return webpack_configs;
+  };
+  if (isDevelopment) {
+    webpackConfigs.devtool = 'inline-source-map';
+  }
+  return webpackConfigs;
 };
 
