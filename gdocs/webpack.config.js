@@ -1,14 +1,14 @@
-const fs = require('fs');
-const path = require('path');
-const webpack = require('webpack');
+const fs = require("fs");
+const path = require("path");
+const webpack = require("webpack");
 const GasPlugin = require("gas-webpack-plugin");
-const CopyPlugin = require('copy-webpack-plugin');
-const HTMLWebpackPlugin = require('html-webpack-plugin');
-const HTMLWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const uglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const CopyPlugin = require("copy-webpack-plugin");
+const HTMLWebpackPlugin = require("html-webpack-plugin");
+const HTMLWebpackIncludeAssetsPlugin = require("html-webpack-include-assets-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const uglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const GAppsJSWrapperPlugin = require("./myplugins");
 
 // Read Samples first
@@ -19,10 +19,10 @@ function readdir(path) {
     if (item.startsWith("/") || file.endsWith("/")) {
       file += item;
     } else {
-      file += ('/' + item);
+      file += ("/" + item);
     }
     var stats = fs.statSync(file);
-    return {'file': file, 'name': item, 'stats': stats};
+    return {"file": file, "name": item, "stats": stats};
   });
 }
 
@@ -36,42 +36,42 @@ module.exports = (env, options) => {
     new CleanWebpackPlugin(),
     new CopyPlugin([
       {
-        from: path.resolve(__dirname, 'appsscript.json'),
-        to: 'appsscript.json'
+        from: path.resolve(__dirname, "appsscript.json"),
+        to: "appsscript.json"
       },
       {
-        from: path.resolve(__dirname, '.claspignore'),
-        to: './'
+        from: path.resolve(__dirname, ".claspignore"),
+        to: "./"
       },
       {
-        from: path.resolve(__dirname, 'server/'),
-        to: 'server/'
+        from: path.resolve(__dirname, "server/"),
+        to: "server/"
       },
       {
-        from: path.resolve(__dirname, 'client/index.gdocs.html'), to: 'client/index.gdocs.html'
+        from: path.resolve(__dirname, "client/index.gdocs.html"), to: "client/index.gdocs.html"
       },
       {
-        from: path.resolve(__dirname, 'client/ext.html'), to: 'client/ext.html'
+        from: path.resolve(__dirname, "client/ext.html"), to: "client/ext.html"
       },
       {
-        from: path.resolve(__dirname, 'client/body.html'), to: 'client/body.html'
+        from: path.resolve(__dirname, "client/body.html"), to: "client/body.html"
       },
       {
-        from: path.resolve(__dirname, 'client/variables.html'), to: 'client/variables.html'
+        from: path.resolve(__dirname, "client/variables.html"), to: "client/variables.html"
       },
       {
-        from: path.resolve(__dirname, 'client/editor.html'), to: 'client/editor.html'
+        from: path.resolve(__dirname, "client/editor.html"), to: "client/editor.html"
       }
     ]),
     new MiniCssExtractPlugin({
-      filename: isDevelopment ? '[name].css' : '[name].[hash].css',
-      chunkFilename: isDevelopment ? '[id].css' : '[id].[hash].css'
+      filename: isDevelopment ? "[name].css" : "[name].[hash].css",
+      chunkFilename: isDevelopment ? "[id].css" : "[id].[hash].css"
     }),
     new HTMLWebpackPlugin({
       title: "Blog Central",
       myPageHeader: "Blog Central",
-      chunks: ['flask'],
-      template: path.resolve(__dirname, 'client/index.flask.html'),
+      chunks: ["flask"],
+      template: path.resolve(__dirname, "client/index.flask.html"),
       filename: "client/index.flask.html"
     }),
     new GAppsJSWrapperPlugin({ source: "client/index.gdocs.js" }),
@@ -99,16 +99,16 @@ module.exports = (env, options) => {
     },
     optimization: {
       splitChunks: {
-        chunks: 'all'
+        chunks: "all"
       },
     },
     output: {
-      library: 'BCJS',
-      libraryTarget: 'this',
-      libraryExport: 'default',
-      path: path.resolve(__dirname, 'dist'),
+      library: "BCJS",
+      libraryTarget: "this",
+      libraryExport: "default",
+      path: path.resolve(__dirname, "dist"),
       publicPath: "/static",
-      filename: 'client/index.[name].js'
+      filename: "client/index.[name].js"
     },
     module: {
       rules: [
@@ -116,21 +116,21 @@ module.exports = (env, options) => {
         {
           test: /\/client\/index.*.ejs$/,
           use: [{
-          loader: 'extract-loader'
+          loader: "extract-loader"
           },
           {
-          loader: 'html-loader',
+          loader: "html-loader",
           options: {
-            // interpolate: 'require'
+            // interpolate: "require"
           }
           },
           {
-          loader: 'render-template-loader',
+          loader: "render-template-loader",
           options: {
-            engine: 'ejs',
+            engine: "ejs",
             locals: {
-            title: 'Render Template Loader',
-            desc: 'Rendering templates with a Webpack loader since 2017'
+            title: "Render Template Loader",
+            desc: "Rendering templates with a Webpack loader since 2017"
             },
             engineOptions: function (info) {
             // Ejs wants a filename for partials rendering.
@@ -145,24 +145,24 @@ module.exports = (env, options) => {
         {
           test: /\.hbs$/,
           use: [{
-          loader: 'file-loader?name=[name]-[ext].html'
+          loader: "file-loader?name=[name]-[ext].html"
           },
           {
-          loader: 'extract-loader'
+          loader: "extract-loader"
           },
           {
-          loader: 'render-template-loader',
+          loader: "render-template-loader",
           options: {
-            engine: 'handlebars',
+            engine: "handlebars",
             init: function (engine, info) {
             engine.registerPartial(
-              'body',
-              fs.readFileSync('./client/body.hbs').toString()
+              "body",
+              fs.readFileSync("./client/body.hbs").toString()
             )
             },
             locals: {
-            title: 'Rendered with Handlebars!',
-            desc: 'Partials Support'
+            title: "Rendered with Handlebars!",
+            desc: "Partials Support"
             },
           }
           }]
@@ -170,7 +170,7 @@ module.exports = (env, options) => {
         {
           test: /\.js$/,
           exclude: /node_modules/,
-          use: ['babel-loader']
+          use: ["babel-loader"]
         },
         {
           test: /\.ts$/,
@@ -178,21 +178,21 @@ module.exports = (env, options) => {
             /node_modules/,
             /server/,
           ],
-          use: ['ts-loader']
+          use: ["ts-loader"]
         },
         {
           test: /\.module\.s(a|c)ss$/,
           loader: [
-            isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader,
+            isDevelopment ? "style-loader" : MiniCssExtractPlugin.loader,
             {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               modules: true,
               sourceMap: isDevelopment
             }
             },
             {
-            loader: 'sass-loader',
+            loader: "sass-loader",
             options: {
               sourceMap: isDevelopment
             }
@@ -203,10 +203,10 @@ module.exports = (env, options) => {
           test: /\.s(a|c)ss$/,
           exclude: /\.module.(s(a|c)ss)$/,
           loader: [
-            isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader,
-            'css-loader',
+            isDevelopment ? "style-loader" : MiniCssExtractPlugin.loader,
+            "css-loader",
             {
-            loader: 'sass-loader',
+            loader: "sass-loader",
             options: {
               sourceMap: isDevelopment
             }
@@ -217,7 +217,7 @@ module.exports = (env, options) => {
           test: /\.(jpe?g|png|gif)$/i,
           loader:"file-loader",
           options:{
-            name:'[name].[ext]',
+            name:"[name].[ext]",
             publicPath: "/static/assets/images/",
             outputPath: "assets/images/"
             //the images will be emited to dist/assets/images/ folder
@@ -225,17 +225,17 @@ module.exports = (env, options) => {
         },
         {
           test: /\.(png|svg|jpg|gif)$/,
-          use: [ 'url-loader' ]
+          use: [ "url-loader" ]
         }
       ]
     },
     plugins: plugins,
     resolve: {
-      extensions: ['.js', '.jsx', '.ts', '.tsx', '.scss']
+      extensions: [".js", ".jsx", ".ts", ".tsx", ".scss"]
     }
   };
   if (isDevelopment) {
-    webpackConfigs.devtool = 'inline-source-map';
+    webpackConfigs.devtool = "inline-source-map";
   }
   return webpackConfigs;
 };
