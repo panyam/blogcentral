@@ -13,23 +13,23 @@ const GAppsJSWrapperPlugin = require("./myplugins");
 
 // Read Samples first
 function readdir(path) {
-  var items = fs.readdirSync(path);
+  const items = fs.readdirSync(path);
   return items.map(function(item) {
-    var file = path;
+    const file = path;
     if (item.startsWith("/") || file.endsWith("/")) {
       file += item;
     } else {
       file += ("/" + item);
     }
-    var stats = fs.statSync(file);
+    const stats = fs.statSync(file);
     return {"file": file, "name": item, "stats": stats};
   });
 }
 
 module.exports = (env, options) => {
   console.log("Options: ", options);
-  var isDevelopment = options.mode == "development"
-  var plugins = [
+  const isDevelopment = options.mode == "development";
+  const plugins = [
     new GasPlugin(),
     // new uglifyJsPlugin(),
     // new BundleAnalyzerPlugin(),
@@ -57,7 +57,7 @@ module.exports = (env, options) => {
         from: path.resolve(__dirname, "client/body.html"), to: "client/body.html"
       },
       {
-        from: path.resolve(__dirname, "client/variables.html"), to: "client/variables.html"
+        from: path.resolve(__dirname, "client/constiables.html"), to: "client/constiables.html"
       },
       {
         from: path.resolve(__dirname, "client/editor.html"), to: "client/editor.html"
@@ -86,29 +86,30 @@ module.exports = (env, options) => {
     })
     */
     // new webpack.ProvidePlugin({ $: "jquery", jQuery: "jquery" }),
-    // new webpack.HotModuleReplacementPlugin()
+    new webpack.HotModuleReplacementPlugin()
   ];
   if (!isDevelopment) {
     plugins.splice(0, 0, new uglifyJsPlugin());
   }
 
-  var webpackConfigs = {
+  const webpackConfigs = {
     entry: {
       gdocs: "./client/index.gdocs.ts",
       flask: "./client/index.flask.ts"
+    },
+    output: {
+      path: path.resolve(__dirname, "dist"),
+      filename: "client/index.[name].js",
+      library: "BCJS",
+      libraryTarget: "this",
+      libraryExport: "default",
+      umdNamedDefine: true,
+      publicPath: "/static",
     },
     optimization: {
       splitChunks: {
         chunks: "all"
       },
-    },
-    output: {
-      library: "BCJS",
-      libraryTarget: "this",
-      libraryExport: "default",
-      path: path.resolve(__dirname, "dist"),
-      publicPath: "/static",
-      filename: "client/index.[name].js"
     },
     module: {
       rules: [
@@ -185,17 +186,17 @@ module.exports = (env, options) => {
           loader: [
             isDevelopment ? "style-loader" : MiniCssExtractPlugin.loader,
             {
-            loader: "css-loader",
-            options: {
-              modules: true,
-              sourceMap: isDevelopment
-            }
+              loader: "css-loader",
+              options: {
+                modules: true,
+                sourceMap: isDevelopment
+              }
             },
             {
-            loader: "sass-loader",
-            options: {
-              sourceMap: isDevelopment
-            }
+              loader: "sass-loader",
+              options: {
+                sourceMap: isDevelopment
+              }
             }
           ]
         },
@@ -214,6 +215,10 @@ module.exports = (env, options) => {
           ]
         },
         {
+          test: /\.(png|svg|jpg|gif)$/,
+          use: [ "url-loader" ]
+        },
+        {
           test: /\.(jpe?g|png|gif)$/i,
           loader:"file-loader",
           options:{
@@ -222,10 +227,6 @@ module.exports = (env, options) => {
             outputPath: "assets/images/"
             //the images will be emited to dist/assets/images/ folder
           }
-        },
-        {
-          test: /\.(png|svg|jpg|gif)$/,
-          use: [ "url-loader" ]
         }
       ]
     },
