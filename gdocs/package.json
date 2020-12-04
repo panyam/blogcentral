@@ -31,7 +31,7 @@
     "eslint-plugin-prettier": "^3.1.0",
     "extract-loader": "^5.0.1",
     "gas-webpack-plugin": "^1.0.2",
-    "highlight.js": "9.16.2",
+    "highlight.js": "10.4.1",
     "html-loader": "^1.1.0",
     "html-webpack-include-assets-plugin": "^2.0.0",
     "html-webpack-plugin": "^4.3.0",
